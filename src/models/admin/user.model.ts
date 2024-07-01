@@ -1,4 +1,4 @@
-import { Role } from "../../../shared/lists/roles.enum";
+import { Role } from "../../lists/roles.enum";
 import { Address } from "../person/address.model";
 import { Company } from "../person/company.model";
 import { Person } from "../person/person.model";

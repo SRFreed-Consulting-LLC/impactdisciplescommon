@@ -10,7 +10,6 @@ import { SessionService } from './session.service';
 import { AppUser } from '../models/admin/user.model';
 import { LogMessage } from '../models/utils/log-message.model';
 
-
 const defaultPath = '/';
 
 @Injectable({

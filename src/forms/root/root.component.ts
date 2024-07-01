@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DxButtonTypes } from 'devextreme-angular/ui/button';
-import { RouteItem } from '../../models/utils/route-item';
 import { ActivatedRoute } from '@angular/router';
 import { TopNavService } from '../../services/top-nav.service';
+import { RouteItem } from '../../models/utils/route-item';
 
 @Component({
   selector: 'app-root',

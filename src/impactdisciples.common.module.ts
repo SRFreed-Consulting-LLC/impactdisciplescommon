@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { AppRoutingModule } from 'src/app/app-routing.module';
 import { FormsModule } from './forms/forms.module';
 
 @NgModule({
@@ -7,7 +6,6 @@ import { FormsModule } from './forms/forms.module';
 
   ],
   imports: [
-    AppRoutingModule,
     FormsModule,
   ],
   providers: [
@@ -15,4 +13,4 @@ import { FormsModule } from './forms/forms.module';
   exports: [
   ]
 })
-export class SharedModule { }
+export class ImpactDisciplesModule { }
