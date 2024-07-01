@@ -7,12 +7,13 @@ import { UnauthenticatedContentComponent } from "./unauthenticated-content";
 import { NotAuthorizedContainerComponent } from "./not-authorized-container";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { DxFormModule, DxLoadIndicatorModule } from "devextreme-angular";
+import { DxFormModule, DxLoadIndicatorModule, DxScrollViewModule, DxTabsModule, DxToolbarModule } from "devextreme-angular";
 import { CaptureUsernameFormComponent } from "./capture-username-form/capture-username-form.component";
 import { CapturePasswordFormComponent } from "./capture-password-form/capture-password-form.component";
 import { CreateAuthFormComponent } from "./create-auth-form/create-auth-form.component";
-import { SingleCardModule } from "../layouts/single-card/single-card.component";
-
+import { LayoutModule } from "@angular/cdk/layout";
+import { RootComponent } from "./root/root.component";
+import { SingleCardComponent } from "./single-card/single-card.component";
 
 @NgModule({
   declarations: [
@@ -21,18 +22,23 @@ import { SingleCardModule } from "../layouts/single-card/single-card.component";
     CapturePasswordFormComponent,
     CreateAuthFormComponent,
     ResetPasswordFormComponent,
+    RootComponent,
+    SingleCardComponent,
     UnauthenticatedContentComponent,
-    NotAuthorizedContainerComponent
+    NotAuthorizedContainerComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
     RouterModule,
+    LayoutModule,
     DxFormModule,
     DxLoadIndicatorModule,
     DxLoadIndicatorModule,
-    SingleCardModule
+    DxScrollViewModule,
+    DxTabsModule,
+    DxToolbarModule
   ],
   providers: [
   ],

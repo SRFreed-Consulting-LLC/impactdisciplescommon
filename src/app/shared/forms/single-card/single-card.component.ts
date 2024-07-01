@@ -16,12 +16,3 @@ export class SingleCardComponent {
 
   constructor() { }
 }
-
-@NgModule({
-  imports: [ CommonModule, DxScrollViewModule ],
-  exports: [ SingleCardComponent ],
-  declarations: [ SingleCardComponent ]
-})
-export class SingleCardModule {
-  
-}

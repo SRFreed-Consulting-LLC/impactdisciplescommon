@@ -1,4 +1,4 @@
-import { JBH_APPLICATIONS } from '../../lists/jbh_applications.enum';
+import { JBH_APPLICATIONS } from '../../../shared/lists/jbh_applications.enum';
 import { BaseModel } from '../BaseModel';
 
 export class UserPermission extends BaseModel {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { JBH_APPLICATIONS } from '../lists/jbh_applications.enum';
+import { JBH_APPLICATIONS } from '../../shared/lists/jbh_applications.enum';
 import { UserPermission } from '../models/utils/user-permission.model';
 import { TracerDAO } from './TracerDAO.service';
 

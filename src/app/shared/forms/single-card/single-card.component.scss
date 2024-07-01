@@ -8,8 +8,8 @@
 .single-card {
   .dx-card {
     width: 330px;
-    margin: auto auto;
-    padding: 30px;
+    margin: 0px;
+    padding: 0px;
     flex-grow: 0;
 
     :host-context(.screen-x-small) & {

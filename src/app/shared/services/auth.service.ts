@@ -4,11 +4,11 @@ import { UserCredential } from 'firebase/auth';
 
 import { ToastrService } from 'ngx-toastr';
 import { AppUserService } from './user.service';
-import { AppUser } from '../models/admin/user.model';
 import { FireAuthDao } from '../dao/FireAuthDao.dao';
-import { LogMessage } from '../models/utils/log-message.model';
 import { LoggerService } from './logger.service';
 import { SessionService } from './session.service';
+import { AppUser } from '../models/admin/user.model';
+import { LogMessage } from '../models/utils/log-message.model';
 
 
 const defaultPath = '/';
