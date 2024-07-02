@@ -6,10 +6,16 @@
 }
 
 .single-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
   .dx-card {
     width: 330px;
     margin: 0px;
-    padding: 0px;
+    padding: 10px;
     flex-grow: 0;
 
     :host-context(.screen-x-small) & {

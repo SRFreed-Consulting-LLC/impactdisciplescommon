@@ -46,6 +46,8 @@ import { SingleCardComponent } from "./single-card/single-card.component";
     ChangePasswordFormComponent,
     ResetPasswordFormComponent,
     UnauthenticatedContentComponent,
+    NotAuthorizedContainerComponent,
+    UnauthenticatedContentComponent,
     NotAuthorizedContainerComponent
   ]
 })
