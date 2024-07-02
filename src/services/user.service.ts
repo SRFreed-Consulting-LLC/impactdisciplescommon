@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppUser } from '../models/admin/appuser.model';
-import { TracerDAO } from '../dao/tracer.dao';
+import { FirebaseDAO } from '../dao/firebase.dao';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +8,7 @@ import { TracerDAO } from '../dao/tracer.dao';
 export class AppUserService {
   table: string = 'users';
 
-  constructor(public dao: TracerDAO<AppUser>) {}
+  constructor(public dao: FirebaseDAO<AppUser>) {}
 
   getAll(): Promise<AppUser[]>{
     return this.dao.getAll(this.table);

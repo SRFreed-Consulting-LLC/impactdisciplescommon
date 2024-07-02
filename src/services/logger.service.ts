@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Timestamp } from "@google-cloud/firestore";
 import { LogMessage } from "../models/utils/log-message.model";
-import { TracerDAO } from '../dao/tracer.dao';
+import { FirebaseDAO } from '../dao/firebase.dao';
 
 
 @Injectable({
@@ -9,7 +9,7 @@ import { TracerDAO } from '../dao/tracer.dao';
 })
 export class LoggerService {
 
-  constructor(public dao: TracerDAO<LogMessage>) {
+  constructor(public dao: FirebaseDAO<LogMessage>) {
   }
 
   getAll(): Promise<LogMessage[]>{

@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { QueryConstraint, addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { Injectable } from '@angular/core';
+import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { BaseModel } from '../models/base.model';
 @Injectable({
   providedIn: 'root'
 })
-export class TracerDAO<T extends BaseModel> {
+export class FirebaseDAO<T extends BaseModel> {
 
   constructor(public fs: Firestore ) {}
 

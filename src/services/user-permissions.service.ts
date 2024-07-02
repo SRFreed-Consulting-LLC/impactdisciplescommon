@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TracerDAO } from '../dao/tracer.dao';
+import { FirebaseDAO } from '../dao/firebase.dao';
 import { UserPermission } from '../models/admin/user-permission.model';
 import { IMPACT_APPLICATIONS } from '../lists/impact_applications.enum';
 
@@ -10,7 +10,7 @@ export class UserPermissionService {
   private readonly agentCollectionPath = 'agents';
   private readonly associationCollectionPath = 'user-permissions';
 
-  constructor(public dao: TracerDAO<UserPermission>) {
+  constructor(public dao: FirebaseDAO<UserPermission>) {
 
   }
 

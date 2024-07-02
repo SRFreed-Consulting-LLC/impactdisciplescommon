@@ -26,7 +26,7 @@ import { UserPermission } from '../models/admin/user-permission.model';
 import { AppUser } from '../models/admin/appuser.model';
 import { AppUserService } from '../services/user.service';
 import { CookieService } from 'ngx-cookie-service';
-import { QueryParam, WhereFilterOperandKeys } from './tracer.dao';
+import { QueryParam, WhereFilterOperandKeys } from './firebase.dao';
 
 
 const AUTH_COOKIE_NAME = 'crm_auth';
@@ -132,11 +132,8 @@ export class FireAuthDao {
   }
 
   public async logOut() {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => {
-      return false;
-    };
     try {
-      await this.router.navigate(["loginForm"]);
+      await this.router.navigate(['/capture-username-form']);
       await signOut(this.auth);
     } catch (error) {
       console.error('Error in Auth Service.', error);

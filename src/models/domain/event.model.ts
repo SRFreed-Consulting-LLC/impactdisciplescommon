@@ -12,6 +12,6 @@ export class EventModel extends BaseModel {
   endDate: Timestamp;
   location: LocationModel;
   attendees: AppUser[];
-  traininSessions: TrainingSessionModel;
+  traininSessions: TrainingSessionModel[];
 
 }
