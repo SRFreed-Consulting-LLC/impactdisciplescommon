@@ -1,7 +1,6 @@
-
-import { BaseModel } from "../BaseModel";
-import { Address } from "./address.model";
-import { Phone } from "./phone.model";
+import { BaseModel } from "../../base.model";
+import { Address } from "../utils/address.model";
+import { Phone } from "../utils/phone.model";
 
 export class Person extends BaseModel{
     firstName: string;

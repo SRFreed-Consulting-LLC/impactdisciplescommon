@@ -1,9 +1,9 @@
 
-import { BaseModel } from "../BaseModel";
+import { BaseModel } from "../../base.model";
 import { Address } from "./address.model";
 import { Phone } from "./phone.model";
 
-export class Company extends BaseModel {
+export class Organization extends BaseModel {
     name: string;
     address: Address;
     phone: Phone;

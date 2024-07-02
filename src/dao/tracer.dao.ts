@@ -4,7 +4,7 @@ import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DocumentData, onSnapshot, updateDoc } from 'firebase/firestore';
-import { BaseModel } from '../models/BaseModel';
+import { BaseModel } from '../models/base.model';
 
 @Injectable({
   providedIn: 'root'

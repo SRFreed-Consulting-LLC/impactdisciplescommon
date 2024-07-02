@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseModel } from "../BaseModel";
+import { BaseModel } from "../base.model";
 
 
 export class LogMessage extends BaseModel {

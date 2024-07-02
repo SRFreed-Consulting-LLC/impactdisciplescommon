@@ -11,9 +11,7 @@ import { DxFormModule, DxLoadIndicatorModule, DxScrollViewModule, DxTabsModule, 
 import { CaptureUsernameFormComponent } from "./capture-username-form/capture-username-form.component";
 import { CapturePasswordFormComponent } from "./capture-password-form/capture-password-form.component";
 import { CreateAuthFormComponent } from "./create-auth-form/create-auth-form.component";
-import { LayoutModule } from "@angular/cdk/layout";
-import { RootComponent } from "./root/root.component";
-import { SingleCardComponent } from "./single-card/single-card.component";
+import { LayoutsModule } from "../layouts/layouts.module";
 
 @NgModule({
   declarations: [
@@ -22,8 +20,6 @@ import { SingleCardComponent } from "./single-card/single-card.component";
     CapturePasswordFormComponent,
     CreateAuthFormComponent,
     ResetPasswordFormComponent,
-    RootComponent,
-    SingleCardComponent,
     UnauthenticatedContentComponent,
     NotAuthorizedContainerComponent,
   ],
@@ -32,7 +28,7 @@ import { SingleCardComponent } from "./single-card/single-card.component";
     BrowserAnimationsModule,
     CommonModule,
     RouterModule,
-    LayoutModule,
+    LayoutsModule,
     DxFormModule,
     DxLoadIndicatorModule,
     DxLoadIndicatorModule,
@@ -45,8 +41,6 @@ import { SingleCardComponent } from "./single-card/single-card.component";
   exports: [
     ChangePasswordFormComponent,
     ResetPasswordFormComponent,
-    UnauthenticatedContentComponent,
-    NotAuthorizedContainerComponent,
     UnauthenticatedContentComponent,
     NotAuthorizedContainerComponent
   ]

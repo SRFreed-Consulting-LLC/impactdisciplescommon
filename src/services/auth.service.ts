@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { UserCredential } from 'firebase/auth';
-
 import { ToastrService } from 'ngx-toastr';
 import { AppUserService } from './user.service';
-import { FireAuthDao } from '../dao/FireAuthDao.dao';
+import { FireAuthDao } from '../dao/fireauth.dao';
 import { LoggerService } from './logger.service';
 import { SessionService } from './session.service';
-import { AppUser } from '../models/admin/user.model';
+import { AppUser } from '../models/admin/appuser.model';
 import { LogMessage } from '../models/utils/log-message.model';
 
 const defaultPath = '/';

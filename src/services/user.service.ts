@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { AppUser } from '../models/admin/user.model';
-import { TracerDAO } from './TracerDAO.service';
+import { Injectable } from '@angular/core';
+import { AppUser } from '../models/admin/appuser.model';
+import { TracerDAO } from '../dao/tracer.dao';
 
 @Injectable({
   providedIn: 'root'

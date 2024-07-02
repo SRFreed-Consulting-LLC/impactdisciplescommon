@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Timestamp } from "@google-cloud/firestore";
 import { LogMessage } from "../models/utils/log-message.model";
-import { TracerDAO } from "./TracerDAO.service";
+import { TracerDAO } from '../dao/tracer.dao';
+
 
 @Injectable({
   providedIn: "root",

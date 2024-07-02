@@ -1,5 +1,5 @@
 import { JBH_APPLICATIONS } from '../../lists/jbh_applications.enum';
-import { BaseModel } from '../BaseModel';
+import { BaseModel } from '../base.model';
 
 export class UserPermission extends BaseModel {
   owner: string;
