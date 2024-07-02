@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TracerDAO } from '../dao/tracer.dao';
 import { UserPermission } from '../models/admin/user-permission.model';
-import { JBH_APPLICATIONS } from '../lists/jbh_applications.enum';
+import { IMPACT_APPLICATIONS } from '../lists/impact_applications.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -34,9 +34,9 @@ export class UserPermissionService {
     return this.dao.delete(id, 'user_permissions');
   }
 
-  isUserPermittedinTracer(dbId: string): Promise<boolean>{
+  isUserPermittedinCRM(dbId: string): Promise<boolean>{
     return this.getAll(dbId).then(permissions => {
-      let p = permissions.filter(permission => permission.application == JBH_APPLICATIONS.TRACER)
+      let p = permissions.filter(permission => permission.application == IMPACT_APPLICATIONS.CRM_APP)
 
       if(p.length == 1 && p[0].isEnabled){
         return true;
@@ -46,9 +46,9 @@ export class UserPermissionService {
     })
   }
 
-  isUserPermittedinLoadBoard(dbId: string): Promise<boolean>{
+  isUserPermittedinAdminApp(dbId: string): Promise<boolean>{
     return this.getAll(dbId).then(permissions => {
-      let p = permissions.filter(permission => permission.application == JBH_APPLICATIONS.LOADBOARD)
+      let p = permissions.filter(permission => permission.application == IMPACT_APPLICATIONS.ADMIN_APP)
 
       if(p.length == 1 && p[0].isEnabled){
         return true;

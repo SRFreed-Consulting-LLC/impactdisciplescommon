@@ -1,9 +1,9 @@
-import { JBH_APPLICATIONS } from '../../lists/jbh_applications.enum';
+import { IMPACT_APPLICATIONS } from '../../lists/impact_applications.enum';
 import { BaseModel } from '../base.model';
 
 export class UserPermission extends BaseModel {
   owner: string;
-  application: JBH_APPLICATIONS;
+  application: IMPACT_APPLICATIONS;
   isEnabled: boolean = false;
   role: string[] = [];
 }
