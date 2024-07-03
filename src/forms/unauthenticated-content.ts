@@ -17,7 +17,9 @@ import { Router } from '@angular/router';
 })
 export class UnauthenticatedContentComponent {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    router.navigate(['capture-username-form']);
+  }
 
   get title() {
     const path = this.router.url.split('/')[1];

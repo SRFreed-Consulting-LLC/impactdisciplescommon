@@ -8,8 +8,11 @@ import { LoggerService } from './logger.service';
 import { SessionService } from './session.service';
 import { AppUser } from '../models/admin/appuser.model';
 import { LogMessage } from '../models/utils/log-message.model';
+import { CookieService } from 'ngx-cookie-service';
 
 const defaultPath = '/';
+
+const COOKIE_NAME = "impact-disciples-admin"
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +21,7 @@ export class AuthService {
   public user: AppUser;
 
   get loggedIn(): boolean {
-    return !!this.user;
+    return this.cookieService.check(COOKIE_NAME);
   }
 
   private _lastAuthenticatedPath: string = defaultPath;
@@ -26,7 +29,7 @@ export class AuthService {
     this._lastAuthenticatedPath = value;
   }
 
-  constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService,
+  constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService, private cookieService: CookieService,
     public loggerService: LoggerService, public tostrService: ToastrService, private sessionService: SessionService) { }
 
   async findUser(email: string) {
@@ -53,18 +56,24 @@ export class AuthService {
 
   async logIn(email: string, password: string) {
     try {
+      this.cookieService.delete(COOKIE_NAME);
+
       return this.dao.signIn(email.toLowerCase(), password).then((result: UserCredential) => {
         if(result.user){
           return this.userService.getAllByValue('email', email).then(user => {
             if(user && user.length == 1) {
-              this.user = user[0];
-              this.router.navigate([this._lastAuthenticatedPath]);
+              return result.user.getIdTokenResult().then(token => {
+                this.user = user[0];
+                this.router.navigate([this._lastAuthenticatedPath]);
+                this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
 
-              return {
-                isOk: true,
-                data: this.user,
-                message: "Authentication success"
-              };
+                return {
+                  isOk: true,
+                  data: this.user,
+                  message: "Authentication success"
+                };
+              })
+
             } else {
               return {
                 isOk: false,
@@ -224,6 +233,8 @@ export class AuthService {
   async logOut() {
     this.sessionService.currentUser = null;
     this.user = null;
+    this.cookieService.delete(COOKIE_NAME);
+
     this.router.navigate(['/capture-username-form']);
   }
 
@@ -256,10 +267,11 @@ export class AuthService {
   providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate {
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(private router: Router, private authService: AuthService,  private cookieService: CookieService) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const isLoggedIn = this.authService.loggedIn;
+    let isLoggedIn = this.authService.loggedIn;
+
     const isAuthForm = [
       'reset-password',
       'create-account',
@@ -274,6 +286,7 @@ export class AuthGuardService implements CanActivate {
       this.router.navigate([defaultPath]);
       return false;
     }
+
 
     if (!isLoggedIn && !isAuthForm) {
       this.router.navigate(['/capture-username-form']);
