@@ -234,8 +234,6 @@ export class AuthService {
     this.sessionService.currentUser = null;
     this.user = null;
     this.cookieService.delete(COOKIE_NAME);
-
-    this.router.navigate(['/capture-username-form']);
   }
 
   private logMessage(type: string, created_by: string, message: string, data?: any) {
