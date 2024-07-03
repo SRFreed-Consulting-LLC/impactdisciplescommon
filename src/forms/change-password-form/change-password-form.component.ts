@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
 import notify from 'devextreme/ui/notify';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/utils/auth.service';
 
 
 @Component({

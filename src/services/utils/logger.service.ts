@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Timestamp } from "@google-cloud/firestore";
-import { LogMessage } from "../models/utils/log-message.model";
-import { FirebaseDAO } from '../dao/firebase.dao';
+import { LogMessage } from "../../models/utils/log-message.model";
+import { FirebaseDAO } from '../../dao/firebase.dao';
 
 
 @Injectable({

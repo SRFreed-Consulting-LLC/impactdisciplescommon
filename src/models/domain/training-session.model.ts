@@ -1,4 +1,4 @@
-import { TrainingModel } from './training.model';
+import { CourseModel } from './course.model';
 import { BaseModel } from "../base.model";
 import { CoachModel } from "./coach.model";
 import { TrainingRoomModel } from "./training-room.model";
@@ -9,6 +9,6 @@ export class TrainingSessionModel extends BaseModel {
   time: Timestamp;
   coach: CoachModel;
   trainingRoom: TrainingRoomModel
-  training: TrainingModel;
+  training: CourseModel;
   attendees: AppUser[];
 }

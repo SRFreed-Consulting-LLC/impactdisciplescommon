@@ -1,32 +1,32 @@
 import { Injectable } from '@angular/core';
-import { AppUser } from '../models/admin/appuser.model';
 import { FirebaseDAO } from '../dao/firebase.dao';
+import { LocationModel } from '../models/domain/location.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppUserService {
-  table: string = 'users';
+export class LocationService {
+  table: string = 'locations';
 
-  constructor(public dao: FirebaseDAO<AppUser>) {}
+  constructor(public dao: FirebaseDAO<LocationModel>) {}
 
-  getAll(): Promise<AppUser[]>{
+  getAll(): Promise<LocationModel[]>{
     return this.dao.getAll(this.table);
   }
 
-  getAllByValue(field: string, value: any): Promise<AppUser[]>{
+  getAllByValue(field: string, value: any): Promise<LocationModel[]>{
     return this.dao.getAllByValue(this.table, field, value);
   }
 
-  getById(id: String): Promise<AppUser>{
+  getById(id: String): Promise<LocationModel>{
     return this.dao.getById(id, this.table);
   }
 
-  add(value: AppUser): Promise<AppUser>{
+  add(value: LocationModel): Promise<LocationModel>{
     return this.dao.add(value, this.table);
   }
 
-  update(id: string, value: AppUser): Promise<AppUser>{
+  update(id: string, value: LocationModel): Promise<LocationModel>{
     return this.dao.update(id, value, this.table);
   }
 

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { SessionService } from '../../services/session.service';
+import { AuthService } from '../../services/utils/auth.service';
+import { SessionService } from '../../services/utils/session.service';
 
 @Component({
   selector: 'app-create-auth-form',

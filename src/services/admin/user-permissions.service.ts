@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FirebaseDAO } from '../dao/firebase.dao';
-import { UserPermission } from '../models/admin/user-permission.model';
-import { IMPACT_APPLICATIONS } from '../lists/impact_applications.enum';
+import { FirebaseDAO } from '../../dao/firebase.dao';
+import { UserPermission } from '../../models/admin/user-permission.model';
+import { IMPACT_APPLICATIONS } from '../../lists/impact_applications.enum';
 
 @Injectable({
   providedIn: 'root'

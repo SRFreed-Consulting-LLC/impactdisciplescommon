@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/auth.service';
-import { SessionService } from '../../services/session.service';
+import { AuthService } from '../../services/utils/auth.service';
+import { SessionService } from '../../services/utils/session.service';
 
 @Component({
   selector: 'app-capture-password-form',

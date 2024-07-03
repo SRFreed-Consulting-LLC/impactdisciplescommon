@@ -7,7 +7,7 @@ import { dateFromTimestamp } from '../utils/date-from-timestamp';
 @Injectable({
   providedIn: 'root'
 })
-export class EventsService {
+export class EventService {
   table: string = 'events';
 
   constructor(public dao: FirebaseDAO<EventModel>) {}
