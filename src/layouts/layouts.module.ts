@@ -5,13 +5,11 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { DxFormModule, DxLoadIndicatorModule, DxScrollViewModule, DxTabsModule, DxToolbarModule } from "devextreme-angular";
 import { LayoutModule } from "@angular/cdk/layout";
-import { RootComponent } from "./root/root.component";
 import { SingleCardComponent } from "./single-card/single-card.component";
 
 
 @NgModule({
   declarations: [
-    RootComponent,
     SingleCardComponent,
   ],
   imports: [
@@ -30,8 +28,7 @@ import { SingleCardComponent } from "./single-card/single-card.component";
   providers: [
   ],
   exports: [
-    SingleCardComponent,
-    RootComponent
+    SingleCardComponent
   ]
 })
 export class LayoutsModule { }
