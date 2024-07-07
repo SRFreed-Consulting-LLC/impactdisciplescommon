@@ -17,17 +17,32 @@ export class EventService {
       events.forEach(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
         event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+
+        event.agendaItems.forEach(item => {
+          item.startDate = dateFromTimestamp(item.startDate);
+          item.endDate = dateFromTimestamp(item.endDate);
+        })
       })
       return events;
     });
   }
 
   getAllByValue(field: string, value: any): Promise<EventModel[]>{
-    return this.dao.getAllByValue(this.table, field, value);
+    return this.dao.getAllByValue(this.table, field, value).then(events => {
+      events.forEach(event => {
+        event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+        event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+      })
+      return events;
+    });
   }
 
   getById(id: String): Promise<EventModel>{
-    return this.dao.getById(id, this.table);
+    return this.dao.getById(id, this.table).then(event => {
+      event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+      event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+      return event;
+    });
   }
 
   add(value: EventModel): Promise<EventModel>{

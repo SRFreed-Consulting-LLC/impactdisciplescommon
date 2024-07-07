@@ -46,7 +46,9 @@ export class FirebaseDAO<T extends BaseModel> {
   getById(id: String, table: string): Promise<T>{
     let docRef = doc(this.fs, '/' + table + '/' + id);
     return getDoc(docRef).then(doc => {
-      return doc.data() as T;
+      let val: T = doc.data() as T;
+      val.id = doc.id;
+      return val;
     });
   }
 
