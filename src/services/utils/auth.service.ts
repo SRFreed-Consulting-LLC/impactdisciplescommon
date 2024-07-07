@@ -154,8 +154,8 @@ export class AuthService {
     }
   }
 
-  async getUser() {
-    return this.user;
+  getUser(): AppUser {
+    return JSON.parse(this.cookieService.get(COOKIE_NAME));
   }
 
   async createAccount(email: string, password: string) {
