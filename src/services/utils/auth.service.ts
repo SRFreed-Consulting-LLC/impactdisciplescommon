@@ -9,6 +9,7 @@ import { SessionService } from './session.service';
 import { AppUser } from '../../models/admin/appuser.model';
 import { LogMessage } from '../../models/utils/log-message.model';
 import { CookieService } from 'ngx-cookie-service';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 
 const defaultPath = '/';
 
@@ -32,79 +33,14 @@ export class AuthService {
   constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService, private cookieService: CookieService,
     public loggerService: LoggerService, public tostrService: ToastrService, private sessionService: SessionService) { }
 
-  async findUser(email: string) {
-    return this.userService.getAllByValue('email', email).then(user => {
-      if(user && user.length == 1){
-        return user[0];
-      } else {
-        this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).then(
-          (ec: any) => {
-            this.tostrService.error(
-              'The email address (' +
-                email +
-                ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
-                ec,
-              'Login Error',
-              { disableTimeOut: true }
-            );
-          }
-        );
-        return null;
-      }
-    })
-  }
-
-  async logIn(email: string, password: string) {
-    try {
-      this.cookieService.delete(COOKIE_NAME);
-
-      return this.dao.signIn(email.toLowerCase(), password).then((result: UserCredential) => {
-        if(result.user){
-          return this.userService.getAllByValue('email', email).then(user => {
-            if(user && user.length == 1) {
-              return result.user.getIdTokenResult().then(token => {
-                this.user = user[0];
-                this.router.navigate([this._lastAuthenticatedPath]);
-                this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
-
-                return {
-                  isOk: true,
-                  data: this.user,
-                  message: "Authentication success"
-                };
-              })
-
-            } else {
-              return {
-                isOk: false,
-                data: null,
-                message: "Authentication failed"
-              };
-            }
-          })
+  findUser(email: string): Observable<AppUser> {
+    return from(this.userService.getAllByValue('email', email)).pipe(
+      switchMap(user => {
+        if(user && user.length == 1){
+          return of(user[0]);
         } else {
-          return {
-            isOk: false,
-            data: null,
-            message: "Authentication failed"
-          };
-        }
-      },
-      (err) => {
-        if (err.code == 'auth/wrong-password') {
-          this.logMessage('LOGIN', email, 'You have entered an incorrect password for this email address.', [
-            { ...err }
-          ]).then((ec: any) => {
-            this.tostrService.error(
-              'You have entered an incorrect password for this email address. If you have forgotten your password, enter your Email Address and press the "Forgot Password" button. If the problem continues, please contact Alliance Group for assistance with this code: ' +
-                ec,
-              'Login Error',
-              { disableTimeOut: true }
-            );
-          });
-        } else if (err.code == 'auth/user-not-found') {
-          this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).then(
-            (ec: any) => {
+          return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
+            switchMap((ec: any) => {
               this.tostrService.error(
                 'The email address (' +
                   email +
@@ -113,142 +49,249 @@ export class AuthService {
                 'Login Error',
                 { disableTimeOut: true }
               );
-            }
-          );
-        } else if (err.code == 'auth/too-many-requests') {
-          this.logMessage('LOGIN', email, 'Too many failed attempts. The account is temporarily locked.', [
-            { ...err }
-          ]).then((ec: any) => {
-            this.tostrService.error(
-              'There have been too many failed logins to this account. Please reset your password by going to the login screen, entering your password, and pressing the "Forgot Password" button. If the problem continues, please contact your Admin for assistance with this code: ' +
-                ec,
-              'Login Error',
-              { disableTimeOut: true }
-            );
-          });
-        } else {
-          this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).then(
-            (ec: any) => {
-              this.tostrService.error(
-                'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' +
-                  ec,
-                'Login Error',
-                { disableTimeOut: true }
-              );
-            }
+              return of(null);
+            })
           );
         }
-
-        return {
-          isOk: false,
-          data: null,
-          message: "Authentication failed"
-        };
       })
+    );
+  }
+
+  logIn(email: string, password: string): Observable<any> {
+    try {
+      this.cookieService.delete(COOKIE_NAME);
+
+      return from(this.dao.signIn(email.toLowerCase(), password)).pipe(
+        switchMap((result: UserCredential) => {
+          if(result.user){
+            return from(this.userService.getAllByValue('email', email)).pipe(
+              switchMap(user => {
+                if(user && user.length == 1) {
+                  return from(result.user.getIdTokenResult()).pipe(
+                    map(token => {
+                      this.user = user[0];
+                      this.router.navigate([this._lastAuthenticatedPath]);
+                      this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
+
+                      return {
+                        isOk: true,
+                        data: this.user,
+                        message: "Authentication success"
+                      };
+                    })
+                  );
+
+                } else {
+                  return of({
+                    isOk: false,
+                    data: null,
+                    message: "Authentication failed"
+                  });
+                }
+              })
+            );
+          } else {
+            return of({
+              isOk: false,
+              data: null,
+              message: "Authentication failed"
+            });
+          }
+        }),
+        catchError((err) => {
+          if (err.code == 'auth/wrong-password') {
+            return this.logMessage('LOGIN', email, 'You have entered an incorrect password for this email address.', [
+              { ...err }
+            ]).pipe(
+              switchMap((ec: any) => {
+                this.tostrService.error(
+                  'You have entered an incorrect password for this email address. If you have forgotten your password, enter your Email Address and press the "Forgot Password" button. If the problem continues, please contact Alliance Group for assistance with this code: ' +
+                    ec,
+                  'Login Error',
+                  { disableTimeOut: true }
+                );
+                return of({
+                  isOk: false,
+                  data: null,
+                  message: "Authentication failed"
+                });
+              })
+            );
+          } else if (err.code == 'auth/user-not-found') {
+            return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
+              switchMap((ec: any) => {
+                this.tostrService.error(
+                  'The email address (' +
+                    email +
+                    ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
+                    ec,
+                  'Login Error',
+                  { disableTimeOut: true }
+                );
+                return of({
+                  isOk: false,
+                  data: null,
+                  message: "Authentication failed"
+                });
+              })
+            );
+          } else if (err.code == 'auth/too-many-requests') {
+            return this.logMessage('LOGIN', email, 'Too many failed attempts. The account is temporarily locked.', [
+              { ...err }
+            ]).pipe(
+              switchMap((ec: any) => {
+                this.tostrService.error(
+                  'There have been too many failed logins to this account. Please reset your password by going to the login screen, entering your password, and pressing the "Forgot Password" button. If the problem continues, please contact your Admin for assistance with this code: ' +
+                    ec,
+                  'Login Error',
+                  { disableTimeOut: true }
+                );
+                return of({
+                  isOk: false,
+                  data: null,
+                  message: "Authentication failed"
+                });
+              })
+            );
+          } else {
+            return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
+              switchMap((ec: any) => {
+                this.tostrService.error(
+                  'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' +
+                    ec,
+                  'Login Error',
+                  { disableTimeOut: true }
+                );
+                return of({
+                  isOk: false,
+                  data: null,
+                  message: "Authentication failed"
+                });
+              })
+            );
+          }
+        })
+      );
     }
     catch {
-      return {
+      return of({
         isOk: false,
         message: "Authentication failed"
-      };
+      });
     }
   }
 
-  getUser(): AppUser {
-    return JSON.parse(this.cookieService.get(COOKIE_NAME));
+  getUser(): Observable<AppUser> {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+    let user: AppUser = null;
+  
+    try {
+      if (cookieValue) {
+        user = JSON.parse(cookieValue);
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+  
+    return of(user);
   }
 
-  async createAccount(email: string, password: string) {
+  createAccount(email: string, password: string): Observable<any> {
     try {
-      return this.dao.register(email.toLowerCase(), password).then((result: UserCredential) =>{
-        if(result.user){
-          return this.userService.getAllByValue('email', email).then(async appuser => {
-            if(appuser && appuser.length == 1){
-              let u: AppUser = appuser[0];
+      return from(this.dao.register(email.toLowerCase(), password)).pipe(
+        switchMap((result: UserCredential) => {
+          if(result.user){
+            return from(this.userService.getAllByValue('email', email)).pipe(
+              switchMap(async appuser => {
+                if(appuser && appuser.length == 1){
+                  let u: AppUser = appuser[0];
 
-              u.firebaseUID = result.user.uid;
+                  u.firebaseUID = result.user.uid;
 
-              this.userService.update(u.id, u);
+                  await this.userService.update(u.id, u);
 
-              return {
-                isOk: true,
-                message: "Account Successfully Created"
-              };
-            } else {
-              return {
-                isOk: false,
-                message: "More than 1 User Account was found for this email address"
-              };
-            }
-          })
-        } else {
-          console.log(result)
-          return {
-            isOk: false,
-            message: "Failed to create account: "
-          };
-        }
-      })
+                  return {
+                    isOk: true,
+                    message: "Account Successfully Created"
+                  };
+                } else {
+                  return {
+                    isOk: false,
+                    message: "More than 1 User Account was found for this email address"
+                  };
+                }
+              })
+            );
+          } else {
+            return of({
+              isOk: false,
+              message: "Failed to create account: "
+            });
+          }
+        })
+      );
     }
     catch {
-      return {
+      return of({
         isOk: false,
         message: "Failed to create account"
-      };
+      });
     }
   }
 
-  async changePassword(email: string, recoveryCode: string) {
+  changePassword(email: string, recoveryCode: string): Observable<any> {
     try {
       // Send request
 
-      return {
+      return of({
         isOk: true
-      };
+      });
     }
     catch {
-      return {
+      return of({
         isOk: false,
         message: "Failed to change password"
-      }
+      });
     }
   }
 
-  async resetPassword(email: string) {
+  resetPassword(email: string): Observable<any> {
     try {
       // Send request
 
-      return {
+      return of({
         isOk: true
-      };
+      });
     }
     catch {
-      return {
+      return of({
         isOk: false,
         message: "Failed to reset password"
-      };
+      });
     }
   }
 
-  async logOut() {
+  logOut(): void {
     this.sessionService.currentUser = null;
     this.user = null;
     this.cookieService.delete(COOKIE_NAME);
   }
 
-  private logMessage(type: string, created_by: string, message: string, data?: any) {
+  private logMessage(type: string, created_by: string, message: string, data?: any): Observable<any> {
     try {
       let ec = this.generateErrorCode();
       let logMessage: LogMessage = { ...new LogMessage(type, created_by, message, ec, data) };
-      logMessage.id = this.generateErrorCode()
+      logMessage.id = this.generateErrorCode();
 
-      return this.loggerService.add(logMessage).then(() => {
-        return ec;
-      });
+      return from(this.loggerService.add(logMessage)).pipe(
+        map(() => {
+          return ec;
+        })
+      );
     } catch (err) {
       console.error(err);
 
-      return Promise.resolve(true);
+      return of(true);
     }
   }
 
@@ -264,8 +307,9 @@ export class AuthService {
 @Injectable({
   providedIn: 'root'
 })
+//TODO: See why CanActivate is deprecated and update
 export class AuthGuardService implements CanActivate {
-  constructor(private router: Router, private authService: AuthService,  private cookieService: CookieService) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     let isLoggedIn = this.authService.loggedIn;
@@ -284,7 +328,6 @@ export class AuthGuardService implements CanActivate {
       this.router.navigate([defaultPath]);
       return false;
     }
-
 
     if (!isLoggedIn && !isAuthForm) {
       this.router.navigate(['/capture-username-form']);

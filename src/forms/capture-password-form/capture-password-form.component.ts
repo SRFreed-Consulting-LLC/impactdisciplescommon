@@ -1,30 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
+import { map, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-capture-password-form',
   templateUrl: './capture-password-form.component.html',
   styleUrls: ['./capture-password-form.component.scss']
 })
-export class CapturePasswordFormComponent {
-  loading = false;
-  formData: any = {};
+export class CapturePasswordFormComponent implements OnDestroy {
+  @Input() loginEmail: string = '';
+  loginPassword: any = {};
+  public isLoading: boolean = false;
+  
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(private authService: AuthService, public tostrService: ToastrService, private sessionService: SessionService) { }
 
-  async onSubmit(e: Event) {
+  onSubmit(e: Event) {
     e.preventDefault();
-    const { password } = this.formData;
-    this.loading = true;
-
-    const result = await this.authService.logIn(this.sessionService.currentUser.email, password);
-
-    if (!result.isOk) {
-      this.tostrService.error('There was an error trying to log in: ' + result.message);
+    const { password } = this.loginPassword;
+    this.isLoading = true;
+    if(this.loginEmail === '') {
+      this.loginEmail = this.sessionService.currentUser.email;
     }
 
-    this.loading = false;
+    this.authService.logIn(this.loginEmail, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+      if (!result.isOk) {
+        this.tostrService.error('There was an error trying to log in: ' + result.message);
+      }
+      this.isLoading = false;
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }
