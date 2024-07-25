@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
 import { CoachModel } from '../models/domain/coach.model';
+import { Observable } from 'rxjs';
+import { DocumentData } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,10 @@ export class CoachService {
 
   getAll(): Promise<CoachModel[]>{
     return this.dao.getAll(this.table);
+  }
+
+  streamAll(): Observable<CoachModel[]>{
+    return this.dao.streamAll(this.table);
   }
 
   getAllByValue(field: string, value: any): Promise<CoachModel[]>{

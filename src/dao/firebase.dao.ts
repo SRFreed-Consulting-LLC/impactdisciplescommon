@@ -3,7 +3,7 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DocumentData, onSnapshot, updateDoc } from 'firebase/firestore';
+import { onSnapshot, updateDoc } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 
 @Injectable({
@@ -88,8 +88,16 @@ export class FirebaseDAO<T extends BaseModel> {
     return deleteDoc(docRef);
   }
 
-  streamAll(table: string): Observable<DocumentData>{
-    return collectionData(collection(this.fs, '/' + table), {idField: 'id'})
+  streamAll(table: string): Observable<T[]>{
+    return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
+      map(dd => {
+        let retval: T[] = [];
+        dd.forEach(d => {
+          retval.push(d as T);
+        })
+        return retval;
+      })
+    );
   }
 
   streamById(table: string, id: any, field?: string): Observable<T[]>{

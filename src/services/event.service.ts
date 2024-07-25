@@ -56,6 +56,10 @@ export class EventService {
     return from(this.dao.add(value, this.table));
   }
 
+  streamAll(): Observable<EventModel[]>{
+    return this.dao.streamAll(this.table);
+  }
+
   update(id: string, value: EventModel): Observable<EventModel> {
     return from(this.dao.update(id, value, this.table));
   }
