@@ -3,6 +3,7 @@ import { FirebaseDAO } from '../dao/firebase.dao';
 import { EventModel } from '../models/domain/event.model';
 import { Timestamp } from '@google-cloud/firestore';
 import { dateFromTimestamp } from '../utils/date-from-timestamp';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,10 @@ export class EventService {
       })
       return events;
     });
+  }
+
+  streamAll(): Observable<EventModel[]>{
+    return this.dao.streamAll(this.table);
   }
 
   getAllByValue(field: string, value: any): Promise<EventModel[]>{

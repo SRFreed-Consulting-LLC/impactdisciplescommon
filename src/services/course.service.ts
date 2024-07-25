@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
 import { CourseModel } from '../models/domain/course.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class CourseService {
 
   getAll(): Promise<CourseModel[]>{
     return this.dao.getAll(this.table);
+  }
+
+  streamAll(): Observable<CourseModel[]>{
+    return this.dao.streamAll(this.table);
   }
 
   getAllByValue(field: string, value: any): Promise<CourseModel[]>{

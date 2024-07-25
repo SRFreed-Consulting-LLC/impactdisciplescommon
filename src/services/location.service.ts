@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
 import { LocationModel } from '../models/domain/location.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class LocationService {
 
   getAll(): Promise<LocationModel[]>{
     return this.dao.getAll(this.table);
+  }
+
+  streamAll(): Observable<LocationModel[]>{
+    return this.dao.streamAll(this.table);
   }
 
   getAllByValue(field: string, value: any): Promise<LocationModel[]>{
