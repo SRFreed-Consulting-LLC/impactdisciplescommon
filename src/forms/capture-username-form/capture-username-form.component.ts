@@ -1,41 +1,48 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
-
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-capture-username-form',
   templateUrl: './capture-username-form.component.html',
   styleUrls: ['./capture-username-form.component.scss']
 })
-export class CaptureUsernameFormComponent {
-  loading = false;
-  formData: any = {};
+export class CaptureUsernameFormComponent implements OnDestroy  {
+  @Input() loginEmail: any = {};
+  public isLoading: boolean = false;
+
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(private authService: AuthService, private router: Router, public tostrService: ToastrService, private sessionService: SessionService) { }
 
-  async onSubmit(e: Event) {
+  onSubmit(e: Event) {
     e.preventDefault();
-    const { email } = this.formData;
-    this.loading = true;
+    const { email } = this.loginEmail;
+    this.isLoading = true;
 
-    const result = await this.authService.findUser(email);
-
-    if (!result) {
-      this.loading = false;
-      this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact JBH Administrator for help.')
-    } else {
-      this.sessionService.currentUser = result;
-
-      if(result.firebaseUID){
-        this.loading = false;
-        this.router.navigate(['capture-password-form'])
+    this.authService.findUser(email).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+         if (!result) {
+        this.isLoading = false;
+        this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact JBH Administrator for help.');
       } else {
-        this.loading = false;
-        this.router.navigate(['create-auth-form'])
+        this.sessionService.currentUser = result;
+
+        if (result.firebaseUID) {
+          this.isLoading = false;
+          this.router.navigate(['capture-password-form']);
+        } else {
+          this.isLoading = false;
+          this.router.navigate(['create-auth-form']);
+        }
       }
-    }
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }
