@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
 import { CoachModel } from '../models/domain/coach.model';
 import { Observable } from 'rxjs';
-import { DocumentData } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
