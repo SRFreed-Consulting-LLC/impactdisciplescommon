@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Messaging, getToken, onMessage } from "@angular/fire/messaging";
 import { Timestamp } from "@google-cloud/firestore";
 import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
@@ -6,7 +6,6 @@ import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/admin/notification-registration.service";
 import { AuthService } from "impactdisciplescommon/src/services/utils/auth.service";
 import { ToastrService } from "ngx-toastr";
-import { take } from "rxjs";
 import { environment } from "src/environments/environment";
 
 @Injectable({
