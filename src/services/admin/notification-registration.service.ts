@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../../dao/firebase.dao';
 import { NotificationRegistrationModel } from 'impactdisciplescommon/src/models/admin/notification-registration.model';
+import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
+import { Timestamp } from '@google-cloud/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,13 @@ export class NotificationRegistrationService {
   constructor(public dao: FirebaseDAO<NotificationRegistrationModel>) {}
 
   getAll(): Promise<NotificationRegistrationModel[]>{
-    return this.dao.getAll(this.table);
+    return this.dao.getAll(this.table).then(notifications => {
+      notifications.forEach(notification => {
+        notification.dateRegistered = dateFromTimestamp(notification.dateRegistered as Timestamp);
+        notification.dateRemoved = dateFromTimestamp(notification.dateRemoved as Timestamp);
+      })
+      return notifications;
+    });
   }
 
   getAllByValue(field: string, value: any): Promise<NotificationRegistrationModel[]>{
