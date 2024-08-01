@@ -1,5 +1,6 @@
 import { Injectable, OnInit } from "@angular/core";
 import { Messaging, getToken, onMessage } from "@angular/fire/messaging";
+import { Timestamp } from "@google-cloud/firestore";
 import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
 import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/admin/notification-registration.model";
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/admin/notification-registration.service";
@@ -66,7 +67,7 @@ export class FcmMessageService {
       if(found){
         found.fcmId = localStorage.getItem('fcmtoken');
 
-        found.dateRegistered = new Date();
+        found.dateRegistered = Timestamp.now();
 
         this.notificationRegistrationService.update(found.id, found).then(reg => console.log("updated reg for " + reg.email));
       } else {
@@ -74,7 +75,7 @@ export class FcmMessageService {
 
         found.email = this.authService.user.email;
         found.fcmId = found.fcmId = localStorage.getItem('fcmtoken');
-        found.dateRegistered = new Date();
+        found.dateRegistered = Timestamp.now();
 
         this.notificationRegistrationService.add({...found}).then(reg => console.log("added reg for " + reg.email));;
       }
