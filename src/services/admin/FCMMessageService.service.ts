@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Messaging, getToken, onMessage } from "@angular/fire/messaging";
-import { Timestamp } from "@google-cloud/firestore";
+import { Timestamp } from "firebase/firestore";
 import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
 import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/admin/notification-registration.model";
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/admin/notification-registration.service";
