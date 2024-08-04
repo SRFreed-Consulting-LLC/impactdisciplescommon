@@ -26,8 +26,13 @@ export class AuthService {
   }
 
   private _lastAuthenticatedPath: string = defaultPath;
+
   set lastAuthenticatedPath(value: string) {
     this._lastAuthenticatedPath = value;
+  }
+
+  get lastAuthenticatedPath(): string {
+    return this._lastAuthenticatedPath;
   }
 
   constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService, private cookieService: CookieService,
