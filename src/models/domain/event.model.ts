@@ -13,4 +13,5 @@ export class EventModel extends BaseModel {
   location: LocationModel;
   attendees: AppUser[];
   agendaItems: AgendaItem[];
+  costInDollars: number;
 }
