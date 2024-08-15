@@ -70,7 +70,19 @@ export class EventService {
     );
   }
 
-  getById(id: String): Observable<EventModel> {
+  getById(id: String): Promise<EventModel> {
+    return this.dao.getById(id, this.table).then(event => {
+        event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+        event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+        event.agendaItems.forEach(agendaItem => {
+          agendaItem.startDate = dateFromTimestamp(agendaItem.startDate);
+          agendaItem.endDate = dateFromTimestamp(agendaItem.endDate);
+        })
+        return event;
+      })
+  }
+
+  streamById(id: String): Observable<EventModel> {
     return from(this.dao.getById(id, this.table)).pipe(
       map(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
