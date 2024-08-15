@@ -14,29 +14,25 @@ export class DataSourceHelperService {
     this.isLoading = true;
 
     if(e.changes[0].type != 'remove'){
-      service.update(e.changes[0].key, e.changes[0].data).then(() => {
-        e.cancel = true;
-        this.isLoading = false;
-      })
-
+      service.update(e.changes[0].key, e.changes[0].data);
+      e.cancel = true;
+      this.isLoading = false;
     }
   }
 
   public  onRowAdded(e, service: any){
     this.isLoading = true;
 
-    service.add(e.data).then(() => {
-      e.cancel = true;
-      this.isLoading = false;
-    })
+    service.add(e.data);
+    e.cancel = true;
+    this.isLoading = false;
   }
 
   public onRowRemoved(e, service: any){
     this.isLoading = true;
 
-    service.delete(e.key).then(() => {
-      e.cancel = true;
-      this.isLoading = false;
-    })
+    service.delete(e.key);
+    e.cancel = true;
+    this.isLoading = false;
   }
 }

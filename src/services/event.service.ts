@@ -57,7 +57,22 @@ export class EventService {
   }
 
   streamAll(): Observable<EventModel[]>{
-    return this.dao.streamAll(this.table);
+    return this.dao.streamAll(this.table).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+          event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+
+          if(event.agendaItems){
+            event.agendaItems.forEach(item => {
+              item.startDate = dateFromTimestamp(item.startDate);
+              item.endDate = dateFromTimestamp(item.endDate);
+            });
+          }
+        });
+        return events;
+      })
+    );
   }
 
   update(id: string, value: EventModel): Observable<EventModel> {

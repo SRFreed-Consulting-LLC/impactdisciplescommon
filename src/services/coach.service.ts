@@ -12,7 +12,13 @@ export class CoachService {
   constructor(public dao: FirebaseDAO<CoachModel>) {}
 
   getAll(): Promise<CoachModel[]>{
-    return this.dao.getAll(this.table);
+    return this.dao.getAll(this.table).then(coaches => {
+      coaches.forEach(coach => {
+        coach.fullname = coach.firstName + " " + coach.lastName;
+      })
+
+      return coaches;
+    });
   }
 
   streamAll(): Observable<CoachModel[]>{
