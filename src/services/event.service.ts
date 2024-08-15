@@ -13,9 +13,9 @@ export class EventService {
 
   constructor(public dao: FirebaseDAO<EventModel>) {}
 
-  getAll(): Observable<EventModel[]> {
-    return from(this.dao.getAll(this.table)).pipe(
-      map(events => {
+  getAll(): Promise<EventModel[]> {
+    return this.dao.getAll(this.table).then(events => {
+
         events.forEach(event => {
           event.startDate = dateFromTimestamp(event.startDate as Timestamp);
           event.endDate = dateFromTimestamp(event.endDate as Timestamp);
@@ -26,11 +26,39 @@ export class EventService {
           });
         });
         return events;
+      });
+  }
+
+  streamAll(): Observable<EventModel[]>{
+    return this.dao.streamAll(this.table).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+          event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+
+          if(event.agendaItems){
+            event.agendaItems.forEach(item => {
+              item.startDate = dateFromTimestamp(item.startDate);
+              item.endDate = dateFromTimestamp(item.endDate);
+            });
+          }
+        });
+        return events;
       })
     );
   }
 
-  getAllByValue(field: string, value: any): Observable<EventModel[]> {
+  getAllByValue(field: string, value: any): Promise<EventModel[]> {
+    return this.dao.getAllByValue(this.table, field, value).then(events => {
+      events.forEach(event => {
+        event.startDate = dateFromTimestamp(event.startDate as Timestamp);
+        event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+      });
+      return events;
+    });
+  }
+
+  streamAllByValue(field: string, value: any): Observable<EventModel[]> {
     return from(this.dao.getAllByValue(this.table, field, value)).pipe(
       map(events => {
         events.forEach(event => {
@@ -56,34 +84,17 @@ export class EventService {
     );
   }
 
-  add(value: EventModel): Observable<EventModel> {
-    return from(this.dao.add(value, this.table));
+  add(value: EventModel): Promise<EventModel> {
+    return this.dao.add(value, this.table);
   }
 
-  streamAll(): Observable<EventModel[]>{
-    return this.dao.streamAll(this.table).pipe(
-      map(events => {
-        events.forEach(event => {
-          event.startDate = dateFromTimestamp(event.startDate as Timestamp);
-          event.endDate = dateFromTimestamp(event.endDate as Timestamp);
 
-          if(event.agendaItems){
-            event.agendaItems.forEach(item => {
-              item.startDate = dateFromTimestamp(item.startDate);
-              item.endDate = dateFromTimestamp(item.endDate);
-            });
-          }
-        });
-        return events;
-      })
-    );
+
+  update(id: string, value: EventModel): Promise<EventModel> {
+    return this.dao.update(id, value, this.table);
   }
 
-  update(id: string, value: EventModel): Observable<EventModel> {
-    return from(this.dao.update(id, value, this.table));
-  }
-
-  delete(id: string): Observable<void> {
-    return from(this.dao.delete(id, this.table));
+  delete(id: string): Promise<void> {
+    return this.dao.delete(id, this.table);
   }
 }
