@@ -5,5 +5,6 @@ export class AgendaItem extends BaseModel{
   name: string;
   startDate: Date;
   endDate: Date;
-  allDay?: boolean;
+  isCourse?: boolean;
+  isSingleSessionCourse?: boolean;
 }
