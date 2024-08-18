@@ -6,11 +6,11 @@ import { Phone } from "./utils/phone.model";
 export class CoachModel extends Person {
   fullname: string;
   title: string;
-  photoURL: string;
+  photoUrl: string;
   bio: string
   organization: OrganizationModel;
 
-  constructor(firstName: string, lastName: string, address: Address, phone: Phone, title: string, photoURL: string, bio: string, organization: OrganizationModel){
+  constructor(firstName: string, lastName: string, address: Address, phone: Phone, title: string, photoUrl: string, bio: string, organization: OrganizationModel){
     super(firstName, lastName, address, phone);
 
     this.firstName = firstName;
@@ -18,7 +18,7 @@ export class CoachModel extends Person {
     this.address = address;
     this.phone = phone;
     this.title = title;
-    this.photoURL = photoURL;
+    this.photoUrl = photoUrl;
     this.bio = bio;
     this.organization = organization;
 
