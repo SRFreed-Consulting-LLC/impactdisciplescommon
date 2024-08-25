@@ -87,7 +87,7 @@ export class EventService {
       map(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
         event.endDate = dateFromTimestamp(event.endDate as Timestamp);
-        event.agendaItems.forEach(agendaItem => {
+        event.agendaItems?.forEach(agendaItem => {
           agendaItem.startDate = dateFromTimestamp(agendaItem.startDate);
           agendaItem.endDate = dateFromTimestamp(agendaItem.endDate);
         })
