@@ -8,7 +8,7 @@ import { Timestamp } from 'firebase/firestore';
 @Injectable({
   providedIn: 'root'
 })
-export class BlogPostService {
+export class LunchAndLearnService {
   table: string = 'lunch_and_learns';
 
   constructor(public dao: FirebaseDAO<LunchAndLearnModel>) {}

@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "../base.model";
 
-export class ConfigModel extends BaseModel{
+export class WebConfigModel extends BaseModel{
   policy: string;
   tos: string
   countdownEndDateTime: Timestamp | null;
