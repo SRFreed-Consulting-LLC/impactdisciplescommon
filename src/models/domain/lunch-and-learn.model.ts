@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore"
 import { Address } from "./utils/address.model"
 import { BaseModel } from "../base.model";
+import { Phone } from "./utils/phone.model";
 
 export class LunchAndLearnModel extends BaseModel{
   email: string;
@@ -11,6 +12,6 @@ export class LunchAndLearnModel extends BaseModel{
   requestedEndDateTime: Timestamp;
   locationName: string;
   locationAddress: Address;
-  coordinator: string ;
-  coordinatorPhone: string;
+  coordinator: string;
+  coordinatorPhone: Phone;
 }
