@@ -15,4 +15,5 @@ export class EventModel extends BaseModel {
   agendaItems: AgendaItem[];
   description: string;
   costInDollars: number;
+  isSummit: boolean;
 }
