@@ -6,7 +6,7 @@ import { Phone } from "./utils/phone.model";
 export class CoachModel extends Person {
   fullname: string;
   title: string;
-  photoUrl: string;
+  photoUrl: any;
   bio: string
   organization: OrganizationModel;
 
