@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore"
 import { Address } from "./utils/address.model"
 import { BaseModel } from "../base.model";
+import { Phone } from "./utils/phone.model";
 
 export class SeminarModel extends BaseModel{
   requestedSeminarDate: Timestamp;
@@ -11,7 +12,7 @@ export class SeminarModel extends BaseModel{
   preferredLocation: Address;
   eventCoordinator: string;
   email: string;
-  phone: string;
+  phone: Phone;
   hasProjectingDevice: boolean;
   volunteersAvailable: boolean;
   isPrivateEvent: boolean;

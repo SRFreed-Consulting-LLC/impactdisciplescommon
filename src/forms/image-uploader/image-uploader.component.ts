@@ -3,6 +3,7 @@ import CustomFileSystemProvider from 'devextreme/file_management/custom_provider
 import FileSystemItem from 'devextreme/file_management/file_system_item';
 import UploadInfo from 'devextreme/file_management/upload_info';
 import { FileUploadService } from 'impactdisciplescommon/src/services/utils/file-upload.service';
+import { SingleOrMultiple } from 'devextreme/common';
 
 @Component({
   selector: 'app-image-uploader',
@@ -14,10 +15,9 @@ export class ImageUploaderComponent {
 
   @Input() card: any;
   @Input() field: string;
-  @Input() captureImageName: boolean = false;
-  @Input() imageNameField: string;
-  @Input() addToList: boolean;
+  @Input() isList: boolean;
 
+  @Input() selectionMode:SingleOrMultiple = "single"
   @Input() height: number = 450;
 
   fileSystemProvider: any;
@@ -64,20 +64,22 @@ export class ImageUploaderComponent {
   }
 
   onItemClick(e){
-    if(e.selectedItems[0] && e.selectedItems[0].path){
+
+
+    if(e.selectedItems && e.selectedItems.length == 1 && e.selectedItems[0].path){
       this.fileUploadService.getFileUrl(e.selectedItems[0]).then(url => {
-        e.selectedItems[0].dataItem.url= url;
-
-        if(this.addToList){
-          this.card[this.field].push({ name: e.selectedItems[0].dataItem.name, url:e.selectedItems[0].dataItem.url });
-        } else {
-          this.card[this.field] = e.selectedItems[0].dataItem.url
-
-          if(this.captureImageName){
-            this.card[this.imageNameField] = e.selectedItems[0].dataItem.name;
-          }
-        }
+        this.card[this.field] = {name: e.selectedItems[0].name, url: url};
       })
+    } else if (this.isList && e.selectedItems && e.selectedItems.length > 1){
+      let files: any[] = [];
+
+      e.selectedItems.forEach(item => {
+        this.fileUploadService.getFileUrl(item).then(url => {
+          files.push( {name: e.selectedItems[0].name, url: url});
+        })
+      });
+
+      this.card[this.field] = files;
     }
   }
 

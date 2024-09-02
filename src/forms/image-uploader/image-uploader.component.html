@@ -10,7 +10,7 @@
   <dx-file-manager #fileManager
     id="fileManager"
     [fileSystemProvider]="fileSystemProvider"
-    selectionMode="single"
+    [selectionMode]="selectionMode"
     [itemView]="{showFolders: false}"
     (onSelectionChanged)="onItemClick($event)">
       <dxo-permissions
