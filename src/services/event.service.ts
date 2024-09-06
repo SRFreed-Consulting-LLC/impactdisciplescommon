@@ -20,10 +20,12 @@ export class EventService {
           event.startDate = dateFromTimestamp(event.startDate as Timestamp);
           event.endDate = dateFromTimestamp(event.endDate as Timestamp);
 
-          event.agendaItems.forEach(item => {
-            item.startDate = dateFromTimestamp(item.startDate);
-            item.endDate = dateFromTimestamp(item.endDate);
-          });
+          if(event.agendaItems){
+            event.agendaItems.forEach(item => {
+              item.startDate = dateFromTimestamp(item.startDate);
+              item.endDate = dateFromTimestamp(item.endDate);
+            });
+          }
         });
         return events;
       });
@@ -53,6 +55,13 @@ export class EventService {
       events.forEach(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
         event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+
+        if(event.agendaItems){
+          event.agendaItems.forEach(item => {
+            item.startDate = dateFromTimestamp(item.startDate);
+            item.endDate = dateFromTimestamp(item.endDate);
+          });
+        }
       });
       return events;
     });
@@ -64,6 +73,13 @@ export class EventService {
         events.forEach(event => {
           event.startDate = dateFromTimestamp(event.startDate as Timestamp);
           event.endDate = dateFromTimestamp(event.endDate as Timestamp);
+
+          if(event.agendaItems){
+            event.agendaItems.forEach(item => {
+              item.startDate = dateFromTimestamp(item.startDate);
+              item.endDate = dateFromTimestamp(item.endDate);
+            });
+          }
         });
         return events;
       })
@@ -74,10 +90,14 @@ export class EventService {
     return this.dao.getById(id, this.table).then(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
         event.endDate = dateFromTimestamp(event.endDate as Timestamp);
-        event.agendaItems.forEach(agendaItem => {
-          agendaItem.startDate = dateFromTimestamp(agendaItem.startDate);
-          agendaItem.endDate = dateFromTimestamp(agendaItem.endDate);
-        })
+
+        if(event.agendaItems){
+          event.agendaItems.forEach(item => {
+            item.startDate = dateFromTimestamp(item.startDate);
+            item.endDate = dateFromTimestamp(item.endDate);
+          });
+        }
+
         return event;
       })
   }
@@ -87,10 +107,13 @@ export class EventService {
       map(event => {
         event.startDate = dateFromTimestamp(event.startDate as Timestamp);
         event.endDate = dateFromTimestamp(event.endDate as Timestamp);
-        event.agendaItems?.forEach(agendaItem => {
-          agendaItem.startDate = dateFromTimestamp(agendaItem.startDate);
-          agendaItem.endDate = dateFromTimestamp(agendaItem.endDate);
-        })
+
+        if(event.agendaItems){
+          event.agendaItems.forEach(item => {
+            item.startDate = dateFromTimestamp(item.startDate);
+            item.endDate = dateFromTimestamp(item.endDate);
+          });
+        }
         return event;
       })
     );
@@ -99,8 +122,6 @@ export class EventService {
   add(value: EventModel): Promise<EventModel> {
     return this.dao.add(value, this.table);
   }
-
-
 
   update(id: string, value: EventModel): Promise<EventModel> {
     return this.dao.update(id, value, this.table);

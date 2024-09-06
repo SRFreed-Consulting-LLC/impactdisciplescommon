@@ -1,9 +1,11 @@
-import { AppUser } from "../admin/appuser.model";
+import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "../base.model";
-import { EventModel } from "./event.model";
 
 export class EventRegistrationModel extends BaseModel{
-  registrant: AppUser;
-  event: EventModel;
+  firstName: string;
+  lastName: string;
+  eventId: string;
+  email: string;
   receipt: string;
+  registrationDate: Timestamp;
 }

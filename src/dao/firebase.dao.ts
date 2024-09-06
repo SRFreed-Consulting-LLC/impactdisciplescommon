@@ -113,6 +113,21 @@ export class FirebaseDAO<T extends BaseModel> {
     );
   }
 
+  streamByValue(table: string, value: any, field: string): Observable<T[]>{
+    console.log('checking:' + table + " : " + value + " : " + field);
+
+    const q = query(collection(this.fs, '/' + table), where(field, "==", value));
+    return collectionData(q, {idField: 'id'}).pipe(
+      map(dd => {
+        let retval: T[] = [];
+        dd.forEach(d => {
+          retval.push(d as T);
+        })
+        return retval;
+      })
+    );
+  }
+
   getCollectionSnapshot(table: string){
     const q = query(collection(this.fs, table));
     const unsubscribe = onSnapshot(q, (snapshot) => {
