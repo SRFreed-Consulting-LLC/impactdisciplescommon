@@ -3,8 +3,9 @@ import { BaseModel } from '../base.model';
 import { TESTIMONIAL_TYPES } from 'impactdisciplescommon/src/lists/testimonial_types.enum';
 
 export class TestimonialModel extends BaseModel {
-  title: string;
+  title?: string;
   author: string;
+  quote?: string;
   text: string;
   date: Timestamp;
   type: TESTIMONIAL_TYPES;
