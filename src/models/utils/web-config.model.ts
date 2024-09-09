@@ -16,4 +16,6 @@ export class WebConfigModel extends BaseModel{
   linkedIn: string | null;
   youtube: string | null;
   instagram: string | null ;
+  inpersonSeminarCost: number;
+  onlineSeminarCost: number;
 }
