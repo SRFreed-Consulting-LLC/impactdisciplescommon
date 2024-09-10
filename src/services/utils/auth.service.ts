@@ -10,6 +10,8 @@ import { AppUser } from '../../models/admin/appuser.model';
 import { LogMessage } from '../../models/utils/log-message.model';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { UserAuthenticated } from '../actions/authentication.actions';
 
 const defaultPath = '/';
 
@@ -35,8 +37,16 @@ export class AuthService {
     return this._lastAuthenticatedPath;
   }
 
-  constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService, private cookieService: CookieService,
-    public loggerService: LoggerService, public tostrService: ToastrService, private sessionService: SessionService) { }
+  constructor(
+    private router: Router, 
+    private store: Store,
+    public dao: FireAuthDao, 
+    public userService: AppUserService, 
+    private cookieService: CookieService,
+    public loggerService: LoggerService, 
+    public tostrService: ToastrService, 
+    private sessionService: SessionService
+  ) { }
 
   findUser(email: string): Observable<AppUser> {
     return from(this.userService.getAllByValue('email', email)).pipe(
@@ -65,10 +75,10 @@ export class AuthService {
   logIn(email: string, password: string): Observable<any> {
     try {
       this.cookieService.delete(COOKIE_NAME);
-
       return from(this.dao.signIn(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
+            console.log('if(result.user)')
             return from(this.userService.getAllByValue('email', email)).pipe(
               switchMap(user => {
                 if(user && user.length == 1) {
@@ -77,7 +87,7 @@ export class AuthService {
                       this.user = user[0];
                       this.router.navigate([this._lastAuthenticatedPath]);
                       this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
-
+                      this.store.dispatch(new UserAuthenticated(this.user))
                       return {
                         isOk: true,
                         data: this.user,
