@@ -9,7 +9,7 @@ import { SessionService } from './session.service';
 import { AppUser } from '../../models/admin/appuser.model';
 import { LogMessage } from '../../models/utils/log-message.model';
 import { CookieService } from 'ngx-cookie-service';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 
 const defaultPath = '/';
 
@@ -22,7 +22,26 @@ export class AuthService {
   public user: AppUser;
 
   get loggedIn(): boolean {
-    return this.cookieService.check(COOKIE_NAME);
+    if(this.cookieService.check(COOKIE_NAME)){
+
+      this.getUser().pipe(take(1)).subscribe(user => {
+        if(user){
+          let expiration: number = user['cookie_expiration_time'];
+
+          user['cookie_expiration_time'] = expiration + (1000 * 60 * 60);
+
+          if(expiration - Date.now() < (1000 * 60 * 60)){
+            this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: user['cookie_expiration_time'] });
+
+            console.log('New Expiration:' + new Date(JSON.parse(this.cookieService.get(COOKIE_NAME))['cookie_expiration_time']));
+          }
+        }
+      });
+
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private _lastAuthenticatedPath: string = defaultPath;
@@ -75,8 +94,11 @@ export class AuthService {
                   return from(result.user.getIdTokenResult()).pipe(
                     map(token => {
                       this.user = user[0];
+                      this.user['cookie_expiration_time'] = Date.parse(token.expirationTime);
+                      console.log('Expiration:' + new Date(this.user['cookie_expiration_time']));
+
                       this.router.navigate([this._lastAuthenticatedPath]);
-                      this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
+                      this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), { expires: this.user['cookie_expiration_time'] });
 
                       return {
                         isOk: true,
@@ -189,15 +211,17 @@ export class AuthService {
   getUser(): Observable<AppUser> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
     let user: AppUser = null;
-  
+
     try {
       if (cookieValue) {
         user = JSON.parse(cookieValue);
+      } else {
+        console.log('cookie not found...expired');
       }
     } catch (error) {
       console.error('Error parsing cookie JSON', error);
     }
-  
+
     return of(user);
   }
 
@@ -280,6 +304,8 @@ export class AuthService {
     this.sessionService.currentUser = null;
     this.user = null;
     this.cookieService.delete(COOKIE_NAME);
+
+    this.router.navigate(['capture-username-form']);
   }
 
   private logMessage(type: string, created_by: string, message: string, data?: any): Observable<any> {
@@ -335,6 +361,8 @@ export class AuthGuardService implements CanActivate {
     }
 
     if (!isLoggedIn && !isAuthForm) {
+
+      console.log('not logged in via Authguard')
       this.router.navigate(['/capture-username-form']);
     }
 

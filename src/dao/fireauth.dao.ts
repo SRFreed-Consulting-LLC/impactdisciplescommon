@@ -60,6 +60,7 @@ export class FireAuthDao {
     this.currentUser$ = fromEventPattern(
       (handler) => this.auth.onAuthStateChanged(handler),
       (_handler, unsubscribe) => {
+        console.log('auth state changed!')
         unsubscribe();
       }
     );

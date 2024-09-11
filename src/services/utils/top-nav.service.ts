@@ -19,7 +19,6 @@ export class TopNavService {
       this.stack.pop();
     }
 
-    console.log(routeItem)
     this.stack.push(routeItem);
 
     this.router.navigate([routeItem.route])
