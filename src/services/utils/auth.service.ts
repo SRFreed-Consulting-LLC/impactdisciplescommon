@@ -30,9 +30,9 @@ export class AuthService {
         if(user){
           let expiration: number = user['cookie_expiration_time'];
 
-          user['cookie_expiration_time'] = expiration + (1000 * 60 * 60);
-
           if(expiration - Date.now() < (1000 * 60 * 60)){
+            user['cookie_expiration_time'] = expiration + (1000 * 60 * 60);
+
             this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: user['cookie_expiration_time'] });
 
             console.log('New Expiration:' + new Date(JSON.parse(this.cookieService.get(COOKIE_NAME))['cookie_expiration_time']));
@@ -97,7 +97,6 @@ export class AuthService {
       return from(this.dao.signIn(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
-            console.log('if(result.user)')
             return from(this.userService.getAllByValue('email', email)).pipe(
               switchMap(user => {
                 if(user && user.length == 1) {
