@@ -64,8 +64,6 @@ export class ImageUploaderComponent {
   }
 
   onItemClick(e){
-
-
     if(e.selectedItems && e.selectedItems.length == 1 && e.selectedItems[0].path){
       this.fileUploadService.getFileUrl(e.selectedItems[0]).then(url => {
         this.card[this.field] = {name: e.selectedItems[0].name, url: url};
@@ -75,7 +73,7 @@ export class ImageUploaderComponent {
 
       e.selectedItems.forEach(item => {
         this.fileUploadService.getFileUrl(item).then(url => {
-          files.push( {name: e.selectedItems[0].name, url: url});
+          files.push( {name: item.name, url: url});
         })
       });
 
