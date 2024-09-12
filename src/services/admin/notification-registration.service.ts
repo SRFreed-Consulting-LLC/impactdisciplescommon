@@ -3,6 +3,7 @@ import { FirebaseDAO } from '../../dao/firebase.dao';
 import { NotificationRegistrationModel } from 'impactdisciplescommon/src/models/admin/notification-registration.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { Timestamp } from '@google-cloud/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,10 @@ export class NotificationRegistrationService {
       })
       return notifications;
     });
+  }
+
+  streamAll(): Observable<NotificationRegistrationModel[]>{
+    return this.dao.streamAll(this.table);
   }
 
   getAllByValue(field: string, value: any): Promise<NotificationRegistrationModel[]>{
