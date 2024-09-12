@@ -6,5 +6,5 @@ export class PodCastModel extends BaseModel{
   date: Timestamp | null;
   subject: string;
   url: string;
-  thumbnail: string | null;
+  thumbnail: any | null;
 }

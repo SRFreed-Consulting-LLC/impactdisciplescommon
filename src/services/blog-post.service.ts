@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
-import { map, Observable } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import { BlogPostModel } from '../models/domain/blog-post.model';
 import { dateFromTimestamp } from '../utils/date-from-timestamp';
 import { Timestamp } from 'firebase/firestore';
@@ -40,6 +40,10 @@ export class BlogPostService {
 
   getById(id: String): Promise<BlogPostModel>{
     return this.dao.getById(id, this.table);
+  }
+
+  streamById(id: String): Observable<BlogPostModel>{
+    return from(this.dao.getById(id, this.table));
   }
 
   add(value: BlogPostModel): Promise<BlogPostModel>{
