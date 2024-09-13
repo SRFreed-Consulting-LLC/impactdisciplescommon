@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Timestamp } from "@google-cloud/firestore";
 import { LogMessage } from "../../models/utils/log-message.model";
 import { FirebaseDAO } from '../../dao/firebase.dao';
-import { Observable } from "rxjs";
+import { from, map, Observable } from "rxjs";
+import { Timestamp } from "firebase/firestore";
+import { dateFromTimestamp } from "impactdisciplescommon/src/utils/date-from-timestamp";
 
 
 @Injectable({
@@ -18,7 +19,7 @@ export class LoggerService {
     return this.dao.getAll('log-messages').then(messages => {
       messages.forEach(message => {
         if(message.date){
-          message.date = (message.date as Timestamp).toDate();
+          message.date = dateFromTimestamp(message.date as Timestamp);
         }
       })
       return messages;
@@ -26,11 +27,33 @@ export class LoggerService {
   }
 
   streamAll(): Observable<LogMessage[]>{
-    return this.dao.streamAll(this.table);
+    return this.dao.streamAll(this.table).pipe(
+      map(messages => {
+        messages.forEach(message => {
+          if(message.date){
+            message.date = dateFromTimestamp(message.date as Timestamp);
+          }
+        });
+        return messages;
+      })
+    );
   }
 
   getById(id: String): Promise<LogMessage>{
     return this.dao.getById(id, this.table);
+  }
+
+  streamAllByValue(field: string, value: any): Observable<LogMessage[]> {
+    return from(this.dao.getAllByValue(this.table, field, value)).pipe(
+      map(messages => {
+        messages.forEach(message => {
+          if(message.date){
+            message.date = dateFromTimestamp(message.date as Timestamp);
+          }
+        });
+        return messages;
+      })
+    );
   }
 
   add(value: LogMessage): Promise<LogMessage>{
