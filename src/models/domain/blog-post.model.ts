@@ -7,7 +7,7 @@ export class BlogPostModel extends BaseModel {
   date: Timestamp;
   subject: string | null;
   blogText: string;
-  mainImage: string;
+  mainImage: any;
   extraImages: string [];
   tags: string[];
 }
