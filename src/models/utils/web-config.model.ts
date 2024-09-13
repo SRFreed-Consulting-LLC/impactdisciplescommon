@@ -13,6 +13,8 @@ export class WebConfigModel extends BaseModel{
   logo: string;
   twitter: string | null;
   facebook: string | null;
+  facebookLive: string | null;
+  applePodCast: string | null;
   linkedIn: string | null;
   youtube: string | null;
   instagram: string | null ;
