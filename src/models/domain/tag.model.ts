@@ -1,5 +1,5 @@
 import { BaseModel } from "../base.model";
 
-export class BlogTagModel extends BaseModel {
+export class TagModel extends BaseModel {
   tag: string;
 }

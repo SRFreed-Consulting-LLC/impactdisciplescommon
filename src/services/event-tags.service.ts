@@ -6,8 +6,8 @@ import { TagModel } from '../models/domain/tag.model';
 @Injectable({
   providedIn: 'root'
 })
-export class BlogTagsService {
-  table: string = 'blog_tags';
+export class EventTagsService {
+  table: string = 'event_tags';
 
   constructor(public dao: FirebaseDAO<TagModel>) {}
 
