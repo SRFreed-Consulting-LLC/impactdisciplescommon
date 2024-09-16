@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
-import { MailModel } from 'impactdisciplescommon/src/models/domain/mail.model';
+import { MailModel } from 'impactdisciplescommon/src/models/admin/mail.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { map, Observable } from 'rxjs';
 
