@@ -43,6 +43,22 @@ export class FirebaseDAO<T extends BaseModel> {
     });
   }
 
+  queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any): Promise<T[]>{
+    const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
+
+    return getDocs(q).then(docs => {
+      let retval: T[] = [];
+
+      docs.forEach(doc => {
+        let val: T = doc.data() as T;
+        val.id = doc.id;
+        retval.push(val);
+      })
+
+      return retval;
+    });
+  }
+
   getById(id: String, table: string): Promise<T>{
     let docRef = doc(this.fs, '/' + table + '/' + id);
     return getDoc(docRef).then(doc => {
@@ -115,6 +131,19 @@ export class FirebaseDAO<T extends BaseModel> {
 
   streamByValue(table: string, value: any, field: string): Observable<T[]>{
     const q = query(collection(this.fs, '/' + table), where(field, "==", value));
+    return collectionData(q, {idField: 'id'}).pipe(
+      map(dd => {
+        let retval: T[] = [];
+        dd.forEach(d => {
+          retval.push(d as T);
+        })
+        return retval;
+      })
+    );
+  }
+
+  quertStreamByValue(table: string, value: any, opStr: WhereFilterOperandKeys, field: string): Observable<T[]>{
+    const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
     return collectionData(q, {idField: 'id'}).pipe(
       map(dd => {
         let retval: T[] = [];

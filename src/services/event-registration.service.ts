@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FirebaseDAO } from '../dao/firebase.dao';
+import { FirebaseDAO, WhereFilterOperandKeys } from '../dao/firebase.dao';
 import { Timestamp } from '@google-cloud/firestore';
 import { dateFromTimestamp } from '../utils/date-from-timestamp';
 import { from, map, Observable } from 'rxjs';
@@ -45,6 +45,28 @@ export class EventRegistrationService {
 
   streamAllByValue(field: string, value: any): Observable<EventRegistrationModel[]> {
     return this.dao.streamByValue(this.table, value, field).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.registrationDate = dateFromTimestamp(event.registrationDate as Timestamp);
+        });
+        return events;
+      })
+    );
+  }
+
+  queryAllByValue(field: string, opStr: WhereFilterOperandKeys, value: any): Promise<EventRegistrationModel[]> {
+    return this.dao.queryByValue(this.table, field, opStr, value).then(events => {
+      events.forEach(event => {
+        events.forEach(event => {
+          event.registrationDate = dateFromTimestamp(event.registrationDate as Timestamp);
+        });
+      });
+      return events;
+    });
+  }
+
+  queryStreamAllByValue(field: string, opStr: WhereFilterOperandKeys, value: any): Observable<EventRegistrationModel[]> {
+    return this.dao.quertStreamByValue(this.table, value, opStr, field).pipe(
       map(events => {
         events.forEach(event => {
           event.registrationDate = dateFromTimestamp(event.registrationDate as Timestamp);
