@@ -9,6 +9,7 @@ export class MailModel extends BaseModel {
 
 export class MailMessageModel{
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
   date: Timestamp;
 }

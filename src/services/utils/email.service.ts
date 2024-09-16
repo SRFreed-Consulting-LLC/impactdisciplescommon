@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
-import { MailModel } from 'impactdisciplescommon/src/models/domain/mail.model';
+import { MailMessageModel, MailModel } from 'impactdisciplescommon/src/models/domain/mail.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { map, Observable } from 'rxjs';
 
@@ -70,5 +70,47 @@ export class EMailService {
 
   delete(id: string){
     return this.dao.delete(id, this.table);
+  }
+
+  sendHtmlEmail(to:string, subject: string, html: string){
+    let mailMessage: MailMessageModel = {... new MailMessageModel()};
+
+    mailMessage.subject = subject;
+    mailMessage.html = html;
+
+    let mail = {... new MailModel()}
+    mail.to = to;
+    mail.date = Timestamp.now();
+    mail.message = mailMessage;
+
+    this.add(mail);
+  }
+
+  sendTextEmail(to:string, subject: string, text: string){
+    let mailMessage: MailMessageModel = {... new MailMessageModel()};
+
+    mailMessage.subject = subject;
+    mailMessage.text = text;
+
+    let mail = {... new MailModel()}
+    mail.to = to;
+    mail.date = Timestamp.now();
+    mail.message = mailMessage;
+
+    this.add(mail);
+  }
+
+  sendTemplateEmail(to:string, subject: string, text: string){
+    let mailMessage: MailMessageModel = {... new MailMessageModel()};
+
+    mailMessage.subject = subject;
+    mailMessage.text = text;
+
+    let mail = {... new MailModel()}
+    mail.to = to;
+    mail.date = Timestamp.now();
+    mail.message = mailMessage;
+
+    this.add(mail);
   }
 }
