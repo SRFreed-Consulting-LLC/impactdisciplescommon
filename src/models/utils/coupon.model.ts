@@ -6,5 +6,5 @@ export class CouponModel extends BaseModel {
   isActive: boolean
   percentOff: number | null
   dollarsOff: number | null
-  tags: TagModel;
+  tags: string[];
 }
