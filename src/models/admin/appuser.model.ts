@@ -11,11 +11,9 @@ export class AppUser extends Person {
     company: OrganizationModel;
     role: Role;
 
-    constructor(firstName: string, lastName: string, address: Address, phone: Phone, company: OrganizationModel, email: string, firebaseUID: string, role: Role){
-        super(firstName, lastName, address, phone);
-        this.email = email;
-        this.firebaseUID = firebaseUID;
-        this.company = company;
-        this.role = role;
+    constructor(){
+      super();
     }
+
+
 }

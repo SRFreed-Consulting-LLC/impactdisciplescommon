@@ -11,7 +11,7 @@ export class CoachModel extends Person {
   organization: OrganizationModel;
 
   constructor(firstName: string, lastName: string, address: Address, phone: Phone, title: string, photoUrl: string, bio: string, organization: OrganizationModel){
-    super(firstName, lastName, address, phone);
+    super();
 
     this.firstName = firstName;
     this.lastName = lastName;

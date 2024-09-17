@@ -9,12 +9,7 @@ export class Person extends BaseModel {
     address: Address;
     phone: Phone;
 
-    constructor(firstName: string, lastName: string, address: Address, phone: Phone){
-        super();
-
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phone = phone;
+    constructor(){
+      super();
     }
 }

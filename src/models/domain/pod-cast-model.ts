@@ -3,7 +3,7 @@ import { BaseModel } from "../base.model";
 
 export class PodCastModel extends BaseModel{
   title: string;
-  date: Timestamp | null;
+  date: Timestamp | Date | null;
   subject: string;
   url: string;
   thumbnail: any | null;
