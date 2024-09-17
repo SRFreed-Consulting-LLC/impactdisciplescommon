@@ -5,9 +5,13 @@ import { Phone } from "./utils/phone.model";
 
 export class SeminarModel extends BaseModel{
   date: Timestamp;
+  dateString: string;
   requestedSeminarDate: Timestamp;
+  requestedSeminarDateString: string;
   requestedStartDateTime: Timestamp;
+  requestedStartDateTimeString: string;
   requestedEndDateTime: Timestamp;
+  requestedEndDateTimeString: string;
   preferredTrainer: string;
   preferredLocationName: string;
   preferredLocation: Address;

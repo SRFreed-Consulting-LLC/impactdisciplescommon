@@ -17,8 +17,8 @@ export class LunchAndLearnService {
     return this.dao.getAll(this.table).then(items => {
       items.forEach(item => {
         item.requestedDate = dateFromTimestamp(item.requestedDate);
-        item.requestedEndDateTime = dateFromTimestamp(item.requestedEndDateTime);
-        item.requestedStartDateTime = dateFromTimestamp(item.requestedStartDateTime);
+        item.requestedEndTime = dateFromTimestamp(item.requestedEndTime);
+        item.requestedStartTime = dateFromTimestamp(item.requestedStartTime);
       })
 
       return items;
@@ -30,8 +30,8 @@ export class LunchAndLearnService {
       map(events => {
         events.forEach(event => {
           event.requestedDate = dateFromTimestamp(event.requestedDate as Timestamp);
-          event.requestedStartDateTime = dateFromTimestamp(event.requestedStartDateTime as Timestamp);
-          event.requestedEndDateTime = dateFromTimestamp(event.requestedEndDateTime as Timestamp);
+          event.requestedStartTime = dateFromTimestamp(event.requestedStartTime as Timestamp);
+          event.requestedEndTime = dateFromTimestamp(event.requestedEndTime as Timestamp);
         });
         return events;
       })
