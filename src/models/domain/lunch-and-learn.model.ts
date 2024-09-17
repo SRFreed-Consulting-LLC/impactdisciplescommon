@@ -4,6 +4,7 @@ import { BaseModel } from "../base.model";
 import { Phone } from "./utils/phone.model";
 
 export class LunchAndLearnModel extends BaseModel{
+  date: Timestamp;
   email: string;
   firstName: string;
   lastName: string;

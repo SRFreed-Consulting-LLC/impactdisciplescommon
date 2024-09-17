@@ -4,6 +4,7 @@ import { BaseModel } from "../base.model";
 import { Phone } from "./utils/phone.model";
 
 export class SeminarModel extends BaseModel{
+  date: Timestamp;
   requestedSeminarDate: Timestamp;
   requestedStartDateTime: Timestamp;
   requestedEndDateTime: Timestamp;
