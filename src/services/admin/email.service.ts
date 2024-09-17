@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
-import { MailMessageModel, MailModel } from 'impactdisciplescommon/src/models/domain/mail.model';
+import { EMailModel, MessageModel, TemplateModel } from 'impactdisciplescommon/src/models/admin/mail.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { map, Observable } from 'rxjs';
 
@@ -11,9 +11,9 @@ import { map, Observable } from 'rxjs';
 export class EMailService {
   table: string = 'mail';
 
-  constructor(public dao: FirebaseDAO<MailModel>) {}
+  constructor(public dao: FirebaseDAO<EMailModel>) {}
 
-  getAll(): Promise<MailModel[]>{
+  getAll(): Promise<EMailModel[]>{
     return this.dao.getAll(this.table).then(messages =>{
       messages.forEach(message => {
         message.date = dateFromTimestamp(message.date as Timestamp);
@@ -23,7 +23,7 @@ export class EMailService {
     })
   }
 
-  streamAll(): Observable<MailModel[]>{
+  streamAll(): Observable<EMailModel[]>{
     return this.dao.streamAll(this.table).pipe(
       map(messages => {
         messages.forEach(message => {
@@ -34,7 +34,7 @@ export class EMailService {
     );;
   }
 
-  getAllByValue(field: string, value: any): Promise<MailModel[]>{
+  getAllByValue(field: string, value: any): Promise<EMailModel[]>{
     return this.dao.getAllByValue(this.table, field, value).then(messages =>{
       messages.forEach(testimonial => {
         testimonial.date = dateFromTimestamp(testimonial.date as Timestamp);
@@ -44,7 +44,7 @@ export class EMailService {
     });
   }
 
-  getById(id: String): Promise<MailModel>{
+  getById(id: String): Promise<EMailModel>{
     return this.dao.getById(id, this.table).then(message => {
       message.date = dateFromTimestamp(message.date as Timestamp);
 
@@ -52,7 +52,7 @@ export class EMailService {
     });
   }
 
-  add(value: MailModel): Promise<MailModel>{
+  add(value: EMailModel): Promise<EMailModel>{
     return this.dao.add(value, this.table).then(message => {
       message.date = dateFromTimestamp(message.date as Timestamp);
 
@@ -60,7 +60,7 @@ export class EMailService {
     });
   }
 
-  update(id: string, value: MailModel): Promise<MailModel>{
+  update(id: string, value: EMailModel): Promise<EMailModel>{
     return this.dao.update(id, value, this.table).then(message => {
       message.date = dateFromTimestamp(message.date as Timestamp);
 
@@ -73,43 +73,44 @@ export class EMailService {
   }
 
   sendHtmlEmail(to:string, subject: string, html: string){
-    let mailMessage: MailMessageModel = {... new MailMessageModel()};
+    let mail = {... new EMailModel()}
+    mail.to = to;
+    mail.date = Timestamp.now();
+
+    let mailMessage: MessageModel = {... new MessageModel()};
 
     mailMessage.subject = subject;
     mailMessage.html = html;
 
-    let mail = {... new MailModel()}
-    mail.to = to;
-    mail.date = Timestamp.now();
     mail.message = mailMessage;
 
     this.add(mail);
   }
 
   sendTextEmail(to:string, subject: string, text: string){
-    let mailMessage: MailMessageModel = {... new MailMessageModel()};
+    let mail = {... new EMailModel()}
+    mail.to = to;
+    mail.date = Timestamp.now();
 
+    let mailMessage: MessageModel = {... new MessageModel()};
     mailMessage.subject = subject;
     mailMessage.text = text;
 
-    let mail = {... new MailModel()}
-    mail.to = to;
-    mail.date = Timestamp.now();
     mail.message = mailMessage;
 
     this.add(mail);
   }
 
-  sendTemplateEmail(to:string, subject: string, text: string){
-    let mailMessage: MailMessageModel = {... new MailMessageModel()};
-
-    mailMessage.subject = subject;
-    mailMessage.text = text;
-
-    let mail = {... new MailModel()}
+  sendTemplateEmail(to:string, templateId: string, model: any){
+    let mail = {... new EMailModel()}
     mail.to = to;
     mail.date = Timestamp.now();
-    mail.message = mailMessage;
+
+    let mailTemplate = {... new TemplateModel()};
+    mailTemplate.name = templateId;
+    mailTemplate.data = model;
+
+    mail.template = mailTemplate;
 
     this.add(mail);
   }

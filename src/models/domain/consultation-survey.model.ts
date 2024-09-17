@@ -3,6 +3,7 @@ import { BaseModel } from "../base.model";
 import { Phone } from "./utils/phone.model";
 
 export class ConsultationSurveyModel extends BaseModel{
+  dateString: string;
   firstName?: string;
   lastName?: string;
   email?: string;
