@@ -20,4 +20,5 @@ export class WebConfigModel extends BaseModel{
   instagram: string | null ;
   inpersonSeminarCost: number;
   onlineSeminarCost: number;
+  adminEmailAddress: string;
 }
