@@ -6,14 +6,14 @@ import { OrganizationModel } from './organization.model';
 import { AgendaItem } from './utils/agenda-item.model';
 
 export class EventModel extends BaseModel {
-  eventName: string;
-  organization: OrganizationModel;
-  startDate: Timestamp;
-  endDate: Timestamp;
-  location: LocationModel;
-  attendees: AppUser[];
-  agendaItems: AgendaItem[];
-  description: string;
-  costInDollars: number;
-  isSummit: boolean;
+  eventName?: string;
+  organization?: OrganizationModel;
+  startDate?: Timestamp;
+  endDate?: Timestamp;
+  location?: LocationModel;
+  attendees?: AppUser[];
+  agendaItems?: AgendaItem[];
+  description?: string;
+  costInDollars?: number;
+  isSummit?: boolean;
 }

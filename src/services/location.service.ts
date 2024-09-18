@@ -27,6 +27,10 @@ export class LocationService {
     return this.dao.getById(id, this.table);
   }
 
+  streamById(id: string): Observable<LocationModel[]>{
+    return this.dao.streamById(id, this.table)
+  }
+
   add(value: LocationModel): Promise<LocationModel>{
     return this.dao.add(value, this.table);
   }
