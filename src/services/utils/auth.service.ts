@@ -297,7 +297,7 @@ export class AuthService {
   resetPassword(email: string): Observable<any> {
     try {
       // Send request
-
+      this.dao.forgotPassword(email);
       return of({
         isOk: true
       });
