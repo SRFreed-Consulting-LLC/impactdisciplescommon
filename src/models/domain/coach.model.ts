@@ -8,19 +8,10 @@ export class CoachModel extends Person {
   title: string;
   photoUrl: any;
   bio: string
-  organization: OrganizationModel;
+  organization: OrganizationModel | any;
 
-  constructor(firstName: string, lastName: string, address: Address, phone: Phone, title: string, photoUrl: string, bio: string, organization: OrganizationModel){
+  constructor(){
     super();
-
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.address = address;
-    this.phone = phone;
-    this.title = title;
-    this.photoUrl = photoUrl;
-    this.bio = bio;
-    this.organization = organization;
 
     this.fullname = this.firstName + ' ' + this.lastName;
   }
