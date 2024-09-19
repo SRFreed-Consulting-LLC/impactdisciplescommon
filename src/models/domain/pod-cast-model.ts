@@ -7,4 +7,5 @@ export class PodCastModel extends BaseModel{
   subject: string;
   url: string;
   thumbnail: any | null;
+  tags: string[];
 }
