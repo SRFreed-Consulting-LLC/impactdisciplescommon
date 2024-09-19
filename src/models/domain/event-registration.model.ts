@@ -7,5 +7,5 @@ export class EventRegistrationModel extends BaseModel{
   eventId: string;
   email: string;
   receipt: string;
-  registrationDate: Timestamp;
+  registrationDate: Timestamp | any;
 }
