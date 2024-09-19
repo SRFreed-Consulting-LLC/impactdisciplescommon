@@ -1,5 +1,6 @@
 import { PHONE_TYPES } from "../lists/phone_types.enum";
 import { Role } from "../lists/roles.enum";
+import { States } from "../lists/states.enum";
 import { TESTIMONIAL_TYPES } from "../lists/testimonial_types.enum";
 
 export class EnumHelper {
@@ -13,6 +14,10 @@ export class EnumHelper {
 
   static getRoleTypesAsArray(): Role[] {
     return Object.keys(Role).map(key => Role[key]);
+  }
+
+  static getStateRoleTypesAsArray(): string[] {
+    return Object.values(States) as [];
   }
 
 }
