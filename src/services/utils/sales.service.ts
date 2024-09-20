@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { CheckoutForm } from 'impactdisciplescommon/src/models/utils/cart.model';
 import { Observable } from 'rxjs';
-import { CheckoutForm } from 'src/app/shared/models/cart.model';
 
 @Injectable({
   providedIn: 'root'
