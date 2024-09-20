@@ -5,6 +5,6 @@ export class ProductModel extends BaseModel {
   title: boolean;
   cost: number | null;
   description: string;
-  length: string;
+  series: string;
   tags: string[];
 }
