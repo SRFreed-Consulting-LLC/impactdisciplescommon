@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { PaymentIntent } from "@stripe/stripe-js";
 import { BaseModel } from "impactdisciplescommon/src/models/base.model";
 import { Address } from "impactdisciplescommon/src/models/domain/utils/address.model";
@@ -22,6 +23,7 @@ export interface Attendee {
 }
 
 export interface CheckoutForm extends BaseModel {
+  dateProcessed?: Timestamp;
   firstName?: string;
   lastName?: string;
   email?: string;
