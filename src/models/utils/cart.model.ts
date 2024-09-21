@@ -33,6 +33,7 @@ export interface CheckoutForm extends BaseModel {
   shippingAddress?: Address;
   cartItems?: CartItem[];
   total?: number;
+  totalBeforeDiscount?: number;
   receipt?: string;
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
