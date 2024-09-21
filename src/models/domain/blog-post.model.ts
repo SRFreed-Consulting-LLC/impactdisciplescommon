@@ -5,9 +5,10 @@ import { TagModel } from "./tag.model";
 export class BlogPostModel extends BaseModel {
   title: string;
   date: Timestamp;
-  subject: string | null;
+  subject?: string;
   blogText: string;
   mainImage: any;
   extraImages: string [];
   tags: string[];
+
 }
