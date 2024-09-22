@@ -1,11 +1,14 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "../base.model"
 
-export class AffilliateSalesModel extends BaseModel {
+export class AffilliateSaleModel extends BaseModel {
   date: Timestamp;
   code: string;
   email: string;
   receipt: string;
   totalBeforeDiscount: number | null;
   totalAfterDiscount: number | null;
+  isPayed: boolean = false;
+  amountPayed: number | null;
+  paymentReceipt: string;
 }
