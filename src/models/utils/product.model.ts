@@ -1,8 +1,8 @@
 import { BaseModel } from "../base.model"
 
 export class ProductModel extends BaseModel {
-  imageUrl:string;
-  title: boolean;
+  imageUrl: any;
+  title: string;
   cost: number | null;
   description: string;
   series: string;
