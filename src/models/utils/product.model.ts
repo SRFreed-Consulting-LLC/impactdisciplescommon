@@ -1,4 +1,5 @@
 import { BaseModel } from "../base.model"
+import { TagModel } from "../domain/tag.model";
 
 export class ProductModel extends BaseModel {
   imageUrl:string;
@@ -6,6 +7,6 @@ export class ProductModel extends BaseModel {
   cost: number | null;
   description: string;
   series: string;
-  tags: string[];
-  category?: string;
+  tags: TagModel[];
+  category?: TagModel;
 }

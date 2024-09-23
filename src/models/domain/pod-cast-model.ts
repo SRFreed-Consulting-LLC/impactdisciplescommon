@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "../base.model";
+import { TagModel } from "./tag.model";
 
 export class PodCastModel extends BaseModel{
   title: string;
@@ -7,5 +8,5 @@ export class PodCastModel extends BaseModel{
   videoType: string;
   videoId: string;
   thumbnail: any | null;
-  tags: string[];
+  tags: TagModel[];
 }

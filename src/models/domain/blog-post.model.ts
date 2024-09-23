@@ -9,6 +9,5 @@ export class BlogPostModel extends BaseModel {
   blogText: string;
   mainImage: any;
   extraImages: string [];
-  tags: string[];
-
+  tags?: TagModel[];
 }
