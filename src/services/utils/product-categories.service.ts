@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class CategoriesService {
+export class ProductCategoriesService {
   table: string = 'product_categories';
 
   constructor(public dao: FirebaseDAO<TagModel>) {}
