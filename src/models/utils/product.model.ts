@@ -8,5 +8,5 @@ export class ProductModel extends BaseModel {
   description: string;
   series: string;
   tags: TagModel[];
-  category?: TagModel;
+  category?: string;
 }
