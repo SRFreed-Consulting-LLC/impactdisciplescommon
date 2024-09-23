@@ -10,7 +10,7 @@ export class EventModel extends BaseModel {
   organization?: OrganizationModel;
   startDate?: Timestamp;
   endDate?: Timestamp;
-  location?: LocationModel;
+  location?: any
   attendees?: AppUser[];
   agendaItems?: AgendaItem[];
   description?: string;
