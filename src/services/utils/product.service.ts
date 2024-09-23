@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { CouponModel } from 'impactdisciplescommon/src/models/utils/coupon.model';
 import { ProductModel } from 'impactdisciplescommon/src/models/utils/product.model';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,10 @@ export class ProductService {
 
   getById(id: String): Promise<ProductModel>{
     return this.dao.getById(id, this.table);
+  }
+
+  streamById(id: String): Observable<ProductModel>{
+    return from(this.dao.getById(id, this.table));
   }
 
   add(value: ProductModel): Promise<ProductModel>{
