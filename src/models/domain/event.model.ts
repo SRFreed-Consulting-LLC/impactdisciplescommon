@@ -16,4 +16,5 @@ export class EventModel extends BaseModel {
   description?: string;
   costInDollars?: number;
   isSummit?: boolean;
+  imageUrl?: any;
 }
