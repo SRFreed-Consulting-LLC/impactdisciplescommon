@@ -11,7 +11,7 @@ export interface CartItem {
   orderQuantity?: number;
   discount?: number;
   isEvent?: boolean;
-  img?: string;
+  img?: any;
   attendees?: Attendee[];
 }
 
