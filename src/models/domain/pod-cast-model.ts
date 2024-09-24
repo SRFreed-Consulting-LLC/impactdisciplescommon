@@ -3,8 +3,9 @@ import { BaseModel } from "../base.model";
 import { TagModel } from "./tag.model";
 
 export class PodCastModel extends BaseModel{
+  date: Timestamp;
   title: string;
-  date: Timestamp | Date | null;
+  category?: string;
   videoType: string;
   videoId: string;
   thumbnail: any | null;
