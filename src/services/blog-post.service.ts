@@ -40,11 +40,11 @@ export class BlogPostService {
 
   streamAllByValue(field: string, value: any): Observable<BlogPostModel[]>{
     return this.dao.streamByValue(this.table, value, field).pipe(
-      map(events => {
-        events.forEach(event => {
-          event.date = dateFromTimestamp(event.date as Timestamp);
+      map(blogs => {
+        blogs.forEach(blog => {
+          blog.date = dateFromTimestamp(blog.date as Timestamp);
         });
-        return events;
+        return blogs;
       })
     );
   }

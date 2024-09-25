@@ -40,11 +40,11 @@ export class PodCastService {
 
   streamAllByValue(field: string, value: any): Observable<PodCastModel[]>{
     return this.dao.streamByValue(this.table, value, field).pipe(
-      map(events => {
-        events.forEach(event => {
-          event.date = dateFromTimestamp(event.date as Timestamp);
+      map(podcasts => {
+        podcasts.forEach(podcast => {
+          podcast.date = dateFromTimestamp(podcast.date as Timestamp);
         });
-        return events;
+        return podcasts;
       })
     );
   }
