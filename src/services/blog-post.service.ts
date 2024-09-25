@@ -38,6 +38,17 @@ export class BlogPostService {
     return this.dao.getAllByValue(this.table, field, value);
   }
 
+  streamAllByValue(field: string, value: any): Observable<BlogPostModel[]>{
+    return this.dao.streamByValue(this.table, value, field).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.date = dateFromTimestamp(event.date as Timestamp);
+        });
+        return events;
+      })
+    );
+  }
+
   getById(id: String): Promise<BlogPostModel>{
     return this.dao.getById(id, this.table);
   }
