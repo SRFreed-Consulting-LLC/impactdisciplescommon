@@ -6,6 +6,7 @@ import { OrganizationModel } from './organization.model';
 import { AgendaItem } from './utils/agenda-item.model';
 
 export class EventModel extends BaseModel {
+  isActive: boolean = false;
   eventName?: string;
   organization?: OrganizationModel;
   startDate?: Timestamp;
