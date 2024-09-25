@@ -3,7 +3,7 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { onSnapshot, updateDoc } from 'firebase/firestore';
+import { onSnapshot, QueryConstraint, updateDoc } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 
 @Injectable({
@@ -155,23 +155,24 @@ export class FirebaseDAO<T extends BaseModel> {
     );
   }
 
-  getCollectionSnapshot(table: string){
-    const q = query(collection(this.fs, table));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-            console.log("New city: ", change.doc.data());
-        }
-        if (change.type === "modified") {
-            console.log("Modified city: ", change.doc.data());
-        }
-        if (change.type === "removed") {
-            console.log("Removed city: ", change.doc.data());
-        }
-      });
-    });
+  queryAllStreamByMultiValue(table: string, queries: QueryParam[]): Observable<T[]>{
+    const queryConstraints: QueryConstraint[] = queries.map((query) =>
+      where(query.field, query.operation, query.value),
+    );
+
+    const q = query(collection(this.fs, '/' + table), ...queryConstraints);
+    return collectionData(q, {idField: 'id'}).pipe(
+      map(dd => {
+        let retval: T[] = [];
+        dd.forEach(d => {
+          retval.push(d as T);
+        })
+        return retval;
+      })
+    );
   }
 }
+
 
 export enum WhereFilterOperandKeys {
   less = '<',

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
-import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { FirebaseDAO, QueryParam } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { TestimonialModel } from 'impactdisciplescommon/src/models/domain/testimonial.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { map, Observable } from 'rxjs';
@@ -42,6 +42,17 @@ export class TestimonialService {
 
       return testimonials;
     });
+  }
+
+  queryAllStreamByMultiValue(queries: QueryParam[]): Observable<TestimonialModel[]>{
+    return this.dao.queryAllStreamByMultiValue(this.table, queries).pipe(
+      map(testimonials => {
+        testimonials.forEach(testimonial => {
+          testimonial.date = dateFromTimestamp(testimonial.date as Timestamp);
+        });
+        return testimonials;
+      })
+    );;
   }
 
   getById(id: String): Promise<TestimonialModel>{
