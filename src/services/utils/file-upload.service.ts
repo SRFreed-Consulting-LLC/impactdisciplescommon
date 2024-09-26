@@ -1,7 +1,6 @@
 import { Injectable, Input } from '@angular/core';
 import { DxFileManagerComponent } from 'devextreme-angular';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
-import UploadInfo from 'devextreme/file_management/upload_info';
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, listAll, getMetadata, uploadBytes, deleteObject, uploadString, UploadResult, getBytes, getDownloadURL  } from "firebase/storage";
 import { FileItem } from 'impactdisciplescommon/src/models/utils/file-item.model';
