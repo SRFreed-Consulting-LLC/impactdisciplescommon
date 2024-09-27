@@ -28,6 +28,10 @@ export class SalesService {
       map(sales => {
         sales.forEach(sale => {
           sale.dateProcessed = dateFromTimestamp(sale.dateProcessed as Timestamp);
+
+          sale.cartItems.forEach(item => {
+            item.dateProcessed = dateFromTimestamp(item.dateProcessed as Timestamp);
+          })
         });
         return sales;
       })
