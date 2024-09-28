@@ -13,6 +13,8 @@ export interface CartItem {
   isEvent?: boolean;
   img?: any;
   attendees?: Attendee[];
+  dateProcessed?: Timestamp;
+  processedStatus?: string;
 }
 
 export interface Attendee {
@@ -23,7 +25,6 @@ export interface Attendee {
 }
 
 export interface CheckoutForm extends BaseModel {
-  dateProcessed?: Timestamp;
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -39,4 +40,6 @@ export interface CheckoutForm extends BaseModel {
   isCreateAccount?: boolean;
   couponCode?: string;
   paymentIntent?: PaymentIntent | string;
+  dateProcessed?: Timestamp;
+  processedStatus?: string;
 }
