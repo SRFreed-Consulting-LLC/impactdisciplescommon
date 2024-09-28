@@ -1,5 +1,5 @@
 import { BaseModel } from "../base.model"
 
 export class CategoryModel extends BaseModel {
-  name: string;
+  name?: string;
 }
