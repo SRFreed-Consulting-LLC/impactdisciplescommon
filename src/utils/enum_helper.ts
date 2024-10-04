@@ -2,6 +2,7 @@ import { PHONE_TYPES } from "../lists/phone_types.enum";
 import { Role } from "../lists/roles.enum";
 import { States } from "../lists/states.enum";
 import { TESTIMONIAL_TYPES } from "../lists/testimonial_types.enum";
+import { UNIT_OF_MEASURE } from "../lists/unit_of_measure.enum";
 
 export class EnumHelper {
   static getPhoneTypesAsArray(): PHONE_TYPES[] {
@@ -18,6 +19,10 @@ export class EnumHelper {
 
   static getStateRoleTypesAsArray(): string[] {
     return Object.values(States) as [];
+  }
+
+  static getUOMTypesAsArray(): string[] {
+    return Object.values(UNIT_OF_MEASURE) as [];
   }
 
 }
