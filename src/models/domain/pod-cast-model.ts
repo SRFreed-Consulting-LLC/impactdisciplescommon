@@ -9,6 +9,7 @@ export class PodCastModel extends BaseModel{
   category?: string;
   videoType: string;
   videoId: string;
+  description: string;
   thumbnail: any | null;
   tags?: TagModel[];
 }
