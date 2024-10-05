@@ -1,7 +1,13 @@
+import { Package, RateOptions, ShippingRequest, WeightDetail } from './../models/domain/shipment.model';
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
 import { Observable } from 'rxjs';
 import { ShippingModel } from '../models/domain/shipment.model';
+import { Address } from '../models/domain/utils/address.model';
+import { UNIT_OF_MEASURE } from '../lists/unit_of_measure.enum';
+import { environment } from 'src/environments/environment';
+import { Phone } from '../models/domain/utils/phone.model';
+import { WebConfigModel } from '../models/utils/web-config.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +43,52 @@ export class ShippingService {
 
   delete(id: string){
     return this.dao.delete(id, this.table);
+  }
+
+  async calculateShipping(config: WebConfigModel, toName: string, toAddress:Address, toPhone: Phone, weight:number){
+    let shipping: ShippingModel = {...new ShippingModel()};
+    shipping.shipTo.name = toName;
+    shipping.shipTo.phone = toPhone.number;
+    shipping.shipTo.addressLine1 = toAddress.address1;
+    shipping.shipTo.cityLocality = toAddress.city;
+    shipping.shipTo.stateProvince = toAddress.state;
+    shipping.shipTo.postalCode = toAddress.zip;
+    shipping.shipTo.countryCode = toAddress.country;
+
+    shipping.shipFrom.name = "Impact Disciples";
+    shipping.shipFrom.phone = config.phone;
+    shipping.shipFrom.addressLine1 = config.address.address1;
+    shipping.shipFrom.cityLocality = config.address.city;
+    shipping.shipFrom.stateProvince = config.address.state;
+    shipping.shipFrom.postalCode = config.address.zip;
+    shipping.shipFrom.countryCode = "US";
+
+    let pkg: Package = {... new Package()};
+    pkg.weight = {...new WeightDetail()};
+    pkg.weight.unit = UNIT_OF_MEASURE.OUNCE;
+    pkg.weight.value = weight;
+
+    shipping.packages.push(pkg);
+
+    let request: ShippingRequest = {... new ShippingRequest()};
+    request.rateOptions = {... new RateOptions()};
+    request.rateOptions.carrierIds.push("se-914430");
+    request.shipment = shipping;
+
+    const response = await fetch(environment.shippingUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to get Shipping Rates: ' + JSON.stringify(response));
+    }
+
+    const rate = await response.json();
+
+    console.log(rate);
+
+    return rate;
   }
 }

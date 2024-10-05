@@ -3,6 +3,7 @@ import { PaymentIntent } from "@stripe/stripe-js";
 import { BaseModel } from "impactdisciplescommon/src/models/base.model";
 import { Address } from "impactdisciplescommon/src/models/domain/utils/address.model";
 import { Phone } from "impactdisciplescommon/src/models/domain/utils/phone.model";
+import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure.enum';
 
 export interface CartItem {
   id?: string;
@@ -15,6 +16,8 @@ export interface CartItem {
   attendees?: Attendee[];
   dateProcessed?: Timestamp;
   processedStatus?: string;
+  weight?: number;
+  uom?: UNIT_OF_MEASURE;
 }
 
 export interface Attendee {
@@ -35,6 +38,7 @@ export interface CheckoutForm extends BaseModel {
   cartItems?: CartItem[];
   total?: number;
   totalBeforeDiscount?: number;
+  totalBeforeDiscountWithShipping?: number;
   receipt?: string;
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
@@ -42,4 +46,5 @@ export interface CheckoutForm extends BaseModel {
   paymentIntent?: PaymentIntent | string;
   dateProcessed?: Timestamp;
   processedStatus?: string;
+  shippingRate?: number;
 }
