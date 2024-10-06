@@ -21,4 +21,5 @@ export class WebConfigModel extends BaseModel{
   inpersonSeminarCost: number;
   onlineSeminarCost: number;
   adminEmailAddress: string;
+  taxImportDate?: Timestamp;
 }
