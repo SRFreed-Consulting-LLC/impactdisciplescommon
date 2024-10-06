@@ -1,3 +1,4 @@
+import { Countries } from "../lists/countries.enum";
 import { PHONE_TYPES } from "../lists/phone_types.enum";
 import { Role } from "../lists/roles.enum";
 import { States } from "../lists/states.enum";
@@ -19,6 +20,10 @@ export class EnumHelper {
 
   static getStateRoleTypesAsArray(): string[] {
     return Object.values(States) as [];
+  }
+
+  static getCountryTypesAsArray(): string[] {
+    return Object.values(Countries) as [];
   }
 
   static getUOMTypesAsArray(): string[] {
