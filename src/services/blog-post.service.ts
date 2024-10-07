@@ -68,4 +68,11 @@ export class BlogPostService {
   delete(id: string){
     return this.dao.delete(id, this.table);
   }
+
+  // getAllTempBlogs(): Promise<any[]>{
+  //   return this.dao.getAll('blog-files-temp')
+  // }
+  // getAllTempBlogImages(): Promise<any[]>{
+  //   return this.dao.getAll('blog-temp')
+  // }
 }
