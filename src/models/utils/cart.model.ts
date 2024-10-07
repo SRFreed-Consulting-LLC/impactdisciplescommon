@@ -48,4 +48,5 @@ export interface CheckoutForm extends BaseModel {
   processedStatus?: string;
   shippingRate?: number;
   estimatedTaxes?: number;
+  taxRate?: number;
 }
