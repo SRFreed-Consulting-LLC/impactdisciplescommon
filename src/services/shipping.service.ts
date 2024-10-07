@@ -8,6 +8,7 @@ import { UNIT_OF_MEASURE } from '../lists/unit_of_measure.enum';
 import { environment } from 'src/environments/environment';
 import { Phone } from '../models/domain/utils/phone.model';
 import { WebConfigModel } from '../models/utils/web-config.model';
+import { CheckoutForm } from '../models/utils/cart.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,12 @@ export class ShippingService {
     return this.dao.delete(id, this.table);
   }
 
-  async calculateShipping(config: WebConfigModel, toName: string, toAddress:Address, toPhone: Phone, weight:number){
+  async calculateShipping(config: WebConfigModel, checkoutForm: CheckoutForm, weight:number){
+
+    let toName: string = checkoutForm.firstName + ' ' + checkoutForm.lastName;
+    let toAddress: Address = checkoutForm.shippingAddress;
+    let toPhone: Phone = checkoutForm.phone;
+
     let shipping: ShippingModel = {...new ShippingModel()};
     shipping.shipTo.name = toName;
     shipping.shipTo.phone = toPhone.number;
