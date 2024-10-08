@@ -27,7 +27,7 @@ export interface Attendee {
   receipt?: string;
 }
 
-export interface CheckoutForm extends BaseModel {
+export class CheckoutForm extends BaseModel {
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -36,7 +36,7 @@ export interface CheckoutForm extends BaseModel {
   billingAddress?: Address;
   shippingAddress?: Address;
   cartItems?: CartItem[];
-  total?: number;
+  total?: number = 0;
   totalBeforeDiscount?: number;
   totalBeforeDiscountWithShipping?: number;
   receipt?: string;
@@ -46,7 +46,9 @@ export interface CheckoutForm extends BaseModel {
   paymentIntent?: PaymentIntent | string;
   dateProcessed?: Timestamp;
   processedStatus?: string;
-  shippingRate?: number;
-  estimatedTaxes?: number;
-  taxRate?: number;
+  shippingRate?: number = 0;
+  estimatedTaxes?: number = 0;
+  taxRate?: number = 0;
+  refundAmount?: number = 0;
+  refundId?: string;
 }

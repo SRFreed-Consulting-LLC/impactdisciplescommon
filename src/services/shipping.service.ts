@@ -93,8 +93,6 @@ export class ShippingService {
 
     const rate = await response.json();
 
-    console.log(rate);
-
     return rate;
   }
 }
