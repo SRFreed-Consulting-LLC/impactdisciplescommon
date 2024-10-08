@@ -23,7 +23,7 @@ export class LocationService {
     return this.dao.getAllByValue(this.table, field, value);
   }
 
-  getById(id: String): Promise<LocationModel>{
+  getById(id: string): Promise<LocationModel>{
     return this.dao.getById(id, this.table);
   }
 
