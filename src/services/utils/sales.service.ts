@@ -38,6 +38,21 @@ export class SalesService {
     );
   }
 
+  streamAllByValue(field: string, value: any): Observable<CheckoutForm[]>{
+    return this.dao.streamByValue(this.table, value, field).pipe(
+      map(sales => {
+        sales.forEach(sale => {
+          sale.dateProcessed = dateFromTimestamp(sale.dateProcessed as Timestamp);
+
+          sale.cartItems.forEach(item => {
+            item.dateProcessed = dateFromTimestamp(item.dateProcessed as Timestamp);
+          })
+        });
+        return sales;
+      })
+    );
+  }
+
   getAllByValue(field: string, value: any): Promise<CheckoutForm[]>{
     return this.dao.getAllByValue(this.table, field, value).then(sales => {
       sales.forEach(sale => {

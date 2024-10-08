@@ -218,6 +218,25 @@ export class AuthService {
     }
   }
 
+  setUser(user: AppUser): Observable<AppUser> {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+
+    try {
+      if (cookieValue) {
+        let currentUser = JSON.parse(cookieValue);
+        this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: currentUser['cookie_expiration_time'] });
+
+        this.user = user;
+      } else {
+        console.log('cookie not found...expired');
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+
+    return of(user);
+  }
+
   getUser(): Observable<AppUser> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
     let user: AppUser = null;
