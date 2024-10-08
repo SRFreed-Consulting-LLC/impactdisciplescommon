@@ -72,7 +72,7 @@ export class ShippingService {
     let pkg: Package = {... new Package()};
     pkg.weight = {...new WeightDetail()};
     pkg.weight.unit = UNIT_OF_MEASURE.OUNCE;
-    pkg.weight.value = weight;
+    pkg.weight.value = weight? weight : 0;
 
     shipping.packages.push(pkg);
 
