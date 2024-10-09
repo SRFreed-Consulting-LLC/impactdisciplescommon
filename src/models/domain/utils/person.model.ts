@@ -6,7 +6,8 @@ export class Person extends BaseModel {
     firstName: string;
     lastName: string;
 
-    address: Address;
+    shippingAddress: Address;
+    billingAddress: Address;
     phone: Phone;
 
     constructor(){
