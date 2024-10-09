@@ -144,7 +144,7 @@ export class FirebaseDAO<T extends BaseModel> {
     );
   }
 
-  quertStreamByValue(table: string, value: any, opStr: WhereFilterOperandKeys, field: string): Observable<T[]>{
+  queryStreamByValue(table: string, value: any, opStr: WhereFilterOperandKeys, field: string): Observable<T[]>{
     const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
     return collectionData(q, {idField: 'id'}).pipe(
       map(dd => {
@@ -172,6 +172,26 @@ export class FirebaseDAO<T extends BaseModel> {
         return retval;
       })
     );
+  }
+
+  queryAllByMultiValue(table: string, queries: QueryParam[]): Promise<T[]>{
+    const queryConstraints: QueryConstraint[] = queries.map((query) =>
+      where(query.field, query.operation, query.value),
+    );
+
+    const q = query(collection(this.fs, '/' + table), ...queryConstraints);
+
+    return getDocs(q).then(docs => {
+      let retval: T[] = [];
+
+      docs.forEach(doc => {
+        let val: T = doc.data() as T;
+        val.id = doc.id;
+        retval.push(val);
+      })
+
+      return retval;
+    });
   }
 }
 

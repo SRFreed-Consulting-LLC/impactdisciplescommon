@@ -66,7 +66,7 @@ export class EventRegistrationService {
   }
 
   queryStreamAllByValue(field: string, opStr: WhereFilterOperandKeys, value: any): Observable<EventRegistrationModel[]> {
-    return this.dao.quertStreamByValue(this.table, value, opStr, field).pipe(
+    return this.dao.queryStreamByValue(this.table, value, opStr, field).pipe(
       map(events => {
         events.forEach(event => {
           event.registrationDate = dateFromTimestamp(event.registrationDate as Timestamp);
