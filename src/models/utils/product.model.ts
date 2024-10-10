@@ -13,4 +13,6 @@ export class ProductModel extends BaseModel {
   category?: string;
   weight?: number;
   uom?: UNIT_OF_MEASURE;
+  isEBook: boolean = false;
+  eBookUrl: any;
 }
