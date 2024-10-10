@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
+import { CustomerService } from 'impactdisciplescommon/src/services/admin/customer.service';
 
 @Component({
   selector: 'app-create-auth-form',
@@ -16,28 +17,42 @@ export class CreateAuthFormComponent implements OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: AuthService, private router: Router, private sessionService: SessionService, public tostrService: ToastrService) { }
+  constructor(private authService: AuthService,
+    private customerService: CustomerService,
+    private router: Router,
+    private sessionService: SessionService,
+    public tostrService: ToastrService) { }
 
   onSubmit(e: Event) {
     e.preventDefault();
-    const { password, password2 } = this.formData;
+    const { email, password, password2 } = this.formData;
     this.isLoading = true;
 
     if (password != password2) {
       this.isLoading = false;
       this.tostrService.error('Passwords do not match. Please try again.');
     } else {
-      this.authService.createAccount(this.sessionService.currentUser.email, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-        if (result.isOk) {
-          this.tostrService.success('Your account has been created. Please login using your new credentials.');
+      this.customerService.getAllByValue('email', email).then(customers => {
+        if(customers.length > 0){
+          this.tostrService.error('An Account for this email already exists. Try logging in with this email address.');
 
-          this.sessionService.currentUser = null;
+          this.router.navigate(['/']);
 
-          this.router.navigate(['capture-username-form']);
+          this.isLoading = false;
         } else {
-          this.tostrService.error('There was an error creating your account: ' + result.message);
+          this.authService.createAccount(email, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+            if (result.isOk) {
+              this.tostrService.success('Your account has been created. Please login using your new credentials.');
+
+              this.sessionService.currentUser = null;
+
+              this.router.navigate(['capture-username-form']);
+            } else {
+              this.tostrService.error('There was an error creating your account: ' + result.message);
+            }
+            this.isLoading = false;
+          })
         }
-        this.isLoading = false;
       })
     }
   }
