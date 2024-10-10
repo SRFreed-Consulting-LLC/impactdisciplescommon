@@ -1,3 +1,4 @@
+import { CustomerService } from './../admin/customer.service';
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { UserCredential } from 'firebase/auth';
@@ -12,6 +13,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
+import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 
 const defaultPath = '/';
 
@@ -64,11 +66,36 @@ export class AuthService {
     private cookieService: CookieService,
     public loggerService: LoggerService,
     public tostrService: ToastrService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private customerService: CustomerService
   ) { }
 
   findUser(email: string): Observable<AppUser> {
     return from(this.userService.getAllByValue('email', email)).pipe(
+      switchMap(user => {
+        if(user && user.length == 1){
+          return of(user[0]);
+        } else {
+          return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
+            switchMap((ec: any) => {
+              this.tostrService.error(
+                'The email address (' +
+                  email +
+                  ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
+                  ec,
+                'Login Error',
+                { disableTimeOut: true }
+              );
+              return of(null);
+            })
+          );
+        }
+      })
+    );
+  }
+
+  findCustomer(email: string): Observable<CustomerModel> {
+    return from(this.customerService.getAllByValue('email', email)).pipe(
       switchMap(user => {
         if(user && user.length == 1){
           return of(user[0]);
