@@ -14,6 +14,7 @@ import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
+import { environment } from 'src/environments/environment';
 
 const defaultPath = '/';
 
@@ -23,7 +24,7 @@ const COOKIE_NAME = "impact-disciples-admin"
   providedIn: 'root'
 })
 export class AuthService {
-  public user: AppUser;
+  public user: AppUser | CustomerModel;
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
@@ -70,32 +71,16 @@ export class AuthService {
     private customerService: CustomerService
   ) { }
 
-  findUser(email: string): Observable<AppUser> {
-    return from(this.userService.getAllByValue('email', email)).pipe(
-      switchMap(user => {
-        if(user && user.length == 1){
-          return of(user[0]);
-        } else {
-          return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
-            switchMap((ec: any) => {
-              this.tostrService.error(
-                'The email address (' +
-                  email +
-                  ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
-                  ec,
-                'Login Error',
-                { disableTimeOut: true }
-              );
-              return of(null);
-            })
-          );
-        }
-      })
-    );
-  }
+  findUser(email: string): Observable<AppUser | CustomerModel> {
+    let user$: Promise<any>;
 
-  findCustomer(email: string): Observable<CustomerModel> {
-    return from(this.customerService.getAllByValue('email', email)).pipe(
+    if(environment.application == 'admin'){
+      user$ = this.userService.getAllByValue('email', email);
+    } else {
+      user$ = this.customerService.getAllByValue('email', email);
+    }
+
+    return from(user$).pipe(
       switchMap(user => {
         if(user && user.length == 1){
           return of(user[0]);
@@ -121,10 +106,19 @@ export class AuthService {
   logIn(email: string, password: string): Observable<any> {
     try {
       this.cookieService.delete(COOKIE_NAME);
+
       return from(this.dao.signIn(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
-            return from(this.userService.getAllByValue('email', email)).pipe(
+            let user$: Promise<any>;
+
+            if(environment.application == 'admin'){
+              user$ = this.userService.getAllByValue('email', email);
+            } else {
+              user$ = this.customerService.getAllByValue('email', email);
+            }
+
+            return from(user$).pipe(
               switchMap(user => {
                 if(user && user.length == 1) {
                   return from(result.user.getIdTokenResult()).pipe(
@@ -134,6 +128,7 @@ export class AuthService {
                       console.log('Expiration:' + new Date(this.user['cookie_expiration_time']));
 
                       this.router.navigate([this._lastAuthenticatedPath]);
+
                       this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), { expires: this.user['cookie_expiration_time'] });
 
                       this.store.dispatch(new UserAuthenticated(this.user))
@@ -245,12 +240,13 @@ export class AuthService {
     }
   }
 
-  setUser(user: AppUser): Observable<AppUser> {
+  setUser(user: AppUser | CustomerModel): Observable<AppUser | CustomerModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     try {
       if (cookieValue) {
         let currentUser = JSON.parse(cookieValue);
+
         this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: currentUser['cookie_expiration_time'] });
 
         this.user = user;
@@ -264,9 +260,10 @@ export class AuthService {
     return of(user);
   }
 
-  getUser(): Observable<AppUser> {
+  getUser(): Observable<AppUser | CustomerModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
-    let user: AppUser = null;
+
+    let user: AppUser | CustomerModel = null;
 
     try {
       if (cookieValue) {
@@ -286,14 +283,26 @@ export class AuthService {
       return from(this.dao.register(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
-            return from(this.userService.getAllByValue('email', email)).pipe(
+            let user$: Promise<any>;
+
+            if(environment.application == 'admin'){
+              user$ = this.userService.getAllByValue('email', email);
+            } else {
+              user$ = this.customerService.getAllByValue('email', email);
+            }
+
+            return from(user$).pipe(
               switchMap(async appuser => {
                 if(appuser && appuser.length == 1){
-                  let u: AppUser = appuser[0];
+                  let u: AppUser | CustomerModel = appuser[0];
 
                   u.firebaseUID = result.user.uid;
 
-                  await this.userService.update(u.id, u);
+                  if(environment.application == 'admin'){
+                    await this.userService.update(u.id, u as AppUser)
+                  } else {
+                    await this.customerService.update(u.id, u as CustomerModel)
+                  }
 
                   return {
                     isOk: true,

@@ -13,7 +13,7 @@ export class CapturePasswordFormComponent implements OnDestroy {
   loginEmail: string = '';
   loginPassword: any = {};
   public isLoading: boolean = false;
-  
+
   private ngUnsubscribe = new Subject<void>();
 
   constructor(private authService: AuthService, public tostrService: ToastrService, private sessionService: SessionService) { }
@@ -22,6 +22,7 @@ export class CapturePasswordFormComponent implements OnDestroy {
     e.preventDefault();
     const { password } = this.loginPassword;
     this.isLoading = true;
+
     if(this.loginEmail === '') {
       this.loginEmail = this.sessionService.currentUser.email;
     }
