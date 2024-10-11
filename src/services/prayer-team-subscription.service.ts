@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { PrayerTeamSubscriptionModel } from '../models/domain/prayer-team-subscription.model';
+import { Timestamp } from 'firebase/firestore';
+import { dateFromTimestamp } from '../utils/date-from-timestamp';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,14 @@ export class PrayerTeamSubscriptionService {
   }
 
   streamAll(): Observable<PrayerTeamSubscriptionModel[]>{
-    return this.dao.streamAll(this.table);
+    return this.dao.streamAll(this.table).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.date = dateFromTimestamp(event.date as Timestamp);
+        });
+        return events;
+      })
+    );;
   }
 
   getAllByValue(field: string, value: any): Promise<PrayerTeamSubscriptionModel[]>{
