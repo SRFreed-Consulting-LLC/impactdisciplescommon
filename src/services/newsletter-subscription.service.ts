@@ -1,7 +1,9 @@
 import { NewsletterSubscriptionModel } from './../models/domain/newsletter-subscription.model';
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../dao/firebase.dao';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { dateFromTimestamp } from '../utils/date-from-timestamp';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,14 @@ export class NewsletterSubscriptionService {
   }
 
   streamAll(): Observable<NewsletterSubscriptionModel[]>{
-    return this.dao.streamAll(this.table);
+    return this.dao.streamAll(this.table).pipe(
+      map(events => {
+        events.forEach(event => {
+          event.date = dateFromTimestamp(event.date as Timestamp);
+        });
+        return events;
+      })
+    );
   }
 
   getAllByValue(field: string, value: any): Promise<NewsletterSubscriptionModel[]>{
