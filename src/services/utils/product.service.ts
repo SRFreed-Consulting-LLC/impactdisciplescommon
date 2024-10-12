@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { FirebaseDAO, QueryParam } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { CouponModel } from 'impactdisciplescommon/src/models/utils/coupon.model';
 import { ProductModel } from 'impactdisciplescommon/src/models/utils/product.model';
 import { from, Observable, Timestamp } from 'rxjs';
@@ -26,6 +26,10 @@ export class ProductService {
 
   streamAllByValue(field: string, value: any): Observable<ProductModel[]>{
     return this.dao.streamByValue(this.table, value, field);
+  }
+
+  streamAllByValues(queries: QueryParam[]): Observable<ProductModel[]>{
+    return this.dao.queryAllStreamByMultiValue(this.table, queries);
   }
 
   getById(id: String): Promise<ProductModel>{
