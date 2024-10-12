@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
-import { TaxRate } from 'impactdisciplescommon/src/models/utils/tax-rate.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FileImportService {
+export class FileImportService<T> {
     constructor() {}
 
     ngOnInit(): void {}
 
-    importRatesFiles(files: File[]): Promise<TaxRate[]>{
-      let promises: Promise<TaxRate[]>[] = []
+    importFiles(files: File[]): Promise<T[]>{
+      let promises: Promise<T[]>[] = []
 
       for(const file of files){
-        promises.push(this.convertFileToPaidArray(file).then(t => Promise.resolve(t)))
+        promises.push(this.convertFileToArray(file).then(t => Promise.resolve(t)))
       }
 
       return Promise.all(promises).then(rates => {
@@ -21,44 +20,44 @@ export class FileImportService {
       })
     }
 
-    convertFileToPaidArray(file: File): Promise<TaxRate[]>{
+    private convertFileToArray(file: File): Promise<T[]>{
       return new Promise(resolve => {
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
           let text = reader.result;
-          let rates = this.createRatesArray(text);
+          let rates = this.createObjectArray(text);
           resolve(rates);
         };
       });
     }
 
-    createRatesArray(csvText): TaxRate[]{
+    private createObjectArray(csvText): T[]{
       let lines: string[] = csvText.split("\n");
       let headers: string[] = lines[0].split(",");
 
-      let rates: TaxRate[] = [];
+      let items: T[] = [];
 
       for (var i = 1; i < lines.length-1; i++) {
         try{
-          var obj = {... new TaxRate()};
+          var obj = {... {} as T};
           let currentline: string[] = lines[i].split(",");
 
           for (var j = 0; j < headers.length; j++) {
-              obj[this.lowercaseFirstLetter(headers[j])] = currentline[j].trim();
+              obj[this.lowercaseFirstLetter(headers[j].trim())] = currentline[j].trim();
           }
 
-          rates.push(obj);
+          items.push(obj);
         } catch (err){
           console.error(err)
         }
       }
 
-      return rates;
+      return items;
     }
 
-    lowercaseFirstLetter(str) {
-      return str.charAt(0).toLowerCase() + str.slice(1);
+    private lowercaseFirstLetter(str: string) {
+      return str.charAt(0).toLowerCase().trim() + str.slice(1);
     }
   }
 
