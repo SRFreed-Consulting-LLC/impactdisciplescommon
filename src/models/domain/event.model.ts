@@ -22,4 +22,5 @@ export class EventModel extends BaseModel {
   emailTemplate?: string;
   videoId?: string;
   faqList: FAQModel[] = [];
+  checkIn?: Timestamp;
 }
