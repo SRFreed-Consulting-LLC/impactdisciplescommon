@@ -12,12 +12,14 @@ export interface CartItem {
   orderQuantity?: number;
   discountPrice?: number;
   isEvent?: boolean;
+  isEBook: boolean;
   img?: any;
   attendees?: Attendee[];
   dateProcessed?: Timestamp;
   processedStatus?: string;
   weight?: number;
   uom?: UNIT_OF_MEASURE;
+  eBookUrl?: any;
 }
 
 export interface Attendee {

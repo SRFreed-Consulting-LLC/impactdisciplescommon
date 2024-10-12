@@ -6,7 +6,7 @@ export class ProductModel extends BaseModel {
   isActive: boolean = false;
   imageUrl: any;
   title: string;
-  cost: number | null;
+  cost: number = 0;
   description: string;
   series: string;
   tags?: TagModel[];
