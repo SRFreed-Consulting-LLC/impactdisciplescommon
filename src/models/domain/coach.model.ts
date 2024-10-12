@@ -8,6 +8,7 @@ export class CoachModel extends Person {
   photoUrl: any;
   bio: string
   organization: OrganizationModel | any;
+  url: string;
 
   constructor(){
     super();
