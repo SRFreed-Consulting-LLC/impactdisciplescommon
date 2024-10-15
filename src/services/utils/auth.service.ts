@@ -278,6 +278,24 @@ export class AuthService {
     return of(user);
   }
 
+  getUserAsPromise(): Promise<AppUser | CustomerModel> {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+
+    let user: AppUser | CustomerModel = null;
+
+    try {
+      if (cookieValue) {
+        user = JSON.parse(cookieValue);
+      } else {
+        console.log('cookie not found...expired');
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+
+    return Promise.resolve(user);
+  }
+
   createAccount(email: string, password: string): Observable<any> {
     try {
       return from(this.dao.register(email.toLowerCase(), password)).pipe(
