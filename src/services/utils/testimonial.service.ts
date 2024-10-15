@@ -52,7 +52,7 @@ export class TestimonialService {
         });
         return testimonials;
       })
-    );;
+    );
   }
 
   getById(id: String): Promise<TestimonialModel>{

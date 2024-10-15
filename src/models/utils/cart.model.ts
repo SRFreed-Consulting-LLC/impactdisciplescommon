@@ -12,7 +12,7 @@ export interface CartItem {
   orderQuantity?: number;
   discountPrice?: number;
   isEvent?: boolean;
-  isEBook: boolean;
+  isEBook?: boolean;
   img?: any;
   attendees?: Attendee[];
   dateProcessed?: Timestamp;
@@ -49,6 +49,8 @@ export class CheckoutForm extends BaseModel {
   dateProcessed?: Timestamp;
   processedStatus?: string;
   shippingRate?: number = 0;
+  shippingRateId?: any;
+  shippingLabel?: any;
   estimatedTaxes?: number = 0;
   taxRate?: number = 0;
   refundAmount?: number = 0;
