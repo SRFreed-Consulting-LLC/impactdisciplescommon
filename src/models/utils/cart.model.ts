@@ -12,7 +12,7 @@ export interface CartItem {
   orderQuantity?: number;
   discountPrice?: number;
   isEvent?: boolean;
-  isEBook: boolean;
+  isEBook?: boolean;
   img?: any;
   attendees?: Attendee[];
   dateProcessed?: Timestamp;
