@@ -50,6 +50,7 @@ export class CheckoutForm extends BaseModel {
   processedStatus?: string;
   shippingRate?: number = 0;
   shippingRateId?: any;
+  shippingLabel?: any;
   estimatedTaxes?: number = 0;
   taxRate?: number = 0;
   refundAmount?: number = 0;
