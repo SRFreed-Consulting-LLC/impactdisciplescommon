@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/utils/auth.service';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
 

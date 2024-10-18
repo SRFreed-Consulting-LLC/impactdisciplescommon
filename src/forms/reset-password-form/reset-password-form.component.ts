@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import notify from 'devextreme/ui/notify';
-import { AuthService } from '../../services/utils/auth.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
+import {  Subject, takeUntil } from 'rxjs';
 
 const notificationText = 'We\'ve sent a link to reset your password. Check your inbox.';
 

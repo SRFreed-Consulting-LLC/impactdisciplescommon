@@ -1,10 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/utils/auth.service';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
-import { CustomerService } from 'impactdisciplescommon/src/services/admin/customer.service';
+import { CustomerService } from 'impactdisciplescommon/src/services/data/customer.service';
 
 @Component({
   selector: 'app-create-auth-form',

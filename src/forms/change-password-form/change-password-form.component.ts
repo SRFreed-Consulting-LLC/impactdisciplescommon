@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
 import notify from 'devextreme/ui/notify';
-import { AuthService } from '../../services/utils/auth.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
