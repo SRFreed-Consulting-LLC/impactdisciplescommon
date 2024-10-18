@@ -4,13 +4,14 @@ import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { PodCastModel } from 'impactdisciplescommon/src/models/domain/pod-cast-model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PodCastService extends BaseService<PodCastModel>{
-  API_KEY = 'AIzaSyBc3tqzBtHxYawF4EvRa-QyKuGxA3DwimM';
-  PLAY_LIST_ID = "UUts-9KXpzNT4oBjyQd4lIXQ";
+  API_KEY
+  PLAY_LIST_ID;
 
   constructor(public override dao: FirebaseDAO<PodCastModel> ) {
     super(dao)
@@ -28,6 +29,17 @@ export class PodCastService extends BaseService<PodCastModel>{
 
   async getVideoInfo(){
     this.videos = signal<any[]>([]);
+
+    const keysResponse = await fetch(environment.youtubeKeyUrl);
+
+    if (!keysResponse.ok) {
+      throw new Error('Failed to fetch client secret');
+    }
+
+    let keysResult = await keysResponse.json();
+
+    this.API_KEY = keysResult.api_key;
+    this.PLAY_LIST_ID = keysResult.playlist_key
 
     let pageToken: string =  await this.callYoutube(this.PLAY_LIST_ID);
 
