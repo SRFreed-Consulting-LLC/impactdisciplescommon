@@ -19,15 +19,14 @@ import {
 } from 'firebase/auth';
 import { BehaviorSubject, Observable, fromEventPattern } from 'rxjs';
 
-import { UserPermissionService } from '../services/admin/user-permissions.service';
+import { UserPermissionService } from '../services/data/user-permissions.service';
 import { Firestore } from '@angular/fire/firestore';
 import { map, mergeMap, shareReplay } from 'rxjs/operators';
 import { UserPermission } from '../models/admin/user-permission.model';
 import { AppUser } from '../models/admin/appuser.model';
-import { AppUserService } from '../services/admin/user.service';
+import { AppUserService } from '../services/data/user.service';
 import { CookieService } from 'ngx-cookie-service';
 import { QueryParam, WhereFilterOperandKeys } from './firebase.dao';
-
 
 const AUTH_COOKIE_NAME = 'crm_auth';
 const USER_COOKIE_NAME = 'crm_user';
