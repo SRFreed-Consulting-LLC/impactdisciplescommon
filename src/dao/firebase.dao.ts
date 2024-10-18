@@ -176,6 +176,24 @@ export class FirebaseDAO<T extends BaseModel> {
       })
     );
   }
+
+  public async createInSubcollection(value: T, table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T> {
+    const ref = collection(this.fs, table, record_id, subcollection)
+
+    const snap = await addDoc(ref, value);
+
+    return this.getById(table, snap.id, fromFirestore);
+  }
+
+  public async getAllFromSubCollection(table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T[]> {
+    const ref = collection(this.fs, table, record_id, subcollection)
+
+    const snap = await getDocs(ref);
+
+    const docsData = snap.docs.map((item) => (item.exists() ? item.data() as T : null));
+
+    return docsData;
+  }
 }
 
 
