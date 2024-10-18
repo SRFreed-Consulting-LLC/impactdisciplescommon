@@ -13,7 +13,7 @@ export class BaseService<T extends BaseModel> {
   constructor(public dao: FirebaseDAO<T>) {}
 
   getAll(): Promise<T[]>{
-    return this.dao.getAll(this.table, this.fromFirestore)
+    return this.dao.getAll(this.table, this.fromFirestore);
   }
 
   getAllByValue(field: string, value: any): Promise<T[]>{
@@ -24,7 +24,7 @@ export class BaseService<T extends BaseModel> {
     return this.dao.queryByValue(this.table, field, opStr, value, this.fromFirestore);
   }
 
-  queryAllByMultiValue(table: string, queries: QueryParam[]): Promise<T[]>{
+  queryAllByMultiValue(queries: QueryParam[]): Promise<T[]>{
     return this.dao.queryAllByMultiValue(this.table, queries, this.fromFirestore)
   }
 
@@ -37,15 +37,15 @@ export class BaseService<T extends BaseModel> {
   }
 
   streamAllByValue(field: string, value: any): Observable<T[]>{
-    return this.dao.streamByValue(this.table, value, field, this.fromFirestore)
+    return this.dao.streamByValue(this.table, field, value, this.fromFirestore)
   }
 
   streamById(id: String): Observable<T>{
     return from(this.dao.getById(id, this.table, this.fromFirestore));
   }
 
-  queryStreamByValue(value: any, opStr: WhereFilterOperandKeys, field: string): Observable<T[]>{
-    return this.dao.queryStreamByValue(this.table, value, opStr, field, this.fromFirestore);
+  queryStreamByValue(field: any, opStr: WhereFilterOperandKeys, value: string): Observable<T[]>{
+    return this.dao.queryStreamByValue(this.table, field, opStr, value, this.fromFirestore);
   }
 
   queryAllStreamByMultiValue(queries: QueryParam[]): Observable<T[]>{

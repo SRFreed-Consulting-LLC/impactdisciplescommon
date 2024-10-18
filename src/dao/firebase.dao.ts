@@ -131,21 +131,7 @@ export class FirebaseDAO<T extends BaseModel> {
     );
   }
 
-  streamById(table: string, id: any, field?: string, fromFirestore?): Observable<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field? field : "id", "==", id));
-    return collectionData(q, {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          let val: T = d as T;
-          retval.push(fromFirestore? fromFirestore(val) :val);
-        })
-        return retval;
-      })
-    );
-  }
-
-  streamByValue(table: string, value: any, field: string, fromFirestore?): Observable<T[]>{
+  streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
     const q = query(collection(this.fs, '/' + table), where(field, "==", value));
     return collectionData(q, {idField: 'id'}).pipe(
       map(dd => {
@@ -159,7 +145,7 @@ export class FirebaseDAO<T extends BaseModel> {
     );
   }
 
-  queryStreamByValue(table: string, value: any, opStr: WhereFilterOperandKeys, field: string, fromFirestore?): Observable<T[]>{
+  queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
     const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
     return collectionData(q, {idField: 'id'}).pipe(
       map(dd => {
@@ -189,24 +175,6 @@ export class FirebaseDAO<T extends BaseModel> {
         return retval;
       })
     );
-  }
-
-  public async createInSubcollection(value: T, table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T> {
-    const ref = collection(this.fs, table, record_id, subcollection)
-
-    const snap = await addDoc(ref, value);
-
-    return this.getById(table, snap.id);
-  }
-
-  public async getAllFromSubCollection(table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T[]> {
-    const ref = collection(this.fs, table, record_id, subcollection)
-
-    const snap = await getDocs(ref);
-
-    const docsData = snap.docs.map((item) => (item.exists() ? item.data() as T : null));
-
-    return docsData;
   }
 }
 
