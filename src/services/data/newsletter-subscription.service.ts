@@ -20,4 +20,13 @@ export class NewsletterSubscriptionService extends BaseService<NewsletterSubscri
 
     return data;
   };
+
+  createNewsLetterSubscription(firstName: string, lastName: string, email: string){
+    let subscriber: NewsletterSubscriptionModel = {...new NewsletterSubscriptionModel()};
+    subscriber.firstName = firstName;
+    subscriber.lastName = lastName;
+    subscriber.email = email;
+    subscriber.date = Timestamp.now();
+    return this.add(subscriber);
+  }
 }

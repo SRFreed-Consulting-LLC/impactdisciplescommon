@@ -20,4 +20,13 @@ export class PrayerTeamSubscriptionService extends BaseService<PrayerTeamSubscri
 
     return data;
   };
+
+  createPrayerTeamSubscription(firstName: string, lastName: string, email: string){
+    let subscriber: PrayerTeamSubscriptionModel = {...new PrayerTeamSubscriptionModel()};
+    subscriber.firstName = firstName;
+    subscriber.lastName = lastName;
+    subscriber.email = email;
+    subscriber.date = Timestamp.now();
+    return this.add(subscriber);
+  }
 }
