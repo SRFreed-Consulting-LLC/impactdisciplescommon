@@ -3,7 +3,7 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DocumentData, QueryConstraint } from 'firebase/firestore';
+import { DocumentData, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 
 @Injectable({
@@ -15,19 +15,19 @@ export class FirebaseDAO<T extends BaseModel> {
 
   public getAll(table: string, fromFirestore?): Promise<T[]>{
     return getDocs(collection(this.fs, '/' + table)).then(docs => {
-      return this.getDocList(docs.docs, fromFirestore);
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
   public getAllByValue(table: string, field: string, value: any, fromFirestore?): Promise<T[]>{
     return getDocs(query(collection(this.fs, '/' + table), where(field, "==", value))).then(docs => {
-      return this.getDocList(docs.docs, fromFirestore);
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
   public queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Promise<T[]>{
     return getDocs(query(collection(this.fs, '/' + table), where(field, opStr, value))).then(docs => {
-      return this.getDocList(docs.docs, fromFirestore);
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
@@ -37,24 +37,31 @@ export class FirebaseDAO<T extends BaseModel> {
     );
 
     return getDocs(query(collection(this.fs, '/' + table), ...queryConstraints)).then(docs => {
-      return this.getDocList(docs.docs, fromFirestore);
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  public getById(id: String, table: string, fromFirestore?): Promise<T>{
-    return getDoc(doc(this.fs, '/' + table + '/' + id)).then(doc => {
-      return this.getDoc(doc, fromFirestore);
+  public getById(id: string, table: string, fromFirestore?): Promise<T>{
+    return getDoc(doc(this.fs, '/' + table + '/' + id)).then(async doc => {
+      let retval: T = doc.data() as T;
+      return fromFirestore? fromFirestore(retval) : retval;
     });
   }
 
   public add(value: T, table: string, fromFirestore?): Promise<T>{
-    return addDoc(collection(this.fs, '/' + table), value).then(doc => {
-      return this.getById(doc.id, table, fromFirestore);
+    return addDoc(collection(this.fs, '/' + table), value).then(async doc => {
+      let retval = await this.getById(doc.id, table, fromFirestore);
+      retval.id = doc.id;
+      return retval;
     });
   }
 
   public async update(id: string, value: T, table: string, fromFirestore?): Promise<T>{
-    await setDoc(doc(this.fs, '/' + table + '/' + id), value);
+    await setDoc(doc(this.fs, '/' + table + '/' + id), value).then(async () => {
+      let retval = await this.getById(id, table, fromFirestore);
+      retval.id = id;
+      return retval;
+    });
 
     return this.getById(id, table, fromFirestore);
   }
@@ -66,7 +73,7 @@ export class FirebaseDAO<T extends BaseModel> {
   public streamAll(table: string, fromFirestore?): Observable<T[]>{
     return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
       map(docs => {
-        return this.getDocList(docs, fromFirestore);
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
@@ -74,7 +81,7 @@ export class FirebaseDAO<T extends BaseModel> {
   public streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
     return collectionData(query(collection(this.fs, '/' + table), where(field, "==", value)), {idField: 'id'}).pipe(
       map(docs => {
-        return this.getDocList(docs, fromFirestore);
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
@@ -82,7 +89,7 @@ export class FirebaseDAO<T extends BaseModel> {
   public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
     return collectionData(query(collection(this.fs, '/' + table), where(field, opStr, value)), {idField: 'id'}).pipe(
       map(docs => {
-        return this.getDocList(docs, fromFirestore);
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
@@ -94,7 +101,7 @@ export class FirebaseDAO<T extends BaseModel> {
 
     return collectionData(query(collection(this.fs, '/' + table), ...queryConstraints), {idField: 'id'}).pipe(
       map(docs => {
-        return this.getDocList(docs, fromFirestore);
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
@@ -113,11 +120,24 @@ export class FirebaseDAO<T extends BaseModel> {
     return docsData;
   }
 
-  private getDocList(docs: (DocumentData | (DocumentData & {id: string}))[], fromFirestore){
+  private getDocListFromStream(docs: (DocumentData | (DocumentData & {id: string}))[], fromFirestore){
     let retval: T[] = [];
 
     docs.forEach(doc => {
       let val: T = doc as T;
+      val.id = doc.id;
+      retval.push(fromFirestore? fromFirestore(val) :val);
+    })
+
+    return retval;
+  }
+
+  private getDocListFromPromise(docs: QuerySnapshot<DocumentData, DocumentData>, fromFirestore){
+    let retval: T[] = [];
+
+    docs.forEach(doc => {
+      let val: T = doc.data() as T;
+      val.id = doc.id;
       retval.push(fromFirestore? fromFirestore(val) :val);
     })
 
@@ -126,6 +146,7 @@ export class FirebaseDAO<T extends BaseModel> {
 
   private getDoc(doc: (DocumentData | (DocumentData & {id: string})), fromFirestore){
     let val: T = doc as T;
+    val.id = doc.id;
     return fromFirestore? fromFirestore(val) : val;
   }
 }
