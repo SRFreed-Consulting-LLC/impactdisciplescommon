@@ -1,20 +1,7 @@
 import { Injectable } from '@angular/core';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
 import UploadInfo from 'devextreme/file_management/upload_info';
-import {
-  deleteObject,
-  FirebaseStorage,
-  FullMetadata,
-  getDownloadURL,
-  getMetadata,
-  getStorage,
-  listAll,
-  ListResult,
-  ref,
-  StorageReference,
-  uploadBytes,
-  uploadString
-} from 'firebase/storage';
+import { deleteObject, FirebaseStorage, FullMetadata, getDownloadURL, getMetadata, getStorage, listAll, ListResult, ref, StorageReference, uploadBytes, uploadString } from 'firebase/storage';
 import { Firestore } from 'firebase/firestore';
 
 @Injectable({

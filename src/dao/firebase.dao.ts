@@ -118,7 +118,6 @@ export class FirebaseDAO<T extends BaseModel> {
 
     docs.forEach(doc => {
       let val: T = doc as T;
-      val.id = doc.id;
       retval.push(fromFirestore? fromFirestore(val) :val);
     })
 
@@ -127,8 +126,7 @@ export class FirebaseDAO<T extends BaseModel> {
 
   private getDoc(doc: (DocumentData | (DocumentData & {id: string})), fromFirestore){
     let val: T = doc as T;
-    val.id = doc.id;
-    return fromFirestore? fromFirestore(val) :val;
+    return fromFirestore? fromFirestore(val) : val;
   }
 }
 

@@ -10,17 +10,17 @@
   <dx-file-manager #fileManager
     id="fileManager"
     [fileSystemProvider]="fileSystemProvider"
-    [selectionMode]="selectionMode"
+    [selectionMode]="'single'"
     [itemView]="{showFolders: false}"
     (onSelectionChanged)="onItemClick($event)">
       <dxo-permissions
-        [create]="true"
         [copy]="true"
-        [move]="true"
+        [create]="true"
         [delete]="true"
+        [download]="true"
+        [move]="true"
         [rename]="true"
-        [upload]="true"
-        [download]="true">
+        [upload]="true">
       </dxo-permissions>
   </dx-file-manager>
 
