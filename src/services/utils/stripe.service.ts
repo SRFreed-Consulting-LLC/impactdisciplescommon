@@ -10,14 +10,14 @@ export class StripeService {
   private stripe: Promise<Stripe>;
 
   constructor() {
-    this.stripe = loadStripe(environment.stripeTestKey);
+    this.stripe = loadStripe(environment.stripeKey);
   }
 
   async getStripe(): Promise<Stripe>{
     if(this.stripe){
       return this.stripe;
     } else {
-      return loadStripe(environment.stripeTestKey);
+      return loadStripe(environment.stripeKey);
     }
   }
 }
