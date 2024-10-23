@@ -3,7 +3,7 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { QueryConstraint, updateDoc } from 'firebase/firestore';
+import { DocumentData, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 
 @Injectable({
@@ -13,188 +13,146 @@ export class FirebaseDAO<T extends BaseModel> {
 
   constructor(public fs: Firestore ) {}
 
-  getAll(table: string, fromFirestore?): Promise<T[]>{
+  public getAll(table: string, fromFirestore?): Promise<T[]>{
     return getDocs(collection(this.fs, '/' + table)).then(docs => {
-      let retval: T[] = [];
-
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(fromFirestore? fromFirestore(val) : val);
-      })
-
-      return retval;
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  getAllByValue(table: string, field: string, value: any, fromFirestore?): Promise<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field, "==", value));
-
-    return getDocs(q).then(docs => {
-      let retval: T[] = [];
-
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(fromFirestore? fromFirestore(val) : val);
-      })
-
-      return retval;
+  public getAllByValue(table: string, field: string, value: any, fromFirestore?): Promise<T[]>{
+    return getDocs(query(collection(this.fs, '/' + table), where(field, "==", value))).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Promise<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
-
-    return getDocs(q).then(docs => {
-      let retval: T[] = [];
-
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(fromFirestore? fromFirestore(val) : val);
-      })
-
-      return retval;
+  public queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Promise<T[]>{
+    return getDocs(query(collection(this.fs, '/' + table), where(field, opStr, value))).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  queryAllByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Promise<T[]>{
+  public queryAllByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Promise<T[]>{
     const queryConstraints: QueryConstraint[] = queries.map((query) =>
       where(query.field, query.operation, query.value),
     );
 
-    const q = query(collection(this.fs, '/' + table), ...queryConstraints);
+    return getDocs(query(collection(this.fs, '/' + table), ...queryConstraints)).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
+    });
+  }
 
-    return getDocs(q).then(docs => {
-      let retval: T[] = [];
+  public getById(id: string, table: string, fromFirestore?): Promise<T>{
+    return getDoc(doc(this.fs, '/' + table + '/' + id)).then(async doc => {
+      let retval: T = doc.data() as T;
+      retval.id = doc.id;
+      return fromFirestore? fromFirestore(retval) : retval;
+    });
+  }
 
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(fromFirestore? fromFirestore(val) : val);
-      })
-
+  public add(value: T, table: string, fromFirestore?): Promise<T>{
+    return addDoc(collection(this.fs, '/' + table), value).then(async doc => {
+      let retval = await this.getById(doc.id, table, fromFirestore);
+      retval.id = doc.id;
       return retval;
     });
   }
 
-  getById(id: String, table: string, fromFirestore?): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-    return getDoc(docRef).then(doc => {
-      let val: T = doc.data() as T;
-      val.id = doc.id;
-      return fromFirestore? fromFirestore(val) : val;
+  public async update(id: string, value: T, table: string, fromFirestore?): Promise<T>{
+    await setDoc(doc(this.fs, '/' + table + '/' + id), value).then(async () => {
+      let retval = await this.getById(id, table, fromFirestore);
+      retval.id = id;
+      return retval;
     });
-  }
-
-  add(value: T, table: string, fromFirestore?): Promise<T>{
-    return addDoc(collection(this.fs, '/' + table), value).then(doc => {
-      return this.getById(doc.id, table, fromFirestore);
-    });
-  }
-
-  async update(id: string, value: T, table: string, fromFirestore?): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-
-    await setDoc(docRef, value);
 
     return this.getById(id, table, fromFirestore);
   }
 
-  async updateField(id: string, table: string, field: string, value: string, fromFirestore?): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-
-    let data: any = {}
-    data[field] = value;
-
-    await updateDoc(docRef, data);
-
-    return this.getById(id, table, fromFirestore);
+  public delete(id: string, table: string){
+    return deleteDoc(doc(this.fs, '/' + table + '/' + id));
   }
 
-  delete(id: string, table: string){
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-    return deleteDoc(docRef);
-  }
-
-  streamAll(table: string, fromFirestore?): Observable<T[]>{
+  public streamAll(table: string, fromFirestore?): Observable<T[]>{
     return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          let val: T = d as T;
-          retval.push(fromFirestore? fromFirestore(val) :val);
-        })
-        return retval;
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
 
-  streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field, "==", value));
-    return collectionData(q, {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          let val: T = d as T;
-          retval.push(fromFirestore? fromFirestore(val) :val);
-        })
-        return retval;
+  public streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
+    return collectionData(query(collection(this.fs, '/' + table), where(field, "==", value)), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
 
-  queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field, opStr, value));
-    return collectionData(q, {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          let val: T = d as T;
-          retval.push(fromFirestore? fromFirestore(val) :val);
-        })
-        return retval;
+  public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
+    return collectionData(query(collection(this.fs, '/' + table), where(field, opStr, value)), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
 
-  queryAllStreamByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Observable<T[]>{
+  public queryAllStreamByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Observable<T[]>{
     const queryConstraints: QueryConstraint[] = queries.map((query) =>
       where(query.field, query.operation, query.value),
     );
 
-    const q = query(collection(this.fs, '/' + table), ...queryConstraints);
-    return collectionData(q, {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          let val: T = d as T;
-          retval.push(fromFirestore? fromFirestore(val) :val);
-        })
-        return retval;
+    return collectionData(query(collection(this.fs, '/' + table), ...queryConstraints), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
       })
     );
   }
 
   public async createInSubcollection(value: T, table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T> {
-    const ref = collection(this.fs, table, record_id, subcollection)
-
-    const snap = await addDoc(ref, value);
+    const snap = await addDoc(collection(this.fs, table, record_id, subcollection), value);
 
     return this.getById(table, snap.id, fromFirestore);
   }
 
   public async getAllFromSubCollection(table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T[]> {
-    const ref = collection(this.fs, table, record_id, subcollection)
-
-    const snap = await getDocs(ref);
+    const snap = await getDocs(collection(this.fs, table, record_id, subcollection));
 
     const docsData = snap.docs.map((item) => (item.exists() ? item.data() as T : null));
 
     return docsData;
   }
+
+  private getDocListFromStream(docs: (DocumentData | (DocumentData & {id: string}))[], fromFirestore){
+    let retval: T[] = [];
+
+    docs.forEach(doc => {
+      let val: T = doc as T;
+      val.id = doc.id;
+      retval.push(fromFirestore? fromFirestore(val) :val);
+    })
+
+    return retval;
+  }
+
+  private getDocListFromPromise(docs: QuerySnapshot<DocumentData, DocumentData>, fromFirestore){
+    let retval: T[] = [];
+
+    docs.forEach(doc => {
+      let val: T = doc.data() as T;
+      val.id = doc.id;
+      retval.push(fromFirestore? fromFirestore(val) :val);
+    })
+
+    return retval;
+  }
+
+  private getDoc(doc: (DocumentData | (DocumentData & {id: string})), fromFirestore){
+    let val: T = doc as T;
+    val.id = doc.id;
+    return fromFirestore? fromFirestore(val) : val;
+  }
 }
+
+
 
 
 export enum WhereFilterOperandKeys {

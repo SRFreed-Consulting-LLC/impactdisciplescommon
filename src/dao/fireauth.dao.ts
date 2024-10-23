@@ -1,24 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import {
-  Auth,
-  browserLocalPersistence,
-  browserSessionPersistence,
-  createUserWithEmailAndPassword,
-  getAuth,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  setPersistence,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updatePassword,
-  User,
-  UserCredential
-} from 'firebase/auth';
+import { Auth, browserLocalPersistence, browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail,
+  setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut, updatePassword, User, UserCredential } from 'firebase/auth';
 import { BehaviorSubject, Observable, fromEventPattern } from 'rxjs';
-
 import { UserPermissionService } from '../services/data/user-permissions.service';
 import { Firestore } from '@angular/fire/firestore';
 import { map, mergeMap, shareReplay } from 'rxjs/operators';

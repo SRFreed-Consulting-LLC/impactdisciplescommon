@@ -8,18 +8,54 @@ import { CheckoutForm } from 'impactdisciplescommon/src/models/utils/cart.model'
 import { WebConfigModel } from 'impactdisciplescommon/src/models/utils/web-config.model';
 import { environment } from 'src/environments/environment';
 import { BaseService } from './base.service';
+import { WebConfigService } from './web-config.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShippingService extends BaseService<ShippingModel>{
-  constructor(public override dao: FirebaseDAO<ShippingModel>) {
+  constructor(public override dao: FirebaseDAO<ShippingModel>, private webConfigService: WebConfigService) {
     super(dao)
     this.table="shipments"
   }
 
-  async calculateShipping(config: WebConfigModel, checkoutForm: CheckoutForm, weight:number){
+  async calculateShipping(checkoutForm: CheckoutForm): Promise<CheckoutForm>{
+    let totalWeight: number;
+
+    try{
+      totalWeight = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => item.weight? item.weight : 0).reduce((a,b) => a + b);
+    }
+    catch(err){
+      totalWeight = 0;
+    }
+
+    let request: ShippingRequest = await this.createRequest(checkoutForm, totalWeight);
+
+    if(totalWeight > 0){
+      return this.makeRequest(request).then(result => {
+        if (result) {
+          result.rateResponse.rates.sort((a, b) => a.shippingAmount.amount - b.shippingAmount.amount);
+
+          checkoutForm.shippingRateId = {... result.rateResponse.rates[0]};
+
+          checkoutForm.shippingRate = Number(Number(result.rateResponse.rates[0].shippingAmount.amount).toFixed(2));
+
+          checkoutForm.total += checkoutForm.shippingRate > 0 ? checkoutForm.shippingRate : 0;
+        }
+
+        return checkoutForm;
+      })
+    } else {
+      checkoutForm.shippingRate = 0;
+
+      return Promise.resolve(checkoutForm)
+    }
+  }
+
+  private async createRequest(checkoutForm: CheckoutForm, weight: number): Promise<ShippingRequest>{
+    const configs = await this.webConfigService.getAll();
+
     let toName: string = checkoutForm.firstName + ' ' + checkoutForm.lastName;
     let toAddress: Address = checkoutForm.shippingAddress;
     let toPhone: Phone = checkoutForm.phone;
@@ -34,11 +70,11 @@ export class ShippingService extends BaseService<ShippingModel>{
     shipping.shipTo.countryCode = toAddress.country;
 
     shipping.shipFrom.name = "Impact Disciples";
-    shipping.shipFrom.phone = config.phone;
-    shipping.shipFrom.addressLine1 = config.address.address1;
-    shipping.shipFrom.cityLocality = config.address.city;
-    shipping.shipFrom.stateProvince = config.address.state;
-    shipping.shipFrom.postalCode = config.address.zip;
+    shipping.shipFrom.phone = configs[0].phone;
+    shipping.shipFrom.addressLine1 = configs[0].address.address1;
+    shipping.shipFrom.cityLocality = configs[0].address.city;
+    shipping.shipFrom.stateProvince = configs[0].address.state;
+    shipping.shipFrom.postalCode = configs[0].address.zip;
     shipping.shipFrom.countryCode = "US";
 
     let pkg: Package = {... new Package()};
@@ -53,6 +89,10 @@ export class ShippingService extends BaseService<ShippingModel>{
     request.rateOptions.carrierIds.push("se-914430");
     request.shipment = shipping;
 
+    return request;
+  }
+
+  private async makeRequest(request: ShippingRequest){
     const response = await fetch(environment.shippingUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

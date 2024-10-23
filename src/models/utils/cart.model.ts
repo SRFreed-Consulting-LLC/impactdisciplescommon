@@ -55,4 +55,5 @@ export class CheckoutForm extends BaseModel {
   taxRate?: number = 0;
   refundAmount?: number = 0;
   refundId?: string;
+  processed?: boolean = false;
 }

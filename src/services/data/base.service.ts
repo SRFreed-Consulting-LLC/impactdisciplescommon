@@ -28,7 +28,7 @@ export class BaseService<T extends BaseModel> {
     return this.dao.queryAllByMultiValue(this.table, queries, this.fromFirestore)
   }
 
-  getById(id: String): Promise<T>{
+  getById(id: string): Promise<T>{
     return this.dao.getById(id, this.table, this.fromFirestore);
   }
 
@@ -40,7 +40,7 @@ export class BaseService<T extends BaseModel> {
     return this.dao.streamByValue(this.table, field, value, this.fromFirestore)
   }
 
-  streamById(id: String): Observable<T>{
+  streamById(id: string): Observable<T>{
     return from(this.dao.getById(id, this.table, this.fromFirestore));
   }
 
@@ -62,5 +62,13 @@ export class BaseService<T extends BaseModel> {
 
   delete(id: string){
     return this.dao.delete(id, this.table);
+  }
+
+  createInSubcollection(value: T, record_id: string, subcollection: string): Promise<T>{
+    return this.dao.createInSubcollection(value, this.table, record_id, subcollection, this.fromFirestore);
+  }
+
+  getAllFromSubCollection(record_id: string, subcollection: string): Promise<T[]> {
+    return this.dao.getAllFromSubCollection(this.table, record_id, subcollection, this.fromFirestore);
   }
 }

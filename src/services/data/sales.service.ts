@@ -20,4 +20,20 @@ export class SalesService extends BaseService<CheckoutForm>{
 
     return data;
   };
+
+  async saveCheckoutForm(checkoutForm: CheckoutForm){
+    checkoutForm.processedStatus = "NEW";
+    checkoutForm.dateProcessed = Timestamp.now();
+
+    if(checkoutForm.isShippingSameAsBilling){
+      checkoutForm.billingAddress = checkoutForm.shippingAddress;
+    }
+
+    checkoutForm.cartItems.forEach(item => {
+      item.dateProcessed = Timestamp.now();
+      item.processedStatus = "NEW"
+    })
+
+    return await this.add(checkoutForm);
+  }
 }
