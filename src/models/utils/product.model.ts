@@ -8,9 +8,9 @@ export class ProductModel extends BaseModel {
   title: string;
   cost: number = 0;
   description: string;
-  series: string;
+  series?: string;
   tags?: TagModel[];
-  category?: string;
+  category: string;
   weight?: number;
   uom?: UNIT_OF_MEASURE;
   isEBook: boolean = false;
