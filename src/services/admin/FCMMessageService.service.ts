@@ -26,17 +26,21 @@ export class FcmMessageService {
   setupNotificationListener(){
     console.log("registering "  + environment.domain);
 
-    navigator.serviceWorker.register("firebase-messaging-sw.js", { type: 'module', scope: environment.domain}).then((serviceWorkerRegistration) => {
-      let val =  {
-        vapidKey: 'BA7LQNkyXTlmgpoC_YX2okUq2LkSXb_6HogSTje_vWteRH9LSVWbHnBwYx-WJ1PO6ryyg0xB_v3B2PGBFN0namY',
-        serviceWorkerRegistration: serviceWorkerRegistration,
-      };
+    //navigator.serviceWorker.register("firebase-messaging-sw.js", { type: 'module', scope: environment.domain}).then((serviceWorkerRegistration) => {
+      navigator.serviceWorker.getRegistration().then(registration =>{
+        let val =  {
+          vapidKey: 'BA7LQNkyXTlmgpoC_YX2okUq2LkSXb_6HogSTje_vWteRH9LSVWbHnBwYx-WJ1PO6ryyg0xB_v3B2PGBFN0namY',
+          serviceWorkerRegistration: registration,
+        };
 
-      getToken(this.messaging, val).then(async (x) => {
-        console.log('my fcm token', x);
-        localStorage.setItem('fcmtoken', x);
-      });
-    }).catch(err => console.error(err));
+        getToken(this.messaging, val).then(async (x) => {
+          console.log('my fcm token', x);
+          localStorage.setItem('fcmtoken', x);
+        });
+      })
+
+
+    //}).catch(err => console.error(err));
 
     onMessage(this.messaging, (msg) => {
       this.toastrService.show(msg.notification.title, msg.notification.body);
