@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/utils/auth.service';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
-import { map, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-capture-password-form',
@@ -10,10 +10,10 @@ import { map, Subject, takeUntil } from 'rxjs';
   styleUrls: ['./capture-password-form.component.scss']
 })
 export class CapturePasswordFormComponent implements OnDestroy {
-  @Input() loginEmail: string = '';
+  loginEmail: string = '';
   loginPassword: any = {};
   public isLoading: boolean = false;
-  
+
   private ngUnsubscribe = new Subject<void>();
 
   constructor(private authService: AuthService, public tostrService: ToastrService, private sessionService: SessionService) { }
@@ -22,6 +22,7 @@ export class CapturePasswordFormComponent implements OnDestroy {
     e.preventDefault();
     const { password } = this.loginPassword;
     this.isLoading = true;
+
     if(this.loginEmail === '') {
       this.loginEmail = this.sessionService.currentUser.email;
     }

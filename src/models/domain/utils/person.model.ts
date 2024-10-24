@@ -6,15 +6,11 @@ export class Person extends BaseModel {
     firstName: string;
     lastName: string;
 
-    address: Address;
+    shippingAddress: Address;
+    billingAddress: Address;
     phone: Phone;
 
-    constructor(firstName: string, lastName: string, address: Address, phone: Phone){
-        super();
-
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phone = phone;
+    constructor(){
+      super();
     }
 }

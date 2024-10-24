@@ -3,7 +3,7 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { onSnapshot, updateDoc } from 'firebase/firestore';
+import { DocumentData, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 
 @Injectable({
@@ -13,123 +13,147 @@ export class FirebaseDAO<T extends BaseModel> {
 
   constructor(public fs: Firestore ) {}
 
-  getAll(table: string): Promise<T[]>{
+  public getAll(table: string, fromFirestore?): Promise<T[]>{
     return getDocs(collection(this.fs, '/' + table)).then(docs => {
-      let retval: T[] = [];
+      return this.getDocListFromPromise(docs, fromFirestore);
+    });
+  }
 
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(val);
-      })
+  public getAllByValue(table: string, field: string, value: any, fromFirestore?): Promise<T[]>{
+    return getDocs(query(collection(this.fs, '/' + table), where(field, "==", value))).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
+    });
+  }
 
+  public queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Promise<T[]>{
+    return getDocs(query(collection(this.fs, '/' + table), where(field, opStr, value))).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
+    });
+  }
+
+  public queryAllByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Promise<T[]>{
+    const queryConstraints: QueryConstraint[] = queries.map((query) =>
+      where(query.field, query.operation, query.value),
+    );
+
+    return getDocs(query(collection(this.fs, '/' + table), ...queryConstraints)).then(docs => {
+      return this.getDocListFromPromise(docs, fromFirestore);
+    });
+  }
+
+  public getById(id: string, table: string, fromFirestore?): Promise<T>{
+    return getDoc(doc(this.fs, '/' + table + '/' + id)).then(async doc => {
+      let retval: T = doc.data() as T;
+      retval.id = doc.id;
+      return fromFirestore? fromFirestore(retval) : retval;
+    });
+  }
+
+  public add(value: T, table: string, fromFirestore?): Promise<T>{
+    return addDoc(collection(this.fs, '/' + table), value).then(async doc => {
+      let retval = await this.getById(doc.id, table, fromFirestore);
+      retval.id = doc.id;
       return retval;
     });
   }
 
-  getAllByValue(table: string, field: string, value: any): Promise<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field, "==", value));
-
-    return getDocs(q).then(docs => {
-      let retval: T[] = [];
-
-      docs.forEach(doc => {
-        let val: T = doc.data() as T;
-        val.id = doc.id;
-        retval.push(val);
-      })
-
+  public async update(id: string, value: T, table: string, fromFirestore?): Promise<T>{
+    await setDoc(doc(this.fs, '/' + table + '/' + id), value).then(async () => {
+      let retval = await this.getById(id, table, fromFirestore);
+      retval.id = id;
       return retval;
     });
+
+    return this.getById(id, table, fromFirestore);
   }
 
-  getById(id: String, table: string): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-    return getDoc(docRef).then(doc => {
+  public delete(id: string, table: string){
+    return deleteDoc(doc(this.fs, '/' + table + '/' + id));
+  }
+
+  public streamAll(table: string, fromFirestore?): Observable<T[]>{
+    return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
+      })
+    );
+  }
+
+  public streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
+    return collectionData(query(collection(this.fs, '/' + table), where(field, "==", value)), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
+      })
+    );
+  }
+
+  public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
+    return collectionData(query(collection(this.fs, '/' + table), where(field, opStr, value)), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
+      })
+    );
+  }
+
+  public queryAllStreamByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Observable<T[]>{
+    const queryConstraints: QueryConstraint[] = queries.map((query) =>
+      where(query.field, query.operation, query.value),
+    );
+
+    return collectionData(query(collection(this.fs, '/' + table), ...queryConstraints), {idField: 'id'}).pipe(
+      map(docs => {
+        return this.getDocListFromStream(docs, fromFirestore);
+      })
+    );
+  }
+
+  public async createInSubcollection(value: T, table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T> {
+    const snap = await addDoc(collection(this.fs, table, record_id, subcollection), value);
+
+    return this.getById(table, snap.id, fromFirestore);
+  }
+
+  public async getAllFromSubCollection(table: string, record_id: string, subcollection: string, fromFirestore?): Promise<T[]> {
+    const snap = await getDocs(collection(this.fs, table, record_id, subcollection));
+
+    const docsData = snap.docs.map((item) => (item.exists() ? item.data() as T : null));
+
+    return docsData;
+  }
+
+  private getDocListFromStream(docs: (DocumentData | (DocumentData & {id: string}))[], fromFirestore){
+    let retval: T[] = [];
+
+    docs.forEach(doc => {
+      let val: T = doc as T;
+      val.id = doc.id;
+      retval.push(fromFirestore? fromFirestore(val) :val);
+    })
+
+    return retval;
+  }
+
+  private getDocListFromPromise(docs: QuerySnapshot<DocumentData, DocumentData>, fromFirestore){
+    let retval: T[] = [];
+
+    docs.forEach(doc => {
       let val: T = doc.data() as T;
       val.id = doc.id;
-      return val;
-    });
+      retval.push(fromFirestore? fromFirestore(val) :val);
+    })
+
+    return retval;
   }
 
-  localeCompareOptions = {
-    numeric: true,
-    sensitivity: Intl.NumberFormat,
-    ignorePunctuation: true,
-  };
-
-  add(value: T, table: string): Promise<T>{
-    return addDoc(collection(this.fs, '/' + table), value).then(doc => {
-      return this.getById(doc.id, table);
-    });
-  }
-
-  async update(id: string, value: T, table: string): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-
-    await setDoc(docRef, value);
-
-    return this.getById(id, table);
-  }
-
-  async updateField(id: string, table: string, field: string, value: string): Promise<T>{
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-
-    let data: any = {}
-    data[field] = value;
-
-    await updateDoc(docRef, data);
-
-    return this.getById(id, table);
-  }
-
-  delete(id: string, table: string){
-    let docRef = doc(this.fs, '/' + table + '/' + id);
-    return deleteDoc(docRef);
-  }
-
-  streamAll(table: string): Observable<T[]>{
-    return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          retval.push(d as T);
-        })
-        return retval;
-      })
-    );
-  }
-
-  streamById(table: string, id: any, field?: string): Observable<T[]>{
-    const q = query(collection(this.fs, '/' + table), where(field? field : "id", "==", id));
-    return collectionData(q, {idField: 'id'}).pipe(
-      map(dd => {
-        let retval: T[] = [];
-        dd.forEach(d => {
-          retval.push(d as T);
-        })
-        return retval;
-      })
-    );
-  }
-
-  getCollectionSnapshot(table: string){
-    const q = query(collection(this.fs, table));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-            console.log("New city: ", change.doc.data());
-        }
-        if (change.type === "modified") {
-            console.log("Modified city: ", change.doc.data());
-        }
-        if (change.type === "removed") {
-            console.log("Removed city: ", change.doc.data());
-        }
-      });
-    });
+  private getDoc(doc: (DocumentData | (DocumentData & {id: string})), fromFirestore){
+    let val: T = doc as T;
+    val.id = doc.id;
+    return fromFirestore? fromFirestore(val) : val;
   }
 }
+
+
+
 
 export enum WhereFilterOperandKeys {
   less = '<',

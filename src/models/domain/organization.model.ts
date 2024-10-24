@@ -9,11 +9,7 @@ export class OrganizationModel extends BaseModel {
     address: Address;
     phone: Phone;
 
-    constructor(name: string, contactName: string, address: Address, phone: Phone){
+    constructor(){
         super();
-        this.name = name;
-        this.contactName = contactName;
-        this.address = address;
-        this.phone = phone;
     }
 }

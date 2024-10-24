@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/utils/auth.service';
+import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-capture-username-form',
@@ -26,7 +26,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     this.authService.findUser(email).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
          if (!result) {
         this.isLoading = false;
-        this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact JBH Administrator for help.');
+        this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact Impact Disciples for help.');
       } else {
         this.sessionService.currentUser = result;
 

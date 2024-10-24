@@ -1,15 +1,20 @@
+import { CustomerService } from '../data/customer.service';
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { UserCredential } from 'firebase/auth';
 import { ToastrService } from 'ngx-toastr';
-import { AppUserService } from '../admin/user.service';
+import { AppUserService } from '../data/user.service';
 import { FireAuthDao } from '../../dao/fireauth.dao';
-import { LoggerService } from './logger.service';
-import { SessionService } from './session.service';
+import { LoggerService } from '../data/logger.service';
+import { SessionService } from '../utils/session.service';
 import { AppUser } from '../../models/admin/appuser.model';
 import { LogMessage } from '../../models/utils/log-message.model';
 import { CookieService } from 'ngx-cookie-service';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { UserAuthenticated } from '../actions/authentication.actions';
+import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
+import { environment } from 'src/environments/environment';
 
 const defaultPath = '/';
 
@@ -19,22 +24,63 @@ const COOKIE_NAME = "impact-disciples-admin"
   providedIn: 'root'
 })
 export class AuthService {
-  public user: AppUser;
+  public user: AppUser | CustomerModel;
 
   get loggedIn(): boolean {
-    return this.cookieService.check(COOKIE_NAME);
+    if(this.cookieService.check(COOKIE_NAME)){
+
+      this.getUser().pipe(take(1)).subscribe(user => {
+        if(user){
+          let expiration: number = user['cookie_expiration_time'];
+
+          if(expiration - Date.now() < (1000 * 60 * 60)){
+            user['cookie_expiration_time'] = expiration + (1000 * 60 * 60);
+
+            this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: user['cookie_expiration_time'] });
+
+            console.log('New Expiration:' + new Date(JSON.parse(this.cookieService.get(COOKIE_NAME))['cookie_expiration_time']));
+          }
+        }
+      });
+
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private _lastAuthenticatedPath: string = defaultPath;
+
   set lastAuthenticatedPath(value: string) {
     this._lastAuthenticatedPath = value;
   }
 
-  constructor(private router: Router, public dao: FireAuthDao, public userService: AppUserService, private cookieService: CookieService,
-    public loggerService: LoggerService, public tostrService: ToastrService, private sessionService: SessionService) { }
+  get lastAuthenticatedPath(): string {
+    return this._lastAuthenticatedPath;
+  }
 
-  findUser(email: string): Observable<AppUser> {
-    return from(this.userService.getAllByValue('email', email)).pipe(
+  constructor(
+    private router: Router,
+    private store: Store,
+    public dao: FireAuthDao,
+    public userService: AppUserService,
+    private cookieService: CookieService,
+    public loggerService: LoggerService,
+    public tostrService: ToastrService,
+    private sessionService: SessionService,
+    private customerService: CustomerService
+  ) { }
+
+  findUser(email: string): Observable<AppUser | CustomerModel> {
+    let user$: Promise<any>;
+
+    if(environment.application == 'admin'){
+      user$ = this.userService.getAllByValue('email', email);
+    } else {
+      user$ = this.customerService.getAllByValue('email', email);
+    }
+
+    return from(user$).pipe(
       switchMap(user => {
         if(user && user.length == 1){
           return of(user[0]);
@@ -64,15 +110,28 @@ export class AuthService {
       return from(this.dao.signIn(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
-            return from(this.userService.getAllByValue('email', email)).pipe(
+            let user$: Promise<any>;
+
+            if(environment.application == 'admin'){
+              user$ = this.userService.getAllByValue('email', email);
+            } else {
+              user$ = this.customerService.getAllByValue('email', email);
+            }
+
+            return from(user$).pipe(
               switchMap(user => {
                 if(user && user.length == 1) {
                   return from(result.user.getIdTokenResult()).pipe(
                     map(token => {
                       this.user = user[0];
-                      this.router.navigate([this._lastAuthenticatedPath]);
-                      this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), new Date(token.expirationTime));
+                      this.user['cookie_expiration_time'] = Date.parse(token.expirationTime);
+                      console.log('Expiration:' + new Date(this.user['cookie_expiration_time']));
 
+                      this.router.navigate([this._lastAuthenticatedPath]);
+
+                      this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), { expires: this.user['cookie_expiration_time'] });
+
+                      this.store.dispatch(new UserAuthenticated(this.user))
                       return {
                         isOk: true,
                         data: this.user,
@@ -181,19 +240,60 @@ export class AuthService {
     }
   }
 
-  getUser(): Observable<AppUser> {
+  setUser(user: AppUser | CustomerModel): Observable<AppUser | CustomerModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
-    let user: AppUser = null;
-  
+
     try {
       if (cookieValue) {
-        user = JSON.parse(cookieValue);
+        let currentUser = JSON.parse(cookieValue);
+
+        this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: currentUser['cookie_expiration_time'] });
+
+        this.user = user;
+      } else {
+        console.log('cookie not found...expired');
       }
     } catch (error) {
       console.error('Error parsing cookie JSON', error);
     }
-  
+
     return of(user);
+  }
+
+  getUser(): Observable<AppUser | CustomerModel> {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+
+    let user: AppUser | CustomerModel = null;
+
+    try {
+      if (cookieValue) {
+        user = JSON.parse(cookieValue);
+      } else {
+        console.log('cookie not found...expired');
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+
+    return of(user);
+  }
+
+  getUserAsPromise(): Promise<AppUser | CustomerModel> {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+
+    let user: AppUser | CustomerModel = null;
+
+    try {
+      if (cookieValue) {
+        user = JSON.parse(cookieValue);
+      } else {
+        console.log('cookie not found...expired');
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+
+    return Promise.resolve(user);
   }
 
   createAccount(email: string, password: string): Observable<any> {
@@ -201,14 +301,26 @@ export class AuthService {
       return from(this.dao.register(email.toLowerCase(), password)).pipe(
         switchMap((result: UserCredential) => {
           if(result.user){
-            return from(this.userService.getAllByValue('email', email)).pipe(
+            let user$: Promise<any>;
+
+            if(environment.application == 'admin'){
+              user$ = this.userService.getAllByValue('email', email);
+            } else {
+              user$ = this.customerService.getAllByValue('email', email);
+            }
+
+            return from(user$).pipe(
               switchMap(async appuser => {
                 if(appuser && appuser.length == 1){
-                  let u: AppUser = appuser[0];
+                  let u: AppUser | CustomerModel = appuser[0];
 
                   u.firebaseUID = result.user.uid;
 
-                  await this.userService.update(u.id, u);
+                  if(environment.application == 'admin'){
+                    await this.userService.update(u.id, u as AppUser)
+                  } else {
+                    await this.customerService.update(u.id, u as CustomerModel)
+                  }
 
                   return {
                     isOk: true,
@@ -258,7 +370,7 @@ export class AuthService {
   resetPassword(email: string): Observable<any> {
     try {
       // Send request
-
+      this.dao.forgotPassword(email);
       return of({
         isOk: true
       });
@@ -275,6 +387,8 @@ export class AuthService {
     this.sessionService.currentUser = null;
     this.user = null;
     this.cookieService.delete(COOKIE_NAME);
+
+    this.router.navigate(['capture-username-form']);
   }
 
   private logMessage(type: string, created_by: string, message: string, data?: any): Observable<any> {
@@ -330,6 +444,8 @@ export class AuthGuardService implements CanActivate {
     }
 
     if (!isLoggedIn && !isAuthForm) {
+
+      console.log('not logged in via Authguard')
       this.router.navigate(['/capture-username-form']);
     }
 

@@ -6,9 +6,5 @@ export class Phone {
     extension: string;
     type: PHONE_TYPES;
 
-    constructor(countryCode: string, number: string, type: PHONE_TYPES){
-        this.countryCode = countryCode;
-        this.number = number;
-        this.type = type;
-    }
+    constructor(){}
 }

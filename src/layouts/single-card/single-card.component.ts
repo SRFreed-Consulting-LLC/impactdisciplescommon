@@ -1,6 +1,4 @@
-import { Component, NgModule, Input} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DxScrollViewModule }  from 'devextreme-angular/ui/scroll-view';
+import { Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-single-card',

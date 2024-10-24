@@ -1,26 +1,17 @@
-import { Address } from "./utils/address.model";
 import { OrganizationModel } from "./organization.model";
 import { Person } from "./utils/person.model";
-import { Phone } from "./utils/phone.model";
 
 export class CoachModel extends Person {
+  isActive: boolean = false;
   fullname: string;
   title: string;
-  photoURL: string;
+  photoUrl: any;
   bio: string
-  organization: OrganizationModel;
+  organization: OrganizationModel | any;
+  url: string;
 
-  constructor(firstName: string, lastName: string, address: Address, phone: Phone, title: string, photoURL: string, bio: string, organization: OrganizationModel){
-    super(firstName, lastName, address, phone);
-
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.address = address;
-    this.phone = phone;
-    this.title = title;
-    this.photoURL = photoURL;
-    this.bio = bio;
-    this.organization = organization;
+  constructor(){
+    super();
 
     this.fullname = this.firstName + ' ' + this.lastName;
   }
