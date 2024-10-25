@@ -43,10 +43,12 @@ export class FirebaseDAO<T extends BaseModel> {
 
   public getById(id: string, table: string, fromFirestore?): Promise<T>{
     return getDoc(doc(this.fs, '/' + table + '/' + id)).then(async doc => {
-      let retval: T = doc.data() as T;
-      retval.id = doc.id;
-      return fromFirestore? fromFirestore(retval) : retval;
-    });
+      if(doc.exists()){
+        let retval: T = doc.data() as T;
+        retval.id = doc.id;
+        return fromFirestore? fromFirestore(retval) : retval;
+      }
+    })
   }
 
   public add(value: T, table: string, fromFirestore?): Promise<T>{
