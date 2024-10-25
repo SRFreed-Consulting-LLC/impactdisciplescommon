@@ -4,9 +4,9 @@ import { Timestamp } from "firebase/firestore";
 import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
 import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/admin/notification-registration.model";
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/data/notification-registration.service";
-import { AuthService } from "impactdisciplescommon/src/services/admin/auth.service";
 import { ToastrService } from "ngx-toastr";
 import { environment } from "src/environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root",
