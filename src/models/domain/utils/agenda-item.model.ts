@@ -10,4 +10,6 @@ export class AgendaItem extends BaseModel{
   isCourse?: boolean;
   maxParticipants?: number;
   signedUp?: number;
+  description?: string;
+  room?: string;
 }

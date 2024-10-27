@@ -1,3 +1,4 @@
+import { EventRegistrationService } from './../data/event-registration.service';
 import { CustomerService } from '../data/customer.service';
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
@@ -15,6 +16,8 @@ import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
+import { DataService } from 'src/app/admin/data.service';
+import { QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 
 const defaultPath = '/';
 
@@ -68,7 +71,9 @@ export class AuthService {
     public loggerService: LoggerService,
     public tostrService: ToastrService,
     private sessionService: SessionService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private eventRegistrtionService: EventRegistrationService,
+    private dataService: DataService
   ) { }
 
   findUser(email: string): Observable<AppUser | CustomerModel> {
@@ -76,8 +81,18 @@ export class AuthService {
 
     if(environment.application == 'admin'){
       user$ = this.userService.getAllByValue('email', email);
-    } else {
+    } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email);
+    } else if(environment.application == 'application'){
+      user$ = this.dataService.event.then(event => {
+        let qp: QueryParam[] = [
+          new QueryParam('email', WhereFilterOperandKeys.equal, email),
+          new QueryParam('eventId', WhereFilterOperandKeys.equal, event.id),
+        ]
+        return this.eventRegistrtionService.queryAllByMultiValue(qp);
+      })
+
+
     }
 
     return from(user$).pipe(

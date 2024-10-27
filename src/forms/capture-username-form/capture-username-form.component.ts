@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-capture-username-form',
@@ -30,12 +31,17 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
       } else {
         this.sessionService.currentUser = result;
 
-        if (result.firebaseUID) {
-          this.isLoading = false;
-          this.router.navigate(['capture-password-form']);
+        if(environment.application != 'application'){
+          if (result.firebaseUID) {
+            this.isLoading = false;
+            this.router.navigate(['capture-password-form']);
+          } else {
+            this.isLoading = false;
+            this.router.navigate(['create-auth-form']);
+          }
         } else {
           this.isLoading = false;
-          this.router.navigate(['create-auth-form']);
+          this.router.navigate(['home']);
         }
       }
     })
