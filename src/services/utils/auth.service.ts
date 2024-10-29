@@ -16,8 +16,6 @@ import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
-import { DataService } from 'src/app/admin/data.service';
-import { QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 
 const defaultPath = '/';
 
