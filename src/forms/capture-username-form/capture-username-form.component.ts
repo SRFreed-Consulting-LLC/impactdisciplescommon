@@ -5,6 +5,9 @@ import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.servi
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CookieService } from 'ngx-cookie-service';
+
+const COOKIE_NAME = "impact-disciples-app"
 
 @Component({
   selector: 'app-capture-username-form',
@@ -17,7 +20,11 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: AuthService, private router: Router, public tostrService: ToastrService, private sessionService: SessionService) { }
+  constructor(private authService: AuthService,
+    private router: Router,
+    public tostrService: ToastrService,
+    private sessionService: SessionService,
+    private cookieService: CookieService) { }
 
   onSubmit(e: Event) {
     e.preventDefault();
@@ -25,13 +32,13 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     this.isLoading = true;
 
     this.authService.findUser(email).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-         if (!result) {
+      if (!result) {
         this.isLoading = false;
         this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact Impact Disciples for help.');
       } else {
-        this.sessionService.currentUser = result;
-
         if(environment.application != 'application'){
+          this.sessionService.currentUser = result;
+
           if (result.firebaseUID) {
             this.isLoading = false;
             this.router.navigate(['capture-password-form']);
@@ -40,8 +47,14 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
             this.router.navigate(['create-auth-form']);
           }
         } else {
+          if(Array.isArray(result)){
+            this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(result));
+          } else {
+            this.cookieService.set("REGISTERED_EVENTS", JSON.stringify([result]));
+          }
+
           this.isLoading = false;
-          this.router.navigate(['home']);
+          this.router.navigate(['event-selector']);
         }
       }
     })

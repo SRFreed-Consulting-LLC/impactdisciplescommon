@@ -5,7 +5,7 @@ import { EventModel } from "./event.model";
 export class EventRegistrationModel extends BaseModel{
   firstName: string;
   lastName: string;
-  eventId: string | EventModel;
+  eventId: string;
   email: string;
   receipt: string;
   registrationDate: Timestamp | any;

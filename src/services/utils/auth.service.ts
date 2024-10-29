@@ -31,7 +31,6 @@ export class AuthService {
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
-
       this.getUser().pipe(take(1)).subscribe(user => {
         if(user){
           let expiration: number = user['cookie_expiration_time'];
@@ -72,8 +71,7 @@ export class AuthService {
     public tostrService: ToastrService,
     private sessionService: SessionService,
     private customerService: CustomerService,
-    private eventRegistrtionService: EventRegistrationService,
-    private dataService: DataService
+    private eventRegistrtionService: EventRegistrationService
   ) { }
 
   findUser(email: string): Observable<AppUser | CustomerModel> {
@@ -84,21 +82,15 @@ export class AuthService {
     } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email);
     } else if(environment.application == 'application'){
-      user$ = this.dataService.event.then(event => {
-        let qp: QueryParam[] = [
-          new QueryParam('email', WhereFilterOperandKeys.equal, email),
-          new QueryParam('eventId', WhereFilterOperandKeys.equal, event.id),
-        ]
-        return this.eventRegistrtionService.queryAllByMultiValue(qp);
-      })
-
-
+      user$ = this.eventRegistrtionService.getAllByValue('email', email);
     }
 
     return from(user$).pipe(
       switchMap(user => {
         if(user && user.length == 1){
           return of(user[0]);
+        } else if(user && user.length > 1){
+          return of(user);
         } else {
           return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
             switchMap((ec: any) => {
