@@ -17,9 +17,9 @@ export class FcmMessageService {
 
   checkNotificationsSetup(){
     if(Notification.permission != 'granted'){
-      this.validateAndRegisterUser()
+      //this.validateAndRegisterUser()
     } else {
-      this.setupNotificationListener();
+      //this.setupNotificationListener();
     }
   }
 

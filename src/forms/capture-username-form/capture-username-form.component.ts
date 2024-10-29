@@ -47,6 +47,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
             this.router.navigate(['create-auth-form']);
           }
         } else {
+
           if(Array.isArray(result)){
             this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(result));
           } else {
@@ -54,7 +55,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
           }
 
           this.isLoading = false;
-          this.router.navigate(['event-selector']);
+          this.router.navigate(['/event-selector']);
         }
       }
     })
