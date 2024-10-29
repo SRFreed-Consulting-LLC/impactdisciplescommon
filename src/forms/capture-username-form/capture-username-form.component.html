@@ -22,7 +22,7 @@
             <ng-container *ngIf="isLoading; else notLoading">
               <dx-load-indicator width="24px" height="24px" [visible]="true"></dx-load-indicator>
             </ng-container>
-            <ng-template #notLoading>Find User Account</ng-template>
+            <ng-template #notLoading>{{environment.application == 'application' ? 'Login' : 'Find User Account'}}</ng-template>
           </span>
         </div>
       </ng-container>

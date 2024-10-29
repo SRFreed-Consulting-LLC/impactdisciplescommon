@@ -18,6 +18,8 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
   @Input() loginEmail: any = {};
   public isLoading: boolean = false;
 
+  environment = environment;
+
   private ngUnsubscribe = new Subject<void>();
 
   constructor(private authService: AuthService,
