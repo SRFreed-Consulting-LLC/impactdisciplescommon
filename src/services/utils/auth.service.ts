@@ -301,59 +301,54 @@ export class AuthService {
     return Promise.resolve(user);
   }
 
-  createAccount(email: string, password: string): Observable<any> {
-    try {
-      return from(this.dao.register(email.toLowerCase(), password)).pipe(
-        switchMap((result: UserCredential) => {
-          if(result.user){
-            let user$: Promise<any>;
+  createAccount(email: string, password: string): Promise<any> {
+    return this.dao.register(email.toLowerCase(), password).then(result => {
+      if(result.user){
+        let user$: Promise<any>;
 
-            if(environment.application == 'admin'){
-              user$ = this.userService.getAllByValue('email', email);
+        if(environment.application == 'admin'){
+          user$ = this.userService.getAllByValue('email', email);
+        } else {
+          user$ = this.customerService.getAllByValue('email', email);
+        }
+
+        return from(user$).pipe(
+          switchMap(async appuser => {
+            if(appuser && appuser.length == 1){
+              let u: AppUser | CustomerModel = appuser[0];
+
+              u.firebaseUID = result.user.uid;
+
+              if(environment.application == 'admin'){
+                await this.userService.update(u.id, u as AppUser)
+              } else {
+                await this.customerService.update(u.id, u as CustomerModel)
+              }
+
+              return {
+                isOk: true,
+                message: "Account Successfully Created"
+              };
             } else {
-              user$ = this.customerService.getAllByValue('email', email);
+              return {
+                isOk: false,
+                message: "More than 1 User Account was found for this email address"
+              };
             }
-
-            return from(user$).pipe(
-              switchMap(async appuser => {
-                if(appuser && appuser.length == 1){
-                  let u: AppUser | CustomerModel = appuser[0];
-
-                  u.firebaseUID = result.user.uid;
-
-                  if(environment.application == 'admin'){
-                    await this.userService.update(u.id, u as AppUser)
-                  } else {
-                    await this.customerService.update(u.id, u as CustomerModel)
-                  }
-
-                  return {
-                    isOk: true,
-                    message: "Account Successfully Created"
-                  };
-                } else {
-                  return {
-                    isOk: false,
-                    message: "More than 1 User Account was found for this email address"
-                  };
-                }
-              })
-            );
-          } else {
-            return of({
-              isOk: false,
-              message: "Failed to create account: "
-            });
-          }
-        })
-      );
-    }
-    catch {
-      return of({
+          })
+        );
+      } else {
+        return Promise.reject({
+          isOk: false,
+          message: "Failed to create account: "
+        });
+      }
+    }).catch(err => {
+      return {
         isOk: false,
-        message: "Failed to create account"
-      });
-    }
+        message: err
+      };
+    })
   }
 
   changePassword(email: string, recoveryCode: string): Observable<any> {

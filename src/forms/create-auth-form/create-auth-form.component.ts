@@ -51,18 +51,35 @@ export class CreateAuthFormComponent implements OnDestroy {
 
           this.isLoading = false;
         } else if(customers.length == 1){
-          this.authService.createAccount(email, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-            if (result.isOk) {
-              this.tostrService.success('Your account has been created. Please login using your new credentials.');
+          if(customers[0].firebaseUID){
+            this.tostrService.success('An account for ' + email + ' already exists!. Try loggin in with this email address!');
 
-              this.sessionService.currentUser = null;
+            this.router.navigate(['capture-username-form']);
+          } else {
+            try{
+              this.authService.createAccount(email, password).then((result) => {
+                if (result.isOk) {
+                  this.tostrService.success('Your account has been created. Please login using your new credentials.');
 
-              this.router.navigate(['capture-username-form']);
-            } else {
-              this.tostrService.error('There was an error creating your account: ' + result.message);
+                  this.sessionService.currentUser = null;
+
+                  this.router.navigate(['capture-username-form']);
+                } else {
+                  if(result.message && result.message.message == "Firebase: Error (auth/email-already-in-use)."){
+                    this.tostrService.error('A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.');
+                  } else {
+                    this.tostrService.error('There was an error creating your account: ' + result.message);
+                  }
+
+
+                }
+                this.isLoading = false;
+              })
+            } catch (err){
+              console.log("error")
+              console.log(err)
             }
-            this.isLoading = false;
-          })
+          }
         }
       })
     }
