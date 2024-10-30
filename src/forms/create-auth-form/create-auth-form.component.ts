@@ -5,6 +5,8 @@ import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.servi
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CustomerService } from 'impactdisciplescommon/src/services/data/customer.service';
+import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-create-auth-form',
@@ -19,6 +21,7 @@ export class CreateAuthFormComponent implements OnDestroy {
 
   constructor(private authService: AuthService,
     private customerService: CustomerService,
+    private userService: AppUserService,
     private router: Router,
     private sessionService: SessionService,
     public tostrService: ToastrService) { }
@@ -32,14 +35,22 @@ export class CreateAuthFormComponent implements OnDestroy {
       this.isLoading = false;
       this.tostrService.error('Passwords do not match. Please try again.');
     } else {
-      this.customerService.getAllByValue('email', email).then(customers => {
-        if(customers.length > 0){
-          this.tostrService.error('An Account for this email already exists. Try logging in with this email address.');
+      let searchResults: Promise<any[]>;
+
+      if(environment.application == 'admin'){
+        searchResults = this.userService.getAllByValue('email', email);
+      } else {
+        searchResults = this.customerService.getAllByValue('email', email);
+      }
+
+      searchResults.then(customers => {
+        if(customers.length == 0){
+          this.tostrService.error('No account exists for this email.');
 
           this.router.navigate(['/']);
 
           this.isLoading = false;
-        } else {
+        } else if(customers.length == 1){
           this.authService.createAccount(email, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
             if (result.isOk) {
               this.tostrService.success('Your account has been created. Please login using your new credentials.');
