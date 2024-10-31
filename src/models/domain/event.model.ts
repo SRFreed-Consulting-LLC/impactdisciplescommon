@@ -23,4 +23,6 @@ export class EventModel extends BaseModel {
   videoId?: string;
   faqList: FAQModel[] = [];
   checkIn?: Timestamp;
+  diningOptions?: string;
+  checkinInstructions?: string;
 }
