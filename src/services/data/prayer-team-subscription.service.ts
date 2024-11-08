@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
-import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { PrayerTeamSubscriptionModel } from 'impactdisciplescommon/src/models/domain/prayer-team-subscription.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
@@ -24,12 +24,24 @@ export class PrayerTeamSubscriptionService extends BaseService<PrayerTeamSubscri
   };
 
   createPrayerTeamSubscription(firstName: string, lastName: string, email: string){
-    let subscriber: PrayerTeamSubscriptionModel = {...new PrayerTeamSubscriptionModel()};
-    subscriber.firstName = firstName;
-    subscriber.lastName = lastName;
-    subscriber.email = email;
-    subscriber.date = Timestamp.now();
-    return this.add(subscriber);
+    let qp: QueryParam[] = [
+      new QueryParam('email', WhereFilterOperandKeys.equal, email),
+      new QueryParam('lastName', WhereFilterOperandKeys.equal, lastName),
+      new QueryParam('firstName', WhereFilterOperandKeys.equal, firstName)
+    ];
+
+    return this.queryAllByMultiValue(qp).then(item => {
+      if(!item || item.length == 0){
+        let subscriber: PrayerTeamSubscriptionModel = {...new PrayerTeamSubscriptionModel()};
+        subscriber.firstName = firstName;
+        subscriber.lastName = lastName;
+        subscriber.email = email;
+        subscriber.date = Timestamp.now();
+        return this.add(subscriber);
+      }
+
+      return Promise.resolve(null);
+    })
   }
 
   sendConfirmationEmail(subscriber: PrayerTeamSubscriptionModel){
