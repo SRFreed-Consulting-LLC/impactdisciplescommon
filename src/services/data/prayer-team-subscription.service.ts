@@ -4,12 +4,14 @@ import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { PrayerTeamSubscriptionModel } from 'impactdisciplescommon/src/models/domain/prayer-team-subscription.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
+import { environment } from 'src/environments/environment';
+import { EMailService } from './email.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PrayerTeamSubscriptionService extends BaseService<PrayerTeamSubscriptionModel> {
-  constructor(public override dao: FirebaseDAO<PrayerTeamSubscriptionModel> ) {
+  constructor(public override dao: FirebaseDAO<PrayerTeamSubscriptionModel>, private emailService: EMailService ) {
     super(dao)
     this.table="prayer_team_subscriptions"
     this.fromFirestore = PrayerTeamSubscriptionService.fromFirestore
@@ -28,5 +30,18 @@ export class PrayerTeamSubscriptionService extends BaseService<PrayerTeamSubscri
     subscriber.email = email;
     subscriber.date = Timestamp.now();
     return this.add(subscriber);
+  }
+
+  sendConfirmationEmail(subscriber: PrayerTeamSubscriptionModel){
+    let subject = 'Thank you for Joining our Prayer Team! ';
+    let text = 'Dear ' + subscriber.firstName + '.\n\n'
+    text += 'Your email address was successfully added to our Prayer Team List! (' + subscriber.email +')\n\n'
+    text +='God Bless! - Impact Disciples Ministry'
+
+    text += "<br><br><br><div>If you believe you received this confirmation by mistake, please click " +
+      "<b><a href='" + environment.unsubscribeUrl + "?email="+ subscriber.email +
+      "&list=prayer_team_subscriptions'>here</a></b> to remove your address.</div>"
+
+    this.emailService.sendTextEmail(subscriber.email, subject, text);
   }
 }

@@ -5,12 +5,14 @@ import { FirebaseDAO, QueryParam } from 'impactdisciplescommon/src/dao/firebase.
 import { NewsletterSubscriptionModel } from 'impactdisciplescommon/src/models/domain/newsletter-subscription.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
+import { environment } from 'src/environments/environment';
+import { EMailService } from './email.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NewsletterSubscriptionService extends BaseService<NewsletterSubscriptionModel> {
-  constructor(public override dao: FirebaseDAO<NewsletterSubscriptionModel> ) {
+  constructor(public override dao: FirebaseDAO<NewsletterSubscriptionModel>, private emailService: EMailService ) {
     super(dao)
     this.table="newsletter_subscriptions"
     this.fromFirestore = NewsletterSubscriptionService.fromFirestore
@@ -41,6 +43,19 @@ export class NewsletterSubscriptionService extends BaseService<NewsletterSubscri
 
       return Promise.resolve(null);
     })
+  }
 
+  sendConfirmationEmail(subscription: NewsletterSubscriptionModel){
+    let subject = 'Thank you for Subscribing to the Impact Disciples Newletter!';
+    let text = '<div>Dear ' + subscription.firstName + '.</div><br><br>'
+    text += '<div>Your email address was successfully added to our Newletter Subsciption List! (' + subscription.email +')</div><br><br>'
+    text += '<div>Please accept this free <a href="' + environment.freeEbookUrl +'" download>EBook</a> as a small token of our appreciation.</div><br><br>'
+    text +='<div>God Bless! - Impact Disciples Ministry</div>'
+
+    text += "<br><br><br><div>If you believe you received this confirmation by mistake, please click " +
+      "<b><a href='" + environment.unsubscribeUrl + "?email="+ subscription.email +
+      "&list=newsletter_subscriptions'>here</a></b> to remove your address.</div>"
+
+    this.emailService.sendHtmlEmail(subscription.email, subject, text);
   }
 }
