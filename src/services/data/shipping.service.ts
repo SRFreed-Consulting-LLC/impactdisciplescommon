@@ -5,7 +5,6 @@ import { ShippingModel, Package, WeightDetail, ShippingRequest, RateOptions } fr
 import { Address } from 'impactdisciplescommon/src/models/domain/utils/address.model';
 import { Phone } from 'impactdisciplescommon/src/models/domain/utils/phone.model';
 import { CheckoutForm } from 'impactdisciplescommon/src/models/utils/cart.model';
-import { WebConfigModel } from 'impactdisciplescommon/src/models/utils/web-config.model';
 import { environment } from 'src/environments/environment';
 import { BaseService } from './base.service';
 import { WebConfigService } from './web-config.service';
@@ -15,6 +14,9 @@ import { WebConfigService } from './web-config.service';
   providedIn: 'root'
 })
 export class ShippingService extends BaseService<ShippingModel>{
+  shippingCarriers: string[] = environment.shippingCarriers;
+
+
   constructor(public override dao: FirebaseDAO<ShippingModel>, private webConfigService: WebConfigService) {
     super(dao)
     this.table="shipments"
@@ -24,9 +26,11 @@ export class ShippingService extends BaseService<ShippingModel>{
     let totalWeight: number;
 
     try{
+      console.log(checkoutForm.cartItems.filter(item => item.isEvent == false))
       totalWeight = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => item.weight? item.weight : 0).reduce((a,b) => a + b);
-    }
-    catch(err){
+      console.log("totalWeight - " + totalWeight)
+    }catch(err){
+      console.log(err);
       totalWeight = 0;
     }
 
@@ -86,7 +90,7 @@ export class ShippingService extends BaseService<ShippingModel>{
 
     let request: ShippingRequest = {... new ShippingRequest()};
     request.rateOptions = {... new RateOptions()};
-    request.rateOptions.carrierIds.push("se-914430");
+    request.rateOptions.carrierIds = this.shippingCarriers;
     request.shipment = shipping;
 
     return request;
@@ -104,6 +108,7 @@ export class ShippingService extends BaseService<ShippingModel>{
     }
 
     const rate = await response.json();
+    console.log(rate)
 
     return rate;
   }
