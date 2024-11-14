@@ -3,6 +3,7 @@ import { Person } from "./utils/person.model";
 
 export class CoachModel extends Person {
   isActive: boolean = false;
+  sortOrder: number;
   fullname: string;
   title: string;
   photoUrl: any;
