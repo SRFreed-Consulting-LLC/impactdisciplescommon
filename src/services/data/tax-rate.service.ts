@@ -27,7 +27,7 @@ export class TaxRateService extends BaseService<TaxRate>{
       let taxableAmount : number;
 
       try{
-        taxableAmount = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => item.price? item.price : 0)?.reduce((a,b) => a + b);
+        taxableAmount = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => (item.price? item.price : 0) * item.orderQuantity)?.reduce((a,b) => a + b);
       } catch(err){
         taxableAmount = 0;
       }
