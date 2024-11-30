@@ -8,6 +8,7 @@ export class AgendaItem extends BaseModel{
   course?: string;
   coaches?: string[];
   isCourse?: boolean;
+  isFoodBreak?: boolean;
   maxParticipants?: number;
   signedUp?: number;
   description?: string;
