@@ -1,7 +1,7 @@
 import { AgendaItem } from './../../models/domain/utils/agenda-item.model';
 import { Injectable } from '@angular/core';
 import { Timestamp } from '@google-cloud/firestore';
-import { FirebaseDAO, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
@@ -22,8 +22,12 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return data;
   };
 
-  async registerForTrainingSession(email: string, courseId: string): Promise<EventRegistrationModel> {
-    let retval = await this.queryAllByValue('email', WhereFilterOperandKeys.equal, email);
+  async registerForTrainingSession(email: string, courseId: string, eventId: string): Promise<EventRegistrationModel> {
+    let params: QueryParam[] = [];
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
+
+    let retval = await this.queryAllByMultiValue(params)
 
     if(retval && retval.length == 1){
       if(!retval[0].trainingSessions){
@@ -40,8 +44,12 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return null;
   }
 
-  async unregisterForTrainingSession(email: string, courseId: string): Promise<EventRegistrationModel> {
-    let retval = await this.queryAllByValue('email', WhereFilterOperandKeys.equal, email);
+  async unregisterForTrainingSession(email: string, courseId: string, eventId: string): Promise<EventRegistrationModel> {
+    let params: QueryParam[] = [];
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
+
+    let retval = await this.queryAllByMultiValue(params);
 
     if(retval && retval.length == 1){
       retval[0].trainingSessions = retval[0].trainingSessions.filter(session => session != courseId);
@@ -52,5 +60,37 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     }
 
     return null;
+  }
+
+  async getUserTrainingSession(email: string, eventId: string): Promise<string []> {
+    let params: QueryParam[] = [];
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
+
+    let retval = await this.queryAllByMultiValue(params);
+
+    if(retval && retval.length == 1){
+      return retval[0].trainingSessions;
+    }
+
+    return [];
+  }
+
+  async getTrainingSessionList(eventId: string): Promise<Map<string, string[]>> {
+    return this.getAllByValue('eventId', eventId).then(registeredusers => {
+      let retval: Map<string, string[]> = new Map<string, string[]>();
+
+      registeredusers.forEach(user => {
+        user.trainingSessions.forEach(session =>{
+          if(!retval.has(session)){
+            retval.set(session, [])
+          }
+
+          retval.get(session).push(user.id);
+        })
+      })
+
+      return retval;
+    })
   }
 }
