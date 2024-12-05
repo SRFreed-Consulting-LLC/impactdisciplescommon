@@ -20,6 +20,8 @@ export class EventModel extends BaseModel {
   costInDollars?: number;
   isSummit?: boolean = false;
   isOnline?: boolean = false;
+  kajabiPurchaseURL?: string;
+  kajabiSubscribeURL?: string;
   imageUrl?: any;
   emailTemplate?: string;
   videoId?: string;
