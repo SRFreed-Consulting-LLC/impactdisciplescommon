@@ -1,3 +1,4 @@
+import { Address } from 'impactdisciplescommon/src/models/domain/utils/address.model';
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "../base.model";
 import { Phone } from "./utils/phone.model";
@@ -9,6 +10,7 @@ export class ConsultationSurveyModel extends BaseModel{
   email?: string;
   phone?: Phone;
   churchName?: string;
+  location: Address;
   country?: string;
   commitment?: number;
   readiness?: number;
