@@ -22,7 +22,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return data;
   };
 
-  async registerForTrainingSession(email: string, courseId: string, eventId: string): Promise<EventRegistrationModel> {
+  async registerForTrainingSession(email: string, agendaItemId: string, eventId: string): Promise<EventRegistrationModel> {
     let params: QueryParam[] = [];
     params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
     params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
@@ -34,7 +34,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
         retval[0].trainingSessions = [];
       }
 
-      retval[0].trainingSessions.push(courseId);
+      retval[0].trainingSessions.push(agendaItemId);
 
       this.update(retval[0].id, retval[0]);
 
@@ -44,7 +44,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return null;
   }
 
-  async unregisterForTrainingSession(email: string, courseId: string, eventId: string): Promise<EventRegistrationModel> {
+  async unregisterForTrainingSession(email: string, agendaItemId: string, eventId: string): Promise<EventRegistrationModel> {
     let params: QueryParam[] = [];
     params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
     params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
@@ -52,7 +52,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     let retval = await this.queryAllByMultiValue(params);
 
     if(retval && retval.length == 1){
-      retval[0].trainingSessions = retval[0].trainingSessions.filter(session => session != courseId);
+      retval[0].trainingSessions = retval[0].trainingSessions.filter(session => session != agendaItemId);
 
       this.update(retval[0].id, retval[0]);
 
