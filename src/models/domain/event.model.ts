@@ -5,7 +5,6 @@ import { Timestamp } from '@google-cloud/firestore';
 import { OrganizationModel } from './organization.model';
 import { AgendaItem } from './utils/agenda-item.model';
 import { FAQModel } from '../utils/faq.model';
-import { WhatToKnowModel } from '../utils/what-to-know.model';
 
 export class EventModel extends BaseModel {
   isActive: boolean = false;
@@ -28,6 +27,6 @@ export class EventModel extends BaseModel {
   faqList: FAQModel[] = [];
   checkIn?: Timestamp;
   diningOptions?: string;
+  whatsNext?: string;
   checkinInstructions?: string;
-  whatToKnows?: WhatToKnowModel[] = [];
 }
