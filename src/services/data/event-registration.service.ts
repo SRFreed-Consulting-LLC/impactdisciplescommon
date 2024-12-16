@@ -24,7 +24,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
 
   async registerForTrainingSession(email: string, agendaItemId: string, eventId: string): Promise<EventRegistrationModel> {
     let params: QueryParam[] = [];
-    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
     params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
 
     let retval = await this.queryAllByMultiValue(params)
@@ -46,7 +46,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
 
   async unregisterForTrainingSession(email: string, agendaItemId: string, eventId: string): Promise<EventRegistrationModel> {
     let params: QueryParam[] = [];
-    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
     params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
 
     let retval = await this.queryAllByMultiValue(params);
@@ -64,7 +64,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
 
   async getUserTrainingSession(email: string, eventId: string): Promise<string []> {
     let params: QueryParam[] = [];
-    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email));
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
     params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
 
     let retval = await this.queryAllByMultiValue(params);

@@ -81,7 +81,7 @@ export class AuthService {
     } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email);
     } else if(environment.application == 'application'){
-      user$ = this.eventRegistrtionService.getAllByValue('email', email);
+      user$ = this.eventRegistrtionService.getAllByValue('email', email.toLowerCase());
     }
 
     return from(user$).pipe(
