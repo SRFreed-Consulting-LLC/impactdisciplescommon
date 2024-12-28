@@ -39,6 +39,7 @@ export class CheckoutForm extends BaseModel {
   shippingAddress?: Address;
   cartItems?: CartItem[];
   total?: number = 0;
+  discount?: number = 0;
   totalBeforeDiscount?: number;
   totalBeforeDiscountWithShipping?: number;
   receipt?: string;
