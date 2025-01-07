@@ -315,31 +315,30 @@ export class AuthService {
           user$ = this.customerService.getAllByValue('email', email);
         }
 
-        return from(user$).pipe(
-          switchMap(async appuser => {
-            if(appuser && appuser.length == 1){
-              let u: AppUser | CustomerModel = appuser[0];
+        return user$.then(async appuser => {
+          console.log(appuser);
+          if(appuser && appuser.length == 1){
+            let u: AppUser | CustomerModel = appuser[0];
 
-              u.firebaseUID = result.user.uid;
+            u.firebaseUID = result.user.uid;
 
-              if(environment.application == 'admin'){
-                await this.userService.update(u.id, u as AppUser)
-              } else {
-                await this.customerService.update(u.id, u as CustomerModel)
-              }
-
-              return {
-                isOk: true,
-                message: "Account Successfully Created"
-              };
+            if(environment.application == 'admin'){
+              await this.userService.update(u.id, u as AppUser)
             } else {
-              return {
-                isOk: false,
-                message: "More than 1 User Account was found for this email address"
-              };
+              await this.customerService.update(u.id, u as CustomerModel)
             }
-          })
-        );
+
+            return {
+              isOk: true,
+              message: "Account Successfully Created"
+            };
+          } else {
+            return {
+              isOk: false,
+              message: "More than 1 User Account was found for this email address"
+            };
+          }
+        });
       } else {
         return Promise.reject({
           isOk: false,
