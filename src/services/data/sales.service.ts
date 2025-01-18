@@ -21,7 +21,7 @@ export class SalesService extends BaseService<CheckoutForm>{
     return data;
   };
 
-  async saveCheckoutForm(checkoutForm: CheckoutForm){
+  saveCheckoutForm(checkoutForm: CheckoutForm){
     checkoutForm.processedStatus = "NEW";
     checkoutForm.dateProcessed = Timestamp.now();
 
@@ -34,6 +34,9 @@ export class SalesService extends BaseService<CheckoutForm>{
       item.processedStatus = "NEW"
     })
 
-    return await this.add(checkoutForm);
+    localStorage.setItem('checkoutForm', JSON.stringify(checkoutForm));
+
+    return checkoutForm;
   }
+
 }
