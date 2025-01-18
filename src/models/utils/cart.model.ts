@@ -10,6 +10,7 @@ export interface CartItem {
   itemName?: string;
   price?: number;
   orderQuantity?: number;
+  discount?: number;
   discountPrice?: number;
   isEvent?: boolean;
   isEBook?: boolean;

@@ -8,6 +8,5 @@ export class CouponModel extends BaseModel {
   affilliateName: string;
   affiliatePaypalAccount: string;
   percentOff: number | null;
-  dollarsOff: number | null;
   tags?: TagModel[];
 }
