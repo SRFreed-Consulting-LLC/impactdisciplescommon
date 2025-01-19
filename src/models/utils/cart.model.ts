@@ -39,22 +39,35 @@ export class CheckoutForm extends BaseModel {
   billingAddress?: Address;
   shippingAddress?: Address;
   cartItems?: CartItem[];
-  total?: number = 0;
-  discount?: number = 0;
-  totalBeforeDiscount?: number;
-  totalBeforeDiscountWithShipping?: number;
   receipt?: string;
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
-  couponCode?: string;
   paymentIntent?: PaymentIntent | string;
   dateProcessed?: Timestamp;
   processedStatus?: string;
+
+  //total sale amount
+  total?: number = 0;
+  //total discount on items
+  discount?: number = 0;
+  //cart total
+  totalBeforeDiscount?: number;
+  //code for coupon
+  couponCode?: string;
+  //coupon discount percentage
+  couponPercent?: number;
+  //amount charged for shipping
   shippingRate?: number = 0;
+  //id of shipping rate used
   shippingRateId?: any;
-  shippingLabel?: any;
+  //amount charged for taxes
   estimatedTaxes?: number = 0;
+  //percent used to figure taxes
   taxRate?: number = 0;
+  //service rate or default rate
+  taxSource?: string;
+
+  shippingLabel?: any;
   refundAmount?: number = 0;
   refundId?: string;
 }

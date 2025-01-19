@@ -22,9 +22,11 @@ export class TaxRateService{
     if (!taxRates) {
       console.log("No qualified tax rate found for zip code " + checkoutForm.shippingAddress.zip);
       checkoutForm.taxRate = .07;
+      checkoutForm.taxSource = "default";
     } else {
       //if no response received. defaultto .07
       checkoutForm.taxRate = taxRates?.combined_rate ? taxRates.combined_rate : .07;
+      checkoutForm.taxSource = "service";
     }
 
     let taxableAmount : number;

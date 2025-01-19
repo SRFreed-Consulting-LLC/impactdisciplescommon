@@ -26,7 +26,9 @@ export class ShippingService extends BaseService<ShippingModel>{
     let totalWeight: number;
 
     try{
-      totalWeight = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => (item.weight? item.weight : 0) * item.orderQuantity).reduce((a,b) => a + b);
+      let weightMap =  checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => (item.weight? item.weight : 0) * item.orderQuantity);
+
+      totalWeight = (weightMap && weightMap.length > 0)? weightMap.reduce((a,b) => a + b) : 0;
     }catch(err){
       console.log(err);
       totalWeight = 0;
