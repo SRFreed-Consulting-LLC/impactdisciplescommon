@@ -21,7 +21,7 @@ export class EMailService extends BaseService<EMailModel>{
     return data;
   };
 
-  sendHtmlEmail(to:string, subject: string, html: string){
+  sendHtmlEmail(to:string, subject: string, html: string): Promise<EMailModel>{
     let mail = {... new EMailModel()}
     mail.to = to;
     mail.date = Timestamp.now();
@@ -33,10 +33,10 @@ export class EMailService extends BaseService<EMailModel>{
 
     mail.message = mailMessage;
 
-    this.add(mail);
+    return this.add(mail);
   }
 
-  sendTextEmail(to:string, subject: string, text: string){
+  sendTextEmail(to:string, subject: string, text: string): Promise<EMailModel>{
     let mail = {... new EMailModel()}
     mail.to = to;
     mail.date = Timestamp.now();
@@ -47,10 +47,10 @@ export class EMailService extends BaseService<EMailModel>{
 
     mail.message = mailMessage;
 
-    this.add(mail);
+    return this.add(mail);
   }
 
-  sendTemplateEmail(to:string, templateId: string, model: any){
+  sendTemplateEmail(to:string, templateId: string, model: any): Promise<EMailModel>{
     let mail = {... new EMailModel()}
     mail.to = to;
     mail.date = Timestamp.now();
@@ -61,6 +61,6 @@ export class EMailService extends BaseService<EMailModel>{
 
     mail.template = mailTemplate;
 
-    this.add(mail);
+    return this.add(mail);
   }
 }
