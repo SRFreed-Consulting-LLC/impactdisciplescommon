@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Unsubscribe } from 'firebase/firestore';
 import { FirebaseDAO, WhereFilterOperandKeys, QueryParam } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { BaseModel } from 'impactdisciplescommon/src/models/base.model';
 import { from, Observable } from 'rxjs';
@@ -40,8 +41,8 @@ export class BaseService<T extends BaseModel> {
     return this.dao.streamByValue(this.table, field, value, this.fromFirestore)
   }
 
-  streamById(id: string): Observable<T>{
-    return from(this.dao.getById(id, this.table, this.fromFirestore));
+  streamById(id: string, callBack): Unsubscribe{
+    return this.dao.streamById(id, this.table, callBack, this.fromFirestore);
   }
 
   queryStreamByValue(field: any, opStr: WhereFilterOperandKeys, value: string): Observable<T[]>{

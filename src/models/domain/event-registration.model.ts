@@ -11,4 +11,6 @@ export class EventRegistrationModel extends BaseModel{
   trainingSessions: string [];
   loggedIn?: boolean = false;
   receiptEmailId?: string;
+  receiptEmailStatus: string;
+  receiptEmailDate: Timestamp | any;
 }

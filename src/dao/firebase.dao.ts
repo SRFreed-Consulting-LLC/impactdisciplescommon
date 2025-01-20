@@ -3,8 +3,9 @@ import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc,
 import { Firestore, collection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DocumentData, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
+import { DocumentData, onSnapshot, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
+import { Unsubscribe } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +88,18 @@ export class FirebaseDAO<T extends BaseModel> {
         return this.getDocListFromStream(docs, fromFirestore);
       })
     );
+  }
+
+  public streamById(id: string, table: string, callBack, fromFirestore?): Unsubscribe{
+    return onSnapshot(doc(this.fs, '/' + table + '/' + id), async doc => {
+      if(doc.exists()){
+        let retval: T = doc.data() as T;
+        retval.id = doc.id;
+        retval = fromFirestore? fromFirestore(retval) : retval;
+        console.log(retval);
+        callBack(retval);
+      }
+    })
   }
 
   public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
