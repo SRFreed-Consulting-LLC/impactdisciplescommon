@@ -21,6 +21,8 @@ export interface CartItem {
   weight?: number;
   uom?: UNIT_OF_MEASURE;
   eBookUrl?: any;
+  size?: string;
+  color?: string;
 }
 
 export interface Attendee {
