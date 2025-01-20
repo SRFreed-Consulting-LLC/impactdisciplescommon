@@ -17,4 +17,6 @@ export class ProductModel extends BaseModel {
   eBookUrl: any;
   seriesOrder: number;
   categoryOrder: number;
+  sizes?: string[] = [];
+  colors?: string[] = [];
 }
