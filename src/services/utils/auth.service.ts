@@ -9,14 +9,12 @@ import { FireAuthDao } from '../../dao/fireauth.dao';
 import { LoggerService } from '../data/logger.service';
 import { SessionService } from '../utils/session.service';
 import { AppUser } from '../../models/admin/appuser.model';
-import { LogMessage } from '../../models/utils/log-message.model';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
-import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 
 const defaultPath = '/';
 
@@ -26,7 +24,7 @@ const COOKIE_NAME = "impact-disciples-admin"
   providedIn: 'root'
 })
 export class AuthService {
-  public user: AppUser | CustomerModel | EventRegistrationModel;
+  public user: AppUser | CustomerModel;
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
@@ -69,8 +67,7 @@ export class AuthService {
     public loggerService: LoggerService,
     public tostrService: ToastrService,
     private sessionService: SessionService,
-    private customerService: CustomerService,
-    private eventRegistrtionService: EventRegistrationService
+    private customerService: CustomerService
   ) { }
 
   findUser(email: string): Observable<AppUser | CustomerModel> {
@@ -80,18 +77,12 @@ export class AuthService {
       user$ = this.userService.getAllByValue('email', email);
     } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email);
-    } else if(environment.application == 'application'){
-      user$ = this.eventRegistrtionService.getAllByValue('email', email.toLowerCase());
     }
 
     return from(user$).pipe(
       switchMap(user => {
-        if(user && user.length == 1){
-          return of(user[0]);
-        } else if(user && user.length > 1){
-          return of(user);
-        } else {
-          return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
+        if (user.length == 0) {
+          return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
             switchMap((ec: any) => {
               this.tostrService.error(
                 'The email address (' +
@@ -104,6 +95,24 @@ export class AuthService {
               return of(null);
             })
           );
+        } else if(user.length == 1){
+          return of(user[0]);
+        } else if(user.length > 1){
+          return this.loggerService.logMessage('LOGIN', email, 'More than 1 account was found with the email address (' + email + ')', []).pipe(
+            switchMap((ec: any) => {
+              this.tostrService.error(
+                'More than 1 account was found with this email address (' +
+                  email +
+                  '). Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
+                  ec,
+                'Login Error',
+                { disableTimeOut: true }
+              );
+              return of(null);
+            })
+          );
+        } else {
+          return of(null);
         }
       })
     );
@@ -165,7 +174,7 @@ export class AuthService {
         }),
         catchError((err) => {
           if (err.code == 'auth/wrong-password') {
-            return this.logMessage('LOGIN', email, 'You have entered an incorrect password for this email address.', [
+            return this.loggerService.logMessage('LOGIN', email, 'You have entered an incorrect password for this email address.', [
               { ...err }
             ]).pipe(
               switchMap((ec: any) => {
@@ -183,7 +192,7 @@ export class AuthService {
               })
             );
           } else if (err.code == 'auth/user-not-found') {
-            return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
+            return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
               switchMap((ec: any) => {
                 this.tostrService.error(
                   'The email address (' +
@@ -201,7 +210,7 @@ export class AuthService {
               })
             );
           } else if (err.code == 'auth/too-many-requests') {
-            return this.logMessage('LOGIN', email, 'Too many failed attempts. The account is temporarily locked.', [
+            return this.loggerService.logMessage('LOGIN', email, 'Too many failed attempts. The account is temporarily locked.', [
               { ...err }
             ]).pipe(
               switchMap((ec: any) => {
@@ -219,7 +228,7 @@ export class AuthService {
               })
             );
           } else {
-            return this.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
+            return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
               switchMap((ec: any) => {
                 this.tostrService.error(
                   'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' +
@@ -246,7 +255,7 @@ export class AuthService {
     }
   }
 
-  setUser(user: AppUser | CustomerModel | EventRegistrationModel): Observable<AppUser | CustomerModel | EventRegistrationModel> {
+  setUser(user: AppUser | CustomerModel): Observable<AppUser | CustomerModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     try {
@@ -391,32 +400,6 @@ export class AuthService {
     this.cookieService.delete(COOKIE_NAME);
 
     this.router.navigate(['capture-username-form']);
-  }
-
-  private logMessage(type: string, created_by: string, message: string, data?: any): Observable<any> {
-    try {
-      let ec = this.generateErrorCode();
-      let logMessage: LogMessage = { ...new LogMessage(type, created_by, message, ec, data) };
-      logMessage.id = this.generateErrorCode();
-
-      return from(this.loggerService.add(logMessage)).pipe(
-        map(() => {
-          return ec;
-        })
-      );
-    } catch (err) {
-      console.error(err);
-
-      return of(true);
-    }
-  }
-
-  private generateErrorCode() {
-    return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
   }
 }
 

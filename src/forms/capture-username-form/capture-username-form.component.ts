@@ -1,3 +1,4 @@
+import { EventRegistrationModel } from './../../models/domain/event-registration.model';
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -6,6 +7,8 @@ import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import { EventRegistrationService } from 'impactdisciplescommon/src/services/data/event-registration.service';
+import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 
 const COOKIE_NAME = "impact-disciples-app"
 
@@ -25,20 +28,42 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
   constructor(private authService: AuthService,
     private router: Router,
     public tostrService: ToastrService,
+    public loggerService: LoggerService,
     private sessionService: SessionService,
+    private eventRegistrationService: EventRegistrationService,
     private cookieService: CookieService) { }
 
-  onSubmit(e: Event) {
+  async onSubmit(e: Event) {
     e.preventDefault();
     const { email } = this.loginEmail;
     this.isLoading = true;
 
-    this.authService.findUser(email).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-      if (!result) {
+
+    if(environment.application == 'application'){
+      let eventRegistrations: EventRegistrationModel[] = await this.eventRegistrationService.getAllByValue('email', email.toLowerCase());
+
+      if(eventRegistrations.length == 0){
+        this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [])
+
+        this.tostrService.error(
+          'The email address (' +email +') is not recognized. Please login with email address used during Registration.', 'Login Error',
+          { disableTimeOut: true }
+        );
         this.isLoading = false;
-        this.tostrService.error('A User account associated with that Email Address could not be found. Please Contact Impact Disciples for help.');
+      } else if(eventRegistrations.length == 1){
+        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
+        this.isLoading = false;
       } else {
-        if(environment.application != 'application'){
+        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify([eventRegistrations]));
+        this.isLoading = false;
+        this.router.navigate(['/event-selector']);
+      }
+
+    } else {
+      this.authService.findUser(email).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+        if (!result) {
+          this.isLoading = false;
+        } else {
           this.sessionService.currentUser = result;
 
           if (result.firebaseUID) {
@@ -48,19 +73,9 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
             this.isLoading = false;
             this.router.navigate(['create-auth-form']);
           }
-        } else {
-
-          if(Array.isArray(result)){
-            this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(result));
-          } else {
-            this.cookieService.set("REGISTERED_EVENTS", JSON.stringify([result]));
-          }
-
-          this.isLoading = false;
-          this.router.navigate(['/event-selector']);
         }
-      }
-    })
+      })
+    }
   }
 
   ngOnDestroy(): void {
