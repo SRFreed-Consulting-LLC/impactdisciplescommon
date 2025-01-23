@@ -7,6 +7,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { CustomerService } from 'impactdisciplescommon/src/services/data/customer.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
 import { environment } from 'src/environments/environment';
+import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
+import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 
 @Component({
   selector: 'app-create-auth-form',
@@ -23,6 +25,7 @@ export class CreateAuthFormComponent implements OnDestroy {
     private customerService: CustomerService,
     private userService: AppUserService,
     private router: Router,
+    public loggerService: LoggerService,
     private sessionService: SessionService,
     public tostrService: ToastrService) { }
 
@@ -35,53 +38,84 @@ export class CreateAuthFormComponent implements OnDestroy {
       this.isLoading = false;
       this.tostrService.error('Passwords do not match. Please try again.');
     } else {
-      let searchResults: Promise<any[]>;
-
       if(environment.application == 'admin'){
-        searchResults = this.userService.getAllByValue('email', email);
+        this.userService.getAllByValue('email', email).then(users => {
+          if(users.length == 0){
+            this.loggerService.logMessage('Create Admin Account', email, 'Tried to setup Admin account for (' + email + '). This email is not recognized. Setup Admin Account first.', []);
+
+            this.tostrService.error('No account exists for this email.');
+
+            this.router.navigate(['/']);
+
+            this.isLoading = false;
+          } else if(users.length == 1){
+            if(users[0].firebaseUID){
+              this.tostrService.success('An account for ' + email + ' had already been setup!. Try logging in with this email address!');
+
+              this.router.navigate(['capture-username-form']);
+            } else {
+              try{
+                this.authService.createAccount(email, password).then((result) => {
+                  if (result.isOk) {
+                    this.tostrService.success('Your account has been created. Please login using your new credentials.');
+
+                    this.sessionService.currentUser = null;
+
+                    this.router.navigate(['capture-username-form']);
+                  } else {
+                    if(result.message && result.message.message == "Firebase: Error (auth/email-already-in-use)."){
+                      this.tostrService.error('A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.');
+
+                      this.loggerService.logMessage('Create Admin Account', email, 'Error setting up Admin for (' + email + '). Firebase: Error (auth/email-already-in-use).', []);
+                    } else {
+                      this.tostrService.error('There was an error creating your account: ' + result.message);
+
+                      this.loggerService.logMessage('Create Admin Account', email, 'Error setting up Admin for (' + email + '). ' + result.message, []);
+                    }
+                  }
+                  this.isLoading = false;
+                })
+              } catch (err){
+                console.log("error")
+                console.log(err)
+              }
+            }
+          }
+        });
       } else {
-        searchResults = this.customerService.getAllByValue('email', email);
-      }
+        this.customerService.getAllByValue('email', email).then(customers => {
+          if(customers.length == 0){
+            let customer: CustomerModel = new CustomerModel();
+            customer.email = email;
 
-      searchResults.then(customers => {
-        if(customers.length == 0){
-          this.tostrService.error('No account exists for this email.');
-
-          this.router.navigate(['/']);
-
-          this.isLoading = false;
-        } else if(customers.length == 1){
-          if(customers[0].firebaseUID){
-            this.tostrService.success('An account for ' + email + ' already exists!. Try loggin in with this email address!');
-
-            this.router.navigate(['capture-username-form']);
-          } else {
-            try{
+            this.customerService.add({...customer}).then(customer => {
               this.authService.createAccount(email, password).then((result) => {
                 if (result.isOk) {
-                  this.tostrService.success('Your account has been created. Please login using your new credentials.');
-
-                  this.sessionService.currentUser = null;
-
-                  this.router.navigate(['capture-username-form']);
+                  this.tostrService.success('Your account has been created! Please login.');
+                  this.router.navigate(['/capture-username-form']);
                 } else {
                   if(result.message && result.message.message == "Firebase: Error (auth/email-already-in-use)."){
                     this.tostrService.error('A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.');
+
+                    this.loggerService.logMessage('Create User Account', email, 'Error setting up User for (' + email + '). Firebase: Error (auth/email-already-in-use).', []);
                   } else {
                     this.tostrService.error('There was an error creating your account: ' + result.message);
+
+                    this.loggerService.logMessage('Create User Account', email, 'Error setting up User for (' + email + '). ' + result.message, []);
                   }
-
-
                 }
                 this.isLoading = false;
-              })
-            } catch (err){
-              console.log("error")
-              console.log(err)
+
+                this.router.navigate(['/']);
+              });
+            })
+          } else if(customers.length == 1){
+            this.tostrService.success('An account for ' + email + ' had already been created!. Try logging in with this email address!');
+
+            this.router.navigate(['capture-username-form']);
             }
-          }
-        }
-      })
+        });
+      }
     }
   }
 

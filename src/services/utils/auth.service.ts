@@ -142,7 +142,11 @@ export class AuthService {
                       this.user['cookie_expiration_time'] = Date.parse(token.expirationTime);
                       console.log('Expiration:' + new Date(this.user['cookie_expiration_time']));
 
-                      this.router.navigate([this._lastAuthenticatedPath]);
+                      if(environment.application == 'admin'){
+                        this.router.navigate([this._lastAuthenticatedPath]);
+                      } else {
+                        this.router.navigate(['profile']);
+                      }
 
                       this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), { expires: this.user['cookie_expiration_time'] });
 
@@ -314,7 +318,7 @@ export class AuthService {
   }
 
   createAccount(email: string, password: string): Promise<any> {
-    return this.dao.register(email.toLowerCase(), password).then(result => {
+    return this.dao.register(email.toLowerCase(), password).then(async result => {
       if(result.user){
         let user$: Promise<any>;
 
@@ -324,7 +328,7 @@ export class AuthService {
           user$ = this.customerService.getAllByValue('email', email);
         }
 
-        return user$.then(async appuser => {
+        return await user$.then(async appuser => {
           console.log(appuser);
           if(appuser && appuser.length == 1){
             let u: AppUser | CustomerModel = appuser[0];

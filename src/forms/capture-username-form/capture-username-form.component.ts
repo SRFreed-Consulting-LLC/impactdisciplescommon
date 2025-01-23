@@ -43,7 +43,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
       let eventRegistrations: EventRegistrationModel[] = await this.eventRegistrationService.getAllByValue('email', email.toLowerCase());
 
       if(eventRegistrations.length == 0){
-        this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [])
+        this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []);
 
         this.tostrService.error(
           'The email address (' +email +') is not recognized. Please login with email address used during Registration.', 'Login Error',
