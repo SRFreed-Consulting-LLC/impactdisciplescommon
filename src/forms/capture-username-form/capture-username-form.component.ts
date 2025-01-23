@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { EventRegistrationService } from 'impactdisciplescommon/src/services/data/event-registration.service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
+import { EventModel } from 'impactdisciplescommon/src/models/domain/event.model';
 
 const COOKIE_NAME = "impact-disciples-app"
 
@@ -51,10 +52,13 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
         );
         this.isLoading = false;
       } else if(eventRegistrations.length == 1){
+        this.setUserCookie(eventRegistrations[0]).pipe(take(1)).subscribe(reg => {this.router.navigate(['home'])});
+        this.sessionService.currentUser = eventRegistrations[0];
         this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
         this.isLoading = false;
+        this.router.navigate(['/home']);
       } else {
-        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify([eventRegistrations]));
+        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
         this.isLoading = false;
         this.router.navigate(['/event-selector']);
       }
@@ -81,5 +85,15 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  setUserCookie(registration: EventRegistrationModel){
+    this.cookieService.set(COOKIE_NAME, JSON.stringify(registration), { expires: 3 });
+
+    registration.loggedIn = true;
+
+    this.eventRegistrationService.update(registration.id, registration);
+
+    return this.authService.setUser(registration);
   }
 }

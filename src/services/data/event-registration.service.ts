@@ -5,6 +5,7 @@ import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciples
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -76,21 +77,7 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return [];
   }
 
-  async getTrainingSessionList(eventId: string): Promise<Map<string, string[]>> {
-    return this.getAllByValue('eventId', eventId).then(registeredusers => {
-      let retval: Map<string, string[]> = new Map<string, string[]>();
-
-      registeredusers.forEach(user => {
-        user.trainingSessions.forEach(session =>{
-          if(!retval.has(session)){
-            retval.set(session, [])
-          }
-
-          retval.get(session).push(user.id);
-        })
-      })
-
-      return retval;
-    })
+  streamTrainingSessionList(eventId: string): Observable<EventRegistrationModel[]> {
+    return this.streamAllByValue('eventId', eventId)
   }
 }

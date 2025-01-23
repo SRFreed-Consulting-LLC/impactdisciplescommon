@@ -15,6 +15,7 @@ import { Store } from '@ngxs/store';
 import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
+import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 
 const defaultPath = '/';
 
@@ -24,7 +25,7 @@ const COOKIE_NAME = "impact-disciples-admin"
   providedIn: 'root'
 })
 export class AuthService {
-  public user: AppUser | CustomerModel;
+  public user: AppUser | CustomerModel | EventRegistrationModel;
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
@@ -259,7 +260,7 @@ export class AuthService {
     }
   }
 
-  setUser(user: AppUser | CustomerModel): Observable<AppUser | CustomerModel> {
+  setUser(user: AppUser | CustomerModel | EventRegistrationModel): Observable<AppUser | CustomerModel | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     try {
