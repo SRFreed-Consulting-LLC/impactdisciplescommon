@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppUser } from '../../models/admin/appuser.model';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
+import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,6 @@ import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/cus
 export class SessionService {
   constructor() {}
 
-  currentUser: AppUser | CustomerModel;
+  currentUser: AppUser | CustomerModel | EventRegistrationModel;
 
 }
