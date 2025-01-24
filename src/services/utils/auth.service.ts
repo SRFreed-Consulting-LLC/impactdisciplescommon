@@ -74,9 +74,9 @@ export class AuthService {
     let user$: Promise<any>;
 
     if(environment.application == 'admin'){
-      user$ = this.userService.getAllByValue('email', email);
+      user$ = this.userService.getAllByValue('email', email.toLowerCase());
     } else if(environment.application == 'web'){
-      user$ = this.customerService.getAllByValue('email', email);
+      user$ = this.customerService.getAllByValue('email', email.toLowerCase());
     }
 
     return from(user$).pipe(
