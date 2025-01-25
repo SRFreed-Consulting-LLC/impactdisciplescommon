@@ -23,6 +23,20 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return data;
   };
 
+  async getEventRegistration(email: string, eventId: string): Promise<EventRegistrationModel> {
+    let params: QueryParam[] = [];
+    params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
+    params.push(new QueryParam('eventId', WhereFilterOperandKeys.equal, eventId));
+
+    let retval = await this.queryAllByMultiValue(params);
+
+    if(retval && retval.length == 1){
+      return retval[0];
+    }
+
+    return null;
+  }
+
   async registerForTrainingSession(email: string, agendaItemId: string, eventId: string): Promise<EventRegistrationModel> {
     let params: QueryParam[] = [];
     params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
