@@ -10,8 +10,8 @@ export class EventModel extends BaseModel {
   isActive: boolean = false;
   eventName?: string;
   organization?: string | OrganizationModel;
-  startDate?: Timestamp | Date;
-  endDate?: Timestamp | Date;
+  startDate?: Timestamp | Date | string;
+  endDate?: Timestamp | Date | string;
   location?: string | LocationModel;
   attendees?: AppUser[];
   agendaItems?: AgendaItem[];
