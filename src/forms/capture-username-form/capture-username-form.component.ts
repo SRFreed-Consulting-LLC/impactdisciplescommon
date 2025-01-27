@@ -9,9 +9,6 @@ import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { EventRegistrationService } from 'impactdisciplescommon/src/services/data/event-registration.service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
-import { EventModel } from 'impactdisciplescommon/src/models/domain/event.model';
-
-const COOKIE_NAME = "impact-disciples-app"
 
 @Component({
   selector: 'app-capture-username-form',
@@ -39,7 +36,6 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     const { email } = this.loginEmail;
     this.isLoading = true;
 
-
     if(environment.application == 'application'){
       let eventRegistrations: EventRegistrationModel[] = await this.eventRegistrationService.getAllByValue('email', email.toLowerCase());
 
@@ -50,18 +46,19 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
           'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.', 'Login Error',
           { disableTimeOut: true }
         );
-        this.isLoading = false;
       } else if(eventRegistrations.length == 1){
-        this.setUserCookie(eventRegistrations[0]).pipe(take(1)).subscribe(reg => {this.router.navigate(['home'])});
-        this.sessionService.currentUser = eventRegistrations[0];
+        this.authService.setUser(eventRegistrations[0]);
+
         this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
-        this.isLoading = false;
-        this.router.navigate(['/home']);
+
+        this.sessionService.setCurrentEventId(eventRegistrations[0].eventId);
       } else {
         this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
-        this.isLoading = false;
+
         this.router.navigate(['/event-selector']);
       }
+
+      this.isLoading = false;
 
     } else {
       this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
@@ -87,13 +84,9 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     this.ngUnsubscribe.complete();
   }
 
-  setUserCookie(registration: EventRegistrationModel){
-    this.cookieService.set(COOKIE_NAME, JSON.stringify(registration), { expires: 3 });
-
+  setLoggedIn(registration: EventRegistrationModel){
     registration.loggedIn = true;
 
     this.eventRegistrationService.update(registration.id, registration);
-
-    return this.authService.setUser(registration);
   }
 }

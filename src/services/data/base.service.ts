@@ -41,8 +41,8 @@ export class BaseService<T extends BaseModel> {
     return this.dao.streamByValue(this.table, field, value, this.fromFirestore)
   }
 
-  streamById(id: string): Observable<T>{
-    return from(this.dao.getById(id, this.table, this.fromFirestore));
+  streamById(id: string): Observable<T[]>{
+    return this.dao.streamByValue(this.table, 'id', id, this.fromFirestore);
   }
 
   streamRecord(id: string, callBack): Unsubscribe{

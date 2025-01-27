@@ -1,4 +1,3 @@
-import { EventRegistrationService } from './../data/event-registration.service';
 import { CustomerService } from '../data/customer.service';
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
@@ -7,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 import { AppUserService } from '../data/user.service';
 import { FireAuthDao } from '../../dao/fireauth.dao';
 import { LoggerService } from '../data/logger.service';
-import { SessionService } from '../utils/session.service';
 import { AppUser } from '../../models/admin/appuser.model';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
@@ -19,7 +17,7 @@ import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/
 
 const defaultPath = '/';
 
-const COOKIE_NAME = "impact-disciples-admin"
+const COOKIE_NAME = "impact-disciples-user"
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +65,6 @@ export class AuthService {
     private cookieService: CookieService,
     public loggerService: LoggerService,
     public tostrService: ToastrService,
-    private sessionService: SessionService,
     private customerService: CustomerService
   ) { }
 
@@ -271,7 +268,7 @@ export class AuthService {
 
         this.user = user;
       } else {
-        this.cookieService.set(COOKIE_NAME, JSON.stringify(user));
+        this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: 3 });
 
         this.user = user;
       }
@@ -282,10 +279,10 @@ export class AuthService {
     return of(user);
   }
 
-  getUser(): Observable<AppUser | CustomerModel> {
+  getUser(): Observable<AppUser | CustomerModel | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
-    let user: AppUser | CustomerModel = null;
+    let user: AppUser | CustomerModel | EventRegistrationModel = null;
 
     try {
       if (cookieValue) {
@@ -300,10 +297,10 @@ export class AuthService {
     return of(user);
   }
 
-  getUserAsPromise(): Promise<AppUser | CustomerModel> {
+  getUserAsPromise(): Promise<AppUser | CustomerModel | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
-    let user: AppUser | CustomerModel = null;
+    let user: AppUser | CustomerModel | EventRegistrationModel = null;
 
     try {
       if (cookieValue) {
@@ -400,7 +397,6 @@ export class AuthService {
   }
 
   logOut(): void {
-    this.sessionService.currentUser = null;
     this.user = null;
     this.cookieService.delete(COOKIE_NAME);
 
