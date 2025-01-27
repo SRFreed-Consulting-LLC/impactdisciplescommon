@@ -47,11 +47,15 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
           { disableTimeOut: true }
         );
       } else if(eventRegistrations.length == 1){
-        this.authService.setUser(eventRegistrations[0]);
+        this.setUser(eventRegistrations[0]);
+
+        this.setLoggedIn(eventRegistrations[0]);
 
         this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
 
         this.sessionService.setCurrentEventId(eventRegistrations[0].eventId);
+
+        this.router.navigate(['home'])
       } else {
         this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
 
@@ -82,6 +86,10 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  setUser(registration: EventRegistrationModel){
+    return this.authService.setUser(registration);
   }
 
   setLoggedIn(registration: EventRegistrationModel){
