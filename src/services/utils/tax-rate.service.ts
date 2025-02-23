@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { CheckoutForm } from 'impactdisciplescommon/src/models/utils/cart.model';
 import { environment } from 'src/environments/environment';
+import { LoggerService } from '../data/logger.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaxRateService{
+
+  constructor(private logService: LoggerService) {}
+
   async calculateTaxRate(checkoutForm: CheckoutForm): Promise<CheckoutForm>{
     var myHeaders = new Headers();
     myHeaders.append("apikey", environment.taxApiKey);
@@ -16,11 +20,14 @@ export class TaxRateService{
       redirect: 'follow',
       headers: myHeaders
     })
-      .then(response => response.json())
-      .catch(error => console.log('error', error));
+    .then(response => response.json())
+    .catch(error => {
+        this.logService.logMessage('TAXCALC REQUEST', checkoutForm.email, 'Error receieved from Tax Calc Service: ', JSON.stringify(error));
+    });
 
     if (!taxRates) {
-      console.log("No qualified tax rate found for zip code " + checkoutForm.shippingAddress.zip);
+      this.logService.logMessage('TAXCALC REQUEST', checkoutForm.email, 'No Tax Rate returned: Setting to .07');
+
       checkoutForm.taxRate = .07;
       checkoutForm.taxSource = "default";
     } else {
@@ -34,6 +41,8 @@ export class TaxRateService{
     try{
       taxableAmount = checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => (item.price? item.price : 0) * item.orderQuantity)?.reduce((a,b) => a + b);
     } catch(err){
+      this.logService.logMessage('TAXCALC REQUEST', checkoutForm.email, 'Error getting taxable amount');
+
       taxableAmount = 0;
     }
 
