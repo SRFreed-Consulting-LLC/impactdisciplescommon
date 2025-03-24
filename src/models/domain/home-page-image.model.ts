@@ -1,9 +1,10 @@
 import { Timestamp } from 'firebase/firestore';
 import { BaseModel } from '../base.model';
+import { ImageModel } from '../utils/image.model';
 
 export class HomePageImageModel extends BaseModel {
   isActive: boolean = false;
-  url?: string;
+  image?: ImageModel;
   title: string;
   text?: string;
   side: string;
