@@ -4,7 +4,7 @@ import { TagModel } from "./tag.model";
 
 export class PodCastModel extends BaseModel{
   isActive: boolean = false;
-  date: Timestamp;
+  date: Timestamp | Date;
   title: string;
   category?: string;
   videoType: string;

@@ -6,7 +6,7 @@ import { ImageModel } from "../utils/image.model";
 export class BlogPostModel extends BaseModel {
   isActive: boolean = false;
   title: string;
-  date: Timestamp;
+  date: Timestamp | Date;
   category?: string;
   blogText: string;
   mainImage: ImageModel;

@@ -315,6 +315,24 @@ export class AuthService {
     return Promise.resolve(user);
   }
 
+  getLoggedInUser(): AppUser {
+    const cookieValue = this.cookieService.get(COOKIE_NAME);
+
+    let user: AppUser = null;
+
+    try {
+      if (cookieValue) {
+        user = JSON.parse(cookieValue);
+      } else {
+        console.log('cookie not found...expired');
+      }
+    } catch (error) {
+      console.error('Error parsing cookie JSON', error);
+    }
+
+    return user;
+  }
+
   createAccount(email: string, password: string): Promise<any> {
     return this.dao.register(email.toLowerCase(), password).then(async result => {
       if(result.user){

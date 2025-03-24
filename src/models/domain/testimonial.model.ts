@@ -8,6 +8,6 @@ export class TestimonialModel extends BaseModel {
   author: string;
   quote?: string;
   text: string;
-  date: Timestamp;
+  date: Timestamp | Date;
   type: TESTIMONIAL_TYPES;
 }
