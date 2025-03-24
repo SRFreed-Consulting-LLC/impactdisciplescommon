@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from '@google-cloud/firestore';
-import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
+import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { EventModel } from 'impactdisciplescommon/src/models/domain/event.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
@@ -27,5 +27,15 @@ export class EventService extends BaseService<EventModel>{
     }
 
     return data;
+  }
+
+  public async isSummitPosted(): Promise<boolean> {
+        let qp: QueryParam[] = [];
+        qp.push(new QueryParam('isActive', WhereFilterOperandKeys.equal, true));
+        qp.push(new QueryParam('isSummit', WhereFilterOperandKeys.equal, true));
+
+        return await  this.queryAllByMultiValue(qp).then(events => {
+          return events.length > 0;
+        })
   }
 }
