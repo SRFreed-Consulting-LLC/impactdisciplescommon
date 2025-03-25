@@ -9,7 +9,6 @@ export class HomePageImageModel extends BaseModel {
   title: string;
   text?: string;
   side: string;
-  ctaVisible: boolean;
   ctaTitle: string;
   ctaDestination: string;
   date: Timestamp;
