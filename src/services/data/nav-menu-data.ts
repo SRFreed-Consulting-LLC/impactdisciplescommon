@@ -10,7 +10,7 @@ const menuData: MenuModel[] = [
       { link: '/equipping-groups', title: 'Equipping Groups', visible: true },
       { link: '/coaching-with-impact', title: 'Coaching with Impact', visible: true },
       { link: '/lunch-and-learns', title: 'Lunch and Learns', visible: true },
-      { link: '/upcoming-training', title: 'Upcoming Training', visible: true }
+      { link: '/events', title: 'Upcoming Training', visible: true }
     ], visible: true
   },
   { link: '/', title: 'Resources', hasDropdown: true,
