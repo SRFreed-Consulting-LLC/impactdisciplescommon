@@ -23,7 +23,7 @@ const menuData: MenuModel[] = [
   },
   { link: '/', title: 'Events', hasDropdown: true,
     dropdownItems: [
-      { link: '/summit/2025', title: 'Summit 2026', visible: 'check' },
+      { link: '/summit/2026', title: 'Summit 2026', visible: 'check' },
       { link: '/events', title: 'Upcoming Training', visible: true },
     ], visible: true
    },
