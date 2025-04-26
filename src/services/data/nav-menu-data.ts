@@ -29,15 +29,7 @@ const menuData: MenuModel[] = [
    },
   { link: '/store', title: 'Store', hasDropdown: false , visible: true},
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true},
-  { link: '/team', title: 'Team', hasDropdown: true,
-    dropdownItems: [
-      { link: '/about', title: 'About Us', visible: true },
-      { link: '/contact', title: 'Contact', visible: true },
-      { link: '/history', title: 'History', visible: true },
-      { link: '/terms', title: 'Terms', visible: true },
-      { link: '/private-policy', title: 'Private Policy', visible: true }
-    ], visible: true
-  },
+  { link: '/team', title: 'Team', hasDropdown: false, visible: true},
 ]
 
 export default menuData;
