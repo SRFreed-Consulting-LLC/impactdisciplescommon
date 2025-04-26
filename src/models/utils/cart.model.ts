@@ -9,6 +9,7 @@ export interface CartItem {
   id?: string;
   itemName?: string;
   price?: number;
+  salePrice?: number;
   orderQuantity?: number;
   discount?: number;
   discountPrice?: number;
@@ -44,6 +45,7 @@ export class CheckoutForm extends BaseModel {
   receipt?: string;
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
+  isFreeShipping?: boolean;
   paymentIntent?: PaymentIntent | string;
   dateProcessed?: Timestamp;
   processedStatus?: string;
