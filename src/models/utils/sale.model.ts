@@ -3,8 +3,8 @@ import { BaseModel } from "../base.model"
 
 export class SaleModel extends BaseModel {
   name: string;
-  startDate: Timestamp;
-  endDate: Timestamp;
+  startDate: Timestamp | string;
+  endDate: Timestamp | string;
   isActive: boolean = false;
   percentOff: number | null;
   isEvents: boolean = false;

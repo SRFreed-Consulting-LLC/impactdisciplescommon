@@ -45,7 +45,6 @@ export class CheckoutForm extends BaseModel {
   receipt?: string;
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
-  isFreeShipping?: boolean;
   paymentIntent?: PaymentIntent | string;
   dateProcessed?: Timestamp;
   processedStatus?: string;
@@ -64,6 +63,10 @@ export class CheckoutForm extends BaseModel {
   shippingRate?: number = 0;
   //id of shipping rate used
   shippingRateId?: any;
+  //amount of shipping discount
+  shippingDiscount?: number = 0;
+  //shipping discount reason
+  shippingDiscountReason?: string;
   //amount charged for taxes
   estimatedTaxes?: number = 0;
   //percent used to figure taxes
