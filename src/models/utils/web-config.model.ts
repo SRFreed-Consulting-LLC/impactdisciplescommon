@@ -24,4 +24,5 @@ export class WebConfigModel extends BaseModel{
   equippingGroupPaymentCost: number;
   adminEmailAddress: string;
   taxImportDate?: Timestamp;
+  freeShippingAmount: number;
 }
