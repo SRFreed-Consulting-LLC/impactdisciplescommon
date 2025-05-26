@@ -76,7 +76,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                   this.isLoading = false;
                 })
               } catch (err){
-                console.log("error")
                 console.log(err)
               }
             }

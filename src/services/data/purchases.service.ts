@@ -38,17 +38,4 @@ export class PurchasesService extends BaseService<CheckoutForm>{
 
     return checkoutForm;
   }
-
-  copyToNewTable(){
-    this.getAll().then(sales => {
-      this.table = "purchases";
-      sales.forEach(sale => {
-        console.log('adding', sale)
-        this.add(sale);
-      })
-
-    })
-
-  }
-
 }
