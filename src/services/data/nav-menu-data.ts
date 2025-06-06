@@ -18,6 +18,7 @@ const menuData: MenuModel[] = [
       { link: '/e-books', title: 'E-Books', visible: true },
       { link: '/podcasts', title: 'Podcasts', visible: true },
       { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true },
+      { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true },
     ], visible: true
   },
   { link: '/', title: 'Events', hasDropdown: true,
