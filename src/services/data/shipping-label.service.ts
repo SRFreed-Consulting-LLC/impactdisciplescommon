@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { environment } from 'src/environments/environment';
 import { BaseService } from './base.service';
-import { ShippingLabelBatchRequest, ShippingLabelRequest } from 'impactdisciplescommon/src/models/domain/shipment-label-batch-request.model';
+import { ShippingLabelRequest } from 'impactdisciplescommon/src/models/domain/shipment-label-batch-request.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { Timestamp } from 'firebase/firestore';
 import { Package, RateOptions, ShippingModel, ShippingRequest, ShippingToAddress, WeightDetail } from 'impactdisciplescommon/src/models/domain/shipment.model';
