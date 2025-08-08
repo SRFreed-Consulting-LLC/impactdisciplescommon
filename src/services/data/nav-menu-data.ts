@@ -3,33 +3,47 @@ import { MenuModel, MobileMenuModel } from "impactdisciplescommon/src/models/uti
 
 
 const menuData: MenuModel[] = [
-  { link: '/', title: 'Home', hasDropdown: false , visible: true},
-  { link: '/', title: 'Training', hasDropdown: true,
+  { link: '/', title: 'Home', hasDropdown: false , visible: true, external: false, highlight: false},
+  { link: '/', title: 'Training',
+    hasDropdown: true,
     dropdownItems: [
-      { link: '/seminars', title: 'Seminars', visible: true },
-      { link: '/equipping-groups', title: 'Equipping Groups', visible: true },
-      { link: '/coaching-with-impact', title: 'Coaching with Impact', visible: true },
-      { link: '/lunch-and-learns', title: 'Lunch and Learns', visible: true },
-      { link: '/events', title: 'Upcoming Training', visible: true }
-    ], visible: true
+      { link: '/seminars', title: 'Seminars', visible: true, external: false, highlight: false },
+      { link: '/equipping-groups', title: 'Equipping Groups', visible: true, external: false, highlight: false },
+      { link: '/coaching-with-impact', title: 'Coaching with Impact', visible: true, external: false, highlight: false },
+      { link: '/lunch-and-learns', title: 'Lunch and Learns', visible: true, external: false, highlight: false },
+      { link: '/events', title: 'Upcoming Training', visible: true, external: false, highlight: false }
+    ],
+    visible: true,
+    external: false,
+    highlight: false
   },
-  { link: '/', title: 'Resources', hasDropdown: true,
+  { link: '/', title: 'Resources',
+    hasDropdown: true,
     dropdownItems: [
-      { link: '/e-books', title: 'E-Books', visible: true },
-      { link: '/podcasts', title: 'Podcasts', visible: true },
-      { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true },
-      { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true },
-    ], visible: true
+      { link: '/e-books', title: 'E-Books', visible: true, external: false, highlight: false },
+      { link: '/podcasts', title: 'Podcasts', visible: true, external: false, highlight: false },
+      { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true, external: false, highlight: false },
+      { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true, external: false, highlight: false },
+    ],
+    visible: true,
+    external: false,
+    highlight: false
   },
-  { link: '/', title: 'Events', hasDropdown: true,
+  { link: '/', title: 'Events',
+    hasDropdown: true,
     dropdownItems: [
-      { link: '/summit/2026', title: 'Summit 2026', visible: 'check' },
-      { link: '/events', title: 'Upcoming Training', visible: true },
-    ], visible: true
+      { link: '/summit/2026', title: 'Summit 2026', visible: 'check', external: false, highlight: false },
+      { link: '/events', title: 'Upcoming Training', visible: true, external: false, highlight: false },
+    ],
+    visible: true,
+    external: false,
+    highlight: false
    },
-  { link: '/store', title: 'Store', hasDropdown: false , visible: true},
-  { link: '/give', title: 'Donate', hasDropdown: false , visible: true},
-  { link: '/team', title: 'Team', hasDropdown: false, visible: true},
+  { link: '/store', title: 'Store', hasDropdown: false , visible: true, external: false, highlight: false},
+  { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
+  { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
+  { link: 'https://events.golfstatus.com/event/2025-impact-golf-tournament', title: 'Golf Tournament 2026', visible: true, external: true, highlight: false },
+
 ]
 
 export default menuData;
