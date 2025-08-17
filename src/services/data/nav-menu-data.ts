@@ -42,7 +42,7 @@ const menuData: MenuModel[] = [
   { link: '/store', title: 'Store', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
-  { link: 'https://events.golfstatus.com/event/2025-impact-golf-tournament', title: 'Golf Tournament 2026', visible: true, external: true, highlight: false },
+  { link: 'https://events.golfstatus.com/event/2025-impact-golf-tournament', title: 'Golf Tournament 2025', visible: true, external: true, highlight: false },
 
 ]
 
