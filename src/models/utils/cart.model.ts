@@ -4,6 +4,7 @@ import { BaseModel } from "impactdisciplescommon/src/models/base.model";
 import { Address } from "impactdisciplescommon/src/models/domain/utils/address.model";
 import { Phone } from "impactdisciplescommon/src/models/domain/utils/phone.model";
 import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure.enum';
+import { IClientAuthorizeCallbackData } from 'ngx-paypal';
 
 export interface CartItem {
   id?: string;
@@ -46,6 +47,7 @@ export class CheckoutForm extends BaseModel {
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
   paymentIntent?: PaymentIntent | string;
+  payPalReceipt?: IClientAuthorizeCallbackData;
   dateProcessed?: Timestamp;
   processedStatus?: string;
 
@@ -74,7 +76,9 @@ export class CheckoutForm extends BaseModel {
   //service rate or default rate
   taxSource?: string;
 
+  //url to shipping label
   shippingLabel?: any;
+
   refundAmount?: number = 0;
   refundId?: string;
 }
