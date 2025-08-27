@@ -24,6 +24,7 @@ const menuData: MenuModel[] = [
       { link: '/podcasts', title: 'Podcasts', visible: true, external: false, highlight: false },
       { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true, external: false, highlight: false },
       { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true, external: false, highlight: false },
+      { link: '/spanish-resources', title: 'Spanish Resources', visible: true, external: false, highlight: false },
     ],
     visible: true,
     external: false,
