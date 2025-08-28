@@ -21,23 +21,7 @@ export class PurchasesService extends BaseService<CheckoutForm>{
     return data;
   };
 
-  saveCheckoutForm(checkoutForm: CheckoutForm){
-    checkoutForm.processedStatus = "NEW";
-    checkoutForm.dateProcessed = Timestamp.now();
 
-    if(checkoutForm.isShippingSameAsBilling){
-      checkoutForm.billingAddress = checkoutForm.shippingAddress;
-    }
-
-    checkoutForm.cartItems.forEach(item => {
-      item.dateProcessed = Timestamp.now();
-      item.processedStatus = "NEW"
-    })
-
-    localStorage.setItem('checkoutForm', JSON.stringify(checkoutForm));
-
-    return checkoutForm;
-  }
 
   calculateProductCostAmount(cartItem){
       return cartItem.data.salePrice ? cartItem.data.salePrice : cartItem.data.price;

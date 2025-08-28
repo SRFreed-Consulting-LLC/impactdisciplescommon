@@ -55,8 +55,6 @@ export class CheckoutForm extends BaseModel {
   total?: number = 0;
   //total discount on items
   discount?: number = 0;
-  //cart total
-  totalBeforeDiscount?: number;
   //code for coupon
   couponCode?: string;
   //coupon discount percentage
