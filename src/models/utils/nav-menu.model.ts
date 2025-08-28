@@ -1,5 +1,5 @@
 export interface MenuModel {
-  link: string,
+  link?: string,
   title: string,
   hasDropdown?: boolean,
   megamenu?: boolean,

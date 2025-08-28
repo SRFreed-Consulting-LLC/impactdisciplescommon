@@ -4,7 +4,7 @@ import { MenuModel, MobileMenuModel } from "impactdisciplescommon/src/models/uti
 
 const menuData: MenuModel[] = [
   { link: '/', title: 'Home', hasDropdown: false , visible: true, external: false, highlight: false},
-  { link: '/', title: 'Training',
+  { title: 'Training',
     hasDropdown: true,
     dropdownItems: [
       { link: '/seminars', title: 'Seminars', visible: true, external: false, highlight: false },
@@ -17,7 +17,7 @@ const menuData: MenuModel[] = [
     external: false,
     highlight: false
   },
-  { link: '/', title: 'Resources',
+  { title: 'Resources',
     hasDropdown: true,
     dropdownItems: [
       { link: '/e-books', title: 'E-Books', visible: true, external: false, highlight: false },
@@ -30,7 +30,7 @@ const menuData: MenuModel[] = [
     external: false,
     highlight: false
   },
-  { link: '/', title: 'Events',
+  { title: 'Events',
     hasDropdown: true,
     dropdownItems: [
       { link: '/summit/2026', title: 'Summit 2026', visible: 'check', external: false, highlight: false },

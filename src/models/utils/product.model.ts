@@ -20,4 +20,5 @@ export class ProductModel extends BaseModel {
   categoryOrder: number;
   sizes?: string[] = [];
   colors?: string[] = [];
+  showInStore: boolean;
 }
