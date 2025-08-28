@@ -4,12 +4,13 @@ import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { EMailModel, MessageModel, TemplateModel } from 'impactdisciplescommon/src/models/admin/mail.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
+import { EMailTemplatesService } from './email-templates.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EMailService extends BaseService<EMailModel>{
-  constructor(public override dao: FirebaseDAO<EMailModel>) {
+  constructor(public override dao: FirebaseDAO<EMailModel>, public templateService: EMailTemplatesService) {
     super(dao)
     this.table="mail"
     this.fromFirestore = EMailService.fromFirestore
@@ -62,5 +63,28 @@ export class EMailService extends BaseService<EMailModel>{
     mail.template = mailTemplate;
 
     return this.add(mail);
+  }
+
+  sendHTMLEMailFromTemplate(to:string, templateId: string, model: any){
+    this.templateService.getAllByValue('name', templateId).then(template => {
+      let mail = {... new EMailModel()}
+
+      let html = template[0].html;
+
+      Object.entries(model).forEach(([key, value]) => {
+        html = html.replace("{{"+key+"}}", model[key])
+      });
+
+      mail.to = to;
+      mail.date = Timestamp.now();
+      let mailMessage: MessageModel = {... new MessageModel()};
+
+      mailMessage.subject = template[0].subject;
+      mailMessage.html = html;
+
+      mail.message = mailMessage;
+
+      return this.add(mail);
+    })
   }
 }
