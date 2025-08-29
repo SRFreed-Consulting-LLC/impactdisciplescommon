@@ -33,7 +33,6 @@ export class ShippingService extends BaseService<ShippingModel>{
     } catch(err){
       this.logService.logMessage('SHIPPING REQUEST', checkoutForm.email, 'Error receieved calculating shipping: ', JSON.stringify(err));
 
-      console.log(err);
       totalWeight = 0;
     }
 
@@ -47,8 +46,6 @@ export class ShippingService extends BaseService<ShippingModel>{
           checkoutForm.shippingRateId = {... result.rateResponse.rates[0]};
 
           checkoutForm.shippingRate = Number(Number(result.rateResponse.rates[0].shippingAmount.amount).toFixed(2));
-
-          checkoutForm.total += checkoutForm.shippingRate > 0 ? checkoutForm.shippingRate : 0;
         }
 
         return checkoutForm;
