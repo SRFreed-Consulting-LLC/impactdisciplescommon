@@ -25,4 +25,6 @@ export class WebConfigModel extends BaseModel{
   adminEmailAddress: string;
   taxImportDate?: Timestamp;
   freeShippingAmount: number;
+  paypalClientId?: string;
+  taxApiKey? : string;
 }

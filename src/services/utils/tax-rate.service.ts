@@ -1,19 +1,31 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { CheckoutForm } from 'impactdisciplescommon/src/models/utils/cart.model';
 import { environment } from 'src/environments/environment';
 import { LoggerService } from '../data/logger.service';
+import { WebConfigService } from '../data/web-config.service';
+import { WebConfigModel } from 'impactdisciplescommon/src/models/utils/web-config.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaxRateService{
+export class TaxRateService implements OnInit {
 
-  constructor(private logService: LoggerService) {}
+  webconfig: WebConfigModel;
+
+  constructor(private logService: LoggerService, private webconfigService: WebConfigService) {
+    this.webconfigService.getAll().then(configs => {
+      this.webconfig = configs[0];
+    })
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.webconfig = await this.webconfigService.getAll()[0];
+  }
 
   async calculateTaxRate(checkoutForm: CheckoutForm): Promise<CheckoutForm>{
     var myHeaders = new Headers();
-    myHeaders.append("apikey", environment.taxApiKey);
+    myHeaders.append("apikey", this.webconfig.taxApiKey);
 
     const taxRates = await fetch("https://api.apilayer.com/tax_data/tax_rates?zip="+checkoutForm.shippingAddress.zip+"&use_client_ip=false&country=US", {
       method: 'GET',
