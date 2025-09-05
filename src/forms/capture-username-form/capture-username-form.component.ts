@@ -36,7 +36,23 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     const { email } = this.loginEmail;
     this.isLoading = true;
 
-    if(environment.application == 'application'){
+    if(environment.application == 'book'){
+      this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+        if (!result) {
+          this.isLoading = false;
+        } else {
+          this.sessionService.currentUser = result;
+
+          if (result.firebaseUID) {
+            this.isLoading = false;
+            this.router.navigate(['capture-password-form']);
+          } else {
+            this.isLoading = false;
+            this.router.navigate(['create-auth-form']);
+          }
+        }
+      })
+    } else if(environment.application == 'application'){
       let eventRegistrations: EventRegistrationModel[] = await this.eventRegistrationService.getAllByValue('email', email.toLowerCase());
 
       if(eventRegistrations.length == 0){

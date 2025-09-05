@@ -71,7 +71,7 @@ export class AuthService {
   findUser(email: string): Observable<AppUser | CustomerModel> {
     let user$: Promise<any>;
 
-    if(environment.application == 'admin'){
+    if(environment.application == 'admin' || environment.application == 'book'){
       user$ = this.userService.getAllByValue('email', email.toLowerCase());
     } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email.toLowerCase());
@@ -125,7 +125,7 @@ export class AuthService {
           if(result.user){
             let user$: Promise<any>;
 
-            if(environment.application == 'admin'){
+            if(environment.application == 'admin' || environment.application == 'book'){
               user$ = this.userService.getAllByValue('email', email);
             } else {
               user$ = this.customerService.getAllByValue('email', email);
@@ -142,6 +142,8 @@ export class AuthService {
 
                       if(environment.application == 'admin'){
                         this.router.navigate([this._lastAuthenticatedPath]);
+                      } else if(environment.application == 'book'){
+                        this.router.navigate(['home']);
                       } else {
                         this.router.navigate(['profile']);
                       }
