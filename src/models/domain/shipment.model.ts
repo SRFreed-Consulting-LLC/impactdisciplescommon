@@ -4,12 +4,13 @@ import { BaseModel } from '../base.model';
 export class ShippingRequest {
   rateOptions: RateOptions;
   shipment: ShippingModel;
+  weight: number;
 }
 export class ShippingModel extends BaseModel {
   validateAddress: string = "no_validation";
   shipTo: ShippingToAddress = {... new ShippingToAddress()};
   shipFrom: ShippingFromAddress = {... new ShippingFromAddress()};
-  packages: Package[] = [];;
+  packages: Package[] = [];
 }
 
 export class ShippingToAddress {
@@ -25,7 +26,7 @@ export class ShippingToAddress {
 
 export class ShippingFromAddress {
   companyName: string;
-  name: string;
+  name?: string;
   phone: string;
   addressLine1: string;
   addressLine2: string;

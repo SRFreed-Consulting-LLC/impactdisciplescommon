@@ -18,12 +18,20 @@ export class EnumHelper {
     return Object.keys(Role).map(key => Role[key]);
   }
 
-  static getStateRoleTypesAsArray(): string[] {
+  static getStateTypesAsArray(): string[] {
     return Object.values(States) as [];
+  }
+
+  static getState2LetterTypesAsArray(): string[] {
+    return Object.entries(States) as [];
   }
 
   static getCountryTypesAsArray(): string[] {
     return Object.values(Countries) as [];
+  }
+
+  static getCountry2LetterTypesAsArray(): string[] {
+    return Object.entries(Countries) as [];
   }
 
   static getUOMTypesAsArray(): string[] {

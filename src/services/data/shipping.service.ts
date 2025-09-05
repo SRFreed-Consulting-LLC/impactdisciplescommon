@@ -1,3 +1,4 @@
+import { LoggerService } from './logger.service';
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure.enum';
@@ -17,7 +18,7 @@ export class ShippingService extends BaseService<ShippingModel>{
   shippingCarriers: string[] = environment.shippingCarriers;
 
 
-  constructor(public override dao: FirebaseDAO<ShippingModel>, private webConfigService: WebConfigService) {
+  constructor(public override dao: FirebaseDAO<ShippingModel>, private webConfigService: WebConfigService, private logService: LoggerService) {
     super(dao)
     this.table="shipments"
   }
@@ -25,12 +26,13 @@ export class ShippingService extends BaseService<ShippingModel>{
   async calculateShipping(checkoutForm: CheckoutForm): Promise<CheckoutForm>{
     let totalWeight: number;
 
-    try{
+    try {
       let weightMap =  checkoutForm.cartItems.filter(item => item.isEvent == false).map(item => (item.weight? item.weight : 0) * item.orderQuantity);
 
       totalWeight = (weightMap && weightMap.length > 0)? weightMap.reduce((a,b) => a + b) : 0;
-    }catch(err){
-      console.log(err);
+    } catch(err){
+      this.logService.logMessage('SHIPPING REQUEST', checkoutForm.email, 'Error receieved calculating shipping: ', JSON.stringify(err));
+
       totalWeight = 0;
     }
 
@@ -44,8 +46,6 @@ export class ShippingService extends BaseService<ShippingModel>{
           checkoutForm.shippingRateId = {... result.rateResponse.rates[0]};
 
           checkoutForm.shippingRate = Number(Number(result.rateResponse.rates[0].shippingAmount.amount).toFixed(2));
-
-          checkoutForm.total += checkoutForm.shippingRate > 0 ? checkoutForm.shippingRate : 0;
         }
 
         return checkoutForm;
@@ -58,42 +58,48 @@ export class ShippingService extends BaseService<ShippingModel>{
   }
 
   private async createRequest(checkoutForm: CheckoutForm, weight: number): Promise<ShippingRequest>{
-    const configs = await this.webConfigService.getAll();
-
-    let toName: string = checkoutForm.firstName + ' ' + checkoutForm.lastName;
-    let toAddress: Address = checkoutForm.shippingAddress;
-    let toPhone: Phone = checkoutForm.phone;
-
-    let shipping: ShippingModel = {...new ShippingModel()};
-    shipping.shipTo.name = toName;
-    shipping.shipTo.phone = toPhone.number;
-    shipping.shipTo.addressLine1 = toAddress.address1;
-    shipping.shipTo.cityLocality = toAddress.city;
-    shipping.shipTo.stateProvince = toAddress.state;
-    shipping.shipTo.postalCode = toAddress.zip;
-    shipping.shipTo.countryCode = toAddress.country;
-
-    shipping.shipFrom.name = "Impact Disciples";
-    shipping.shipFrom.phone = configs[0].phone;
-    shipping.shipFrom.addressLine1 = configs[0].address.address1;
-    shipping.shipFrom.cityLocality = configs[0].address.city;
-    shipping.shipFrom.stateProvince = configs[0].address.state;
-    shipping.shipFrom.postalCode = configs[0].address.zip;
-    shipping.shipFrom.countryCode = "US";
-
-    let pkg: Package = {... new Package()};
-    pkg.weight = {...new WeightDetail()};
-    pkg.weight.unit = UNIT_OF_MEASURE.OUNCE;
-    pkg.weight.value = weight? weight : 0;
-
-    shipping.packages.push(pkg);
-
     let request: ShippingRequest = {... new ShippingRequest()};
-    request.rateOptions = {... new RateOptions()};
-    request.rateOptions.carrierIds = this.shippingCarriers;
-    request.shipment = shipping;
 
-    return request;
+    try {
+      const configs = await this.webConfigService.getAll();
+
+      let toName: string = checkoutForm.firstName + ' ' + checkoutForm.lastName;
+      let toAddress: Address = checkoutForm.shippingAddress;
+      let toPhone: Phone = checkoutForm.phone;
+
+      let shipping: ShippingModel = {...new ShippingModel()};
+      shipping.shipTo.name = toName;
+      shipping.shipTo.phone = toPhone.number;
+      shipping.shipTo.addressLine1 = toAddress.address1;
+      shipping.shipTo.cityLocality = toAddress.city;
+      shipping.shipTo.stateProvince = toAddress.state;
+      shipping.shipTo.postalCode = toAddress.zip;
+      shipping.shipTo.countryCode = toAddress.country;
+
+      shipping.shipFrom.name = "Impact Disciples";
+      shipping.shipFrom.phone = configs[0].phone;
+      shipping.shipFrom.addressLine1 = configs[0].address.address1;
+      shipping.shipFrom.cityLocality = configs[0].address.city;
+      shipping.shipFrom.stateProvince = configs[0].address.state;
+      shipping.shipFrom.postalCode = configs[0].address.zip;
+      shipping.shipFrom.countryCode = "US";
+
+      let pkg: Package = {... new Package()};
+      pkg.weight = {...new WeightDetail()};
+      pkg.weight.unit = UNIT_OF_MEASURE.OUNCE;
+      pkg.weight.value = weight? weight : 0;
+
+      shipping.packages.push(pkg);
+
+      request.rateOptions = {... new RateOptions()};
+      request.rateOptions.carrierIds = this.shippingCarriers;
+      request.shipment = shipping;
+
+      return request;
+    } catch (err) {
+      this.logService.logMessage('SHIPPING REQUEST', checkoutForm.email, 'Error receieved creating shipping request: ', JSON.stringify(err));
+      return request;
+    }
   }
 
   private async makeRequest(request: ShippingRequest){
@@ -104,6 +110,8 @@ export class ShippingService extends BaseService<ShippingModel>{
     });
 
     if (!response.ok) {
+      this.logService.logMessage('SHIPPING REQUEST', request.shipment.shipTo.name, 'Error receieved from ShippingService: ', JSON.stringify(response));
+
       throw new Error('Failed to get Shipping Rates: ' + JSON.stringify(response));
     }
 

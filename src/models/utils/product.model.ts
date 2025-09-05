@@ -7,6 +7,7 @@ export class ProductModel extends BaseModel {
   imageUrl: any;
   title: string;
   cost: number = 0;
+  salePrice: number = 0;
   description: string;
   series?: string;
   tags?: TagModel[];
@@ -19,4 +20,5 @@ export class ProductModel extends BaseModel {
   categoryOrder: number;
   sizes?: string[] = [];
   colors?: string[] = [];
+  showInStore: boolean;
 }

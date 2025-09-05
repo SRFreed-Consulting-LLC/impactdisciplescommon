@@ -16,6 +16,7 @@ export class SeminarService extends BaseService<SeminarModel>{
   }
 
   static readonly fromFirestore = (data): SeminarModel => {
+    data.date = dateFromTimestamp(data.date as Timestamp)
     data.requestedDate = dateFromTimestamp(data.requestedDate as Timestamp)
     data.requestedEndTime = dateFromTimestamp(data.requestedEndTime as Timestamp)
     data.requestedStartTime = dateFromTimestamp(data.requestedStartTime as Timestamp)

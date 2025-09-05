@@ -4,11 +4,13 @@ import { BaseModel } from "impactdisciplescommon/src/models/base.model";
 import { Address } from "impactdisciplescommon/src/models/domain/utils/address.model";
 import { Phone } from "impactdisciplescommon/src/models/domain/utils/phone.model";
 import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure.enum';
+import { IClientAuthorizeCallbackData } from 'ngx-paypal';
 
 export interface CartItem {
   id?: string;
   itemName?: string;
   price?: number;
+  salePrice?: number;
   orderQuantity?: number;
   discount?: number;
   discountPrice?: number;
@@ -45,6 +47,7 @@ export class CheckoutForm extends BaseModel {
   isNewsletter?: boolean;
   isCreateAccount?: boolean;
   paymentIntent?: PaymentIntent | string;
+  payPalReceipt?: IClientAuthorizeCallbackData;
   dateProcessed?: Timestamp;
   processedStatus?: string;
 
@@ -52,8 +55,6 @@ export class CheckoutForm extends BaseModel {
   total?: number = 0;
   //total discount on items
   discount?: number = 0;
-  //cart total
-  totalBeforeDiscount?: number;
   //code for coupon
   couponCode?: string;
   //coupon discount percentage
@@ -62,6 +63,10 @@ export class CheckoutForm extends BaseModel {
   shippingRate?: number = 0;
   //id of shipping rate used
   shippingRateId?: any;
+  //amount of shipping discount
+  shippingDiscount?: number = 0;
+  //shipping discount reason
+  shippingDiscountReason?: string;
   //amount charged for taxes
   estimatedTaxes?: number = 0;
   //percent used to figure taxes
@@ -69,7 +74,9 @@ export class CheckoutForm extends BaseModel {
   //service rate or default rate
   taxSource?: string;
 
+  //url to shipping label
   shippingLabel?: any;
+
   refundAmount?: number = 0;
   refundId?: string;
 }
