@@ -35,8 +35,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     e.preventDefault();
     const { email } = this.loginEmail;
     this.isLoading = true;
-
-    if(environment.application == 'book'){
+    if(environment.application == 'book' || environment.application == 'book-viewer'){
       this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
         if (!result) {
           this.isLoading = false;

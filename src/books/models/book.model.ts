@@ -9,4 +9,5 @@ export class BookModel extends BaseModel {
   year?: number;
   units?: UnitModel[];
   lessons?: LessonModel[];
+  order?: number;
 }
