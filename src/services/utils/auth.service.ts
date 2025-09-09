@@ -145,7 +145,7 @@ export class AuthService {
                       if(environment.application == 'admin'){
                         this.router.navigate([this._lastAuthenticatedPath]);
                       } else if(environment.application == 'book' || environment.application == 'book-viewer'){
-                        this.router.navigate(['home']);
+                        this.router.navigate(['/home']);
                       } else {
                         this.router.navigate(['profile']);
                       }
