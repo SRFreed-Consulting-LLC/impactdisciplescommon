@@ -74,7 +74,9 @@ export const mobileMenuData: MobileMenuModel[] = [
     dropdownMenu: [
       { link: '/e-books', title: 'E-Books', visible: true },
       { link: '/podcasts', title: 'Podcasts', visible: true },
-      { link: '/blog', title: 'Blog', visible: true }
+      { link: '/blog', title: 'Blog', visible: true },
+      { link: '/spanish-resources', title: 'Spanish Resources', visible: true },
+
     ], visible: true
   },
   {
