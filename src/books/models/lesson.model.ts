@@ -13,6 +13,7 @@ export class LessonModel extends BaseModel {
   wedVerse: string;
   thuVerse: string;
   friVerse: string;
-  questions: string[]
+  questions: string[];
+  languages: {};
 }
 
