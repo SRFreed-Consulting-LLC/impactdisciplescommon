@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { PhoneNumberMaskPipe } from './phone-number.pipe';
+import { SafeHtmlPipe } from './safe-html.pipe';
 
 @NgModule({
   declarations: [
-    PhoneNumberMaskPipe
+    PhoneNumberMaskPipe,
+    SafeHtmlPipe
   ],
   exports: [
-    PhoneNumberMaskPipe
+    PhoneNumberMaskPipe,
+    SafeHtmlPipe
   ]
 })
 export class PipesModule { }
