@@ -7,5 +7,7 @@ export class RouteItem {
 
   icon: string;
 
+  text?: string;
+
   level: number;
 }
