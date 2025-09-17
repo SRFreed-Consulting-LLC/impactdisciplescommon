@@ -1,7 +1,9 @@
 import { BaseModel } from "./base.model";
 
 export class LessonLanguageModel extends BaseModel {
-    lesson: string;
+    type: string;
+    lesson?: string;
+    book?: string;
     language: string;
     kvPairs: any[] = [];
 }
