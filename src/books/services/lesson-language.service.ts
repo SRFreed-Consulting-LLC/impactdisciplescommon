@@ -4,7 +4,7 @@ import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from './firebase.dao'
 import { LessonLanguageModel } from '../models/lesson-language.model';
 import { RouteItem } from 'impactdisciplescommon/src/models/utils/route-item';
 import { Actions, ofActionDispatched } from '@ngxs/store';
-import { LanguageChangedAction } from 'src/app/core/language-selector/language-changed.actions';
+import { LanguageChangedAction } from '../actions/language-changed.actions';
 
 @Injectable({
   providedIn: 'root'
