@@ -94,7 +94,13 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
 
   public tabsWithIcon: RouteItem[]=[];
 
-  initMenu(){
+  async initMenu(){
+    if(!localStorage.getItem('impactdiscipleship.book.language.i18n')){
+      let language = localStorage.getItem('impactdiscipleship.book.language')
+
+      localStorage.setItem('impactdiscipleship.book.language.i18n', JSON.stringify(await this.getLanguageModel(language ? language: 'en', '', '')))
+    }
+
     this.tabsWithIcon = [
       { id: 0, name:'Home', route:'home', icon: 'fa-solid fa-book', text: this.translate('Library'), level: 0},
       { id: 1, name:'Schedule', route:'lessons', icon: 'event', text: 'T.O.C.', level: 0},
