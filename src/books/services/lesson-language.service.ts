@@ -2,34 +2,39 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from './firebase.dao';
 import { LessonLanguageModel } from '../models/lesson-language.model';
-import { RouteItem } from 'impactdisciplescommon/src/models/utils/route-item';
-import { Actions, ofActionDispatched } from '@ngxs/store';
-import { LanguageChangedAction } from '../actions/language-changed.actions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LessonLanguageService extends BaseService<LessonLanguageModel> {
-  constructor(public override dao: FirebaseDAO<LessonLanguageModel>, private actions$: Actions,) {
+  constructor(public override dao: FirebaseDAO<LessonLanguageModel>) {
     super(dao)
+
     this.table="lessons-languages"
-
-    this.actions$.pipe(ofActionDispatched(LanguageChangedAction)).subscribe(() => {
-      this.initMenu()
-    })
-
-    this.initMenu()
   }
 
-  async getLanguageModel(language: string, bookId: string, lessonId: string){
-    let app = await this.getApplicationLanguageModel(language);
-    let book = await this.getBookLessonModel(language, bookId);
-    let lesson = await this.getLessonLanguageModel(language, lessonId)
+  async getLessonLanguageModel(language: string, lessonId: string){
+    let app = await this.getApplicationTranslations(language);
+    let books = await this.getBooksTranslations(language);
+    let lesson = await this.getLessonTranslations(language, lessonId)
 
-    return this.createFormOptions(language, app, book, lesson)
+
+    return this.createFormOptions(language, [app, ...books, lesson])
   }
 
-  private createFormOptions(language: string, application: LessonLanguageModel, book: LessonLanguageModel, lesson: LessonLanguageModel){
+  async getAppLanguageModel(language: string){
+    let app = await this.getApplicationTranslations(language);
+
+    return this.createFormOptions(language, [app])
+  }
+
+  async getBookLanguageModel(language: string){
+    let books = await this.getBooksTranslations(language);
+
+    return this.createFormOptions(language, books)
+  }
+
+  private createFormOptions(language: string, models: LessonLanguageModel[]){
     let formOptions = {
       language: language,
       i18n:{}
@@ -39,9 +44,7 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
       formOptions.i18n[language] = {}
     }
 
-    let kvmodels = [application, book, lesson]
-
-    kvmodels.forEach(model => {
+    models.forEach(model => {
       if(model && model.kvPairs){
         let pairs = model.kvPairs.sort((a,b) => a.key - b.key);
 
@@ -54,7 +57,7 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     return formOptions;
   }
 
-  private async getApplicationLanguageModel(language: string){
+  private async getApplicationTranslations(language: string){
     let qp: QueryParam[] = []
     qp.push(new QueryParam('type', WhereFilterOperandKeys.equal, 'application'))
     qp.push(new QueryParam('language', WhereFilterOperandKeys.equal, language))
@@ -66,20 +69,17 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     })
   }
 
-  private async getBookLessonModel(language: string, book: string){
+  private async getBooksTranslations(language: string){
     let qp: QueryParam[] = []
-    qp.push(new QueryParam('book', WhereFilterOperandKeys.equal, book))
+    qp.push(new QueryParam('type', WhereFilterOperandKeys.equal, 'book'))
     qp.push(new QueryParam('language', WhereFilterOperandKeys.equal, language))
 
-    return await this.queryAllByMultiValue(qp).then(lls => {
-      if(lls && lls.length == 1){
-        return lls[0]
-      } else {return null}
-    })
+    return await this.queryAllByMultiValue(qp)
   }
 
-  private async getLessonLanguageModel(language: string, lesson: string){
+  private async getLessonTranslations(language: string, lesson: string){
     let qp: QueryParam[] = []
+    qp.push(new QueryParam('type', WhereFilterOperandKeys.equal, 'lesson'))
     qp.push(new QueryParam('lesson', WhereFilterOperandKeys.equal, lesson))
     qp.push(new QueryParam('language', WhereFilterOperandKeys.equal, language))
 
@@ -90,29 +90,7 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     })
   }
 
-  public menuItems: string[] = [];
-
-  public tabsWithIcon: RouteItem[]=[];
-
-  async initMenu(){
-    if(!localStorage.getItem('impactdiscipleship.book.language.i18n')){
-      let language = localStorage.getItem('impactdiscipleship.book.language')
-
-      localStorage.setItem('impactdiscipleship.book.language.i18n', JSON.stringify(await this.getLanguageModel(language ? language: 'en', '', '')))
-    }
-
-    this.tabsWithIcon = [
-      { id: 0, name:'Home', route:'home', icon: 'fa-solid fa-book', text: this.translate('Library'), level: 0},
-      { id: 1, name:'Schedule', route:'lessons', icon: 'event', text: 'T.O.C.', level: 0},
-      { id: 2, name:'Map', route:'map', icon: 'group', text: this.translate('Groups'), level: 0},
-      { id: 2, name:'User', route:'user-profile', icon: 'user', text: this.translate('Profile'), level: 0}
-    ];
-
-    this.menuItems = [this.translate('Log Off'), this.translate('Languages')]
-  }
-
-  translate(word){
-    let renderOptions = JSON.parse(localStorage.getItem('impactdiscipleship.book.language.i18n'))
+  translate(word, renderOptions){
     return renderOptions['i18n'][renderOptions['language']][word]
   }
 }
