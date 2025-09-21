@@ -3,6 +3,7 @@ import { BaseModel } from "./base.model";
 export class LessonModel extends BaseModel {
   title: string;
   form?: string;
+  showDailyReading: boolean = false;
   book: string;
   unit?: string;
   order: number;
@@ -13,6 +14,7 @@ export class LessonModel extends BaseModel {
   wedVerse?: string;
   thuVerse?: string;
   friVerse?: string;
+  dailyReadingVerse?: string;
   questions?: string[];
 }
 
