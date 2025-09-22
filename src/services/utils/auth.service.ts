@@ -2,7 +2,6 @@ import { CustomerService } from '../data/customer.service';
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { UserCredential } from 'firebase/auth';
-import { ToastrService } from 'ngx-toastr';
 import { AppUserService } from '../data/user.service';
 import { FireAuthDao } from '../../dao/fireauth.dao';
 import { LoggerService } from '../data/logger.service';
@@ -14,6 +13,7 @@ import { UserAuthenticated } from '../actions/authentication.actions';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
+import notify from 'devextreme/ui/notify';
 
 const defaultPath = '/';
 
@@ -64,7 +64,6 @@ export class AuthService {
     public userService: AppUserService,
     private cookieService: CookieService,
     public loggerService: LoggerService,
-    public tostrService: ToastrService,
     private customerService: CustomerService
   ) { }
 
@@ -84,14 +83,17 @@ export class AuthService {
         if (user.length == 0) {
           return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
             switchMap((ec: any) => {
-              this.tostrService.error(
-                'The email address (' +
-                  email +
-                  ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
-                  ec,
-                'Login Error',
-                { disableTimeOut: true }
-              );
+
+              notify({
+                message: 'The email address (' +
+                    email +
+                    ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
+                    ec,
+                position: 'top',
+                width: 600,
+                type: 'error'
+              });
+
               return of(null);
             })
           );
@@ -100,14 +102,13 @@ export class AuthService {
         } else if(user.length > 1){
           return this.loggerService.logMessage('LOGIN', email, 'More than 1 account was found with the email address (' + email + ')', []).pipe(
             switchMap((ec: any) => {
-              this.tostrService.error(
-                'More than 1 account was found with this email address (' +
-                  email +
-                  '). Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
-                  ec,
-                'Login Error',
-                { disableTimeOut: true }
-              );
+              notify({
+                message: 'More than 1 account was found with this email address (' + email +').' +
+                'Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
+                position: 'top',
+                width: 600,
+                type: 'error'
+              });
               return of(null);
             })
           );
@@ -184,12 +185,13 @@ export class AuthService {
               { ...err }
             ]).pipe(
               switchMap((ec: any) => {
-                this.tostrService.error(
-                  'You have entered an incorrect password for this email address. If you have forgotten your password, enter your Email Address and press the "Forgot Password" button. If the problem continues, please contact Alliance Group for assistance with this code: ' +
-                    ec,
-                  'Login Error',
-                  { disableTimeOut: true }
-                );
+                notify({
+                  message: 'You have entered an incorrect password for this email address. If you have forgotten your password, enter your Email Address ' +
+                  'and press the "Forgot Password" button. If the problem continues, please contact Alliance Group for assistance with this code: ' + ec,
+                  position: 'top',
+                  width: 600,
+                  type: 'error'
+                });
                 return of({
                   isOk: false,
                   data: null,
@@ -200,14 +202,12 @@ export class AuthService {
           } else if (err.code == 'auth/user-not-found') {
             return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
               switchMap((ec: any) => {
-                this.tostrService.error(
-                  'The email address (' +
-                    email +
-                    ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
-                    ec,
-                  'Login Error',
-                  { disableTimeOut: true }
-                );
+                notify({
+                  message: 'The email address (' +  email + ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
+                  width: 600,
+                  type: 'error'
+                });
+
                 return of({
                   isOk: false,
                   data: null,
@@ -220,12 +220,12 @@ export class AuthService {
               { ...err }
             ]).pipe(
               switchMap((ec: any) => {
-                this.tostrService.error(
-                  'There have been too many failed logins to this account. Please reset your password by going to the login screen, entering your password, and pressing the "Forgot Password" button. If the problem continues, please contact your Admin for assistance with this code: ' +
-                    ec,
-                  'Login Error',
-                  { disableTimeOut: true }
-                );
+                notify({
+                  message: 'There have been too many failed logins to this account. Please reset your password by going to the login screen, entering your password, and pressing the "Forgot Password" button. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
+                  width: 600,
+                  type: 'error'
+                });
+
                 return of({
                   isOk: false,
                   data: null,
@@ -236,12 +236,12 @@ export class AuthService {
           } else {
             return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', [{ ...err }]).pipe(
               switchMap((ec: any) => {
-                this.tostrService.error(
-                  'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' +
-                    ec,
-                  'Login Error',
-                  { disableTimeOut: true }
-                );
+                notify({
+                  message: 'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' + ec,
+                  width: 600,
+                  type: 'error'
+                });
+
                 return of({
                   isOk: false,
                   data: null,

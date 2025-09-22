@@ -1,14 +1,14 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CustomerService } from 'impactdisciplescommon/src/services/data/customer.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
 import { environment } from 'src/environments/environment';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
+import notify from 'devextreme/ui/notify';
 
 @Component({
   selector: 'app-create-auth-form',
@@ -26,8 +26,7 @@ export class CreateAuthFormComponent implements OnDestroy {
     private userService: AppUserService,
     private router: Router,
     public loggerService: LoggerService,
-    private sessionService: SessionService,
-    public tostrService: ToastrService) { }
+    private sessionService: SessionService) { }
 
   onSubmit(e: Event) {
     e.preventDefault();
@@ -36,39 +35,71 @@ export class CreateAuthFormComponent implements OnDestroy {
 
     if (password != password2) {
       this.isLoading = false;
-      this.tostrService.error('Passwords do not match. Please try again.');
+
+      notify({
+        message: 'Passwords do not match. Please try again.',
+        position: 'top',
+        width: 600,
+        type: 'success'
+      });
+
     } else {
       if(environment.application == 'admin'){
         this.userService.getAllByValue('email', email).then(users => {
           if(users.length == 0){
             this.loggerService.logMessage('Create Admin Account', email, 'Tried to setup Admin account for (' + email + '). This email is not recognized. Setup Admin Account first.', []);
 
-            this.tostrService.error('No account exists for this email.');
+            notify({
+              message: 'No account exists for this email.',
+              position: 'top',
+              width: 600,
+              type: 'error'
+            });
 
             this.router.navigate(['/']);
 
             this.isLoading = false;
           } else if(users.length == 1){
             if(users[0].firebaseUID){
-              this.tostrService.success('An account for ' + email + ' had already been setup!. Try logging in with this email address!');
+              notify({
+                message: 'An account for ' + email + ' had already been setup!. Try logging in with this email address!',
+                position: 'top',
+                width: 600,
+                type: 'error'
+              });
 
               this.router.navigate(['capture-username-form']);
             } else {
               try{
                 this.authService.createAccount(email, password).then((result) => {
                   if (result.isOk) {
-                    this.tostrService.success('Your account has been created. Please login using your new credentials.');
+                    notify({
+                      message: 'Your account has been created. Please login using your new credentials.',
+                      position: 'top',
+                      width: 600,
+                      type: 'success'
+                    });
 
                     this.sessionService.currentUser = null;
 
                     this.router.navigate(['capture-username-form']);
                   } else {
                     if(result.message && result.message.message == "Firebase: Error (auth/email-already-in-use)."){
-                      this.tostrService.error('A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.');
+                      notify({
+                        message: 'A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.',
+                        position: 'top',
+                        width: 600,
+                        type: 'error'
+                      });
 
                       this.loggerService.logMessage('Create Admin Account', email, 'Error setting up Admin for (' + email + '). Firebase: Error (auth/email-already-in-use).', []);
                     } else {
-                      this.tostrService.error('There was an error creating your account: ' + result.message);
+                      notify({
+                        message: 'There was an error creating your account: ' + result.message,
+                        position: 'top',
+                        width: 600,
+                        type: 'error'
+                      });
 
                       this.loggerService.logMessage('Create Admin Account', email, 'Error setting up Admin for (' + email + '). ' + result.message, []);
                     }
@@ -90,15 +121,32 @@ export class CreateAuthFormComponent implements OnDestroy {
             this.customerService.add({...customer}).then(customer => {
               this.authService.createAccount(email, password).then((result) => {
                 if (result.isOk) {
-                  this.tostrService.success('Your account has been created! Please login.');
+                  notify({
+                    message: 'Your account has been created! Please login.',
+                    position: 'top',
+                    width: 600,
+                    type: 'success'
+                  });
+
                   this.router.navigate(['/capture-username-form']);
                 } else {
                   if(result.message && result.message.message == "Firebase: Error (auth/email-already-in-use)."){
-                    this.tostrService.error('A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.');
+
+                    notify({
+                      message: 'A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.',
+                      position: 'top',
+                      width: 600,
+                      type: 'error'
+                    });
 
                     this.loggerService.logMessage('Create User Account', email, 'Error setting up User for (' + email + '). Firebase: Error (auth/email-already-in-use).', []);
                   } else {
-                    this.tostrService.error('There was an error creating your account: ' + result.message);
+                    notify({
+                      message: 'There was an error creating your account: ' + result.message,
+                      position: 'top',
+                      width: 600,
+                      type: 'error'
+                    });
 
                     this.loggerService.logMessage('Create User Account', email, 'Error setting up User for (' + email + '). ' + result.message, []);
                   }
@@ -109,7 +157,13 @@ export class CreateAuthFormComponent implements OnDestroy {
               });
             })
           } else if(customers.length == 1){
-            this.tostrService.success('An account for ' + email + ' had already been created!. Try logging in with this email address!');
+
+            notify({
+              message: 'An account for ' + email + ' had already been created!. Try logging in with this email address!',
+              position: 'top',
+              width: 600,
+              type: 'success'
+            });
 
             this.router.navigate(['capture-username-form']);
             }

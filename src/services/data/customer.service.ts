@@ -7,13 +7,13 @@ import { PHONE_TYPES } from 'impactdisciplescommon/src/lists/phone_types.enum';
 import { Role } from 'impactdisciplescommon/src/lists/roles.enum';
 import { Address } from 'impactdisciplescommon/src/models/domain/utils/address.model';
 import { Phone } from 'impactdisciplescommon/src/models/domain/utils/phone.model';
-import { ToastrService } from 'ngx-toastr';
+import notify from 'devextreme/ui/notify';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService extends BaseService<CustomerModel>{
-  constructor(public override dao: FirebaseDAO<CustomerModel>, private toastrService: ToastrService) {
+  constructor(public override dao: FirebaseDAO<CustomerModel>) {
     super(dao)
     this.table="customers"
   }
@@ -69,9 +69,12 @@ export class CustomerService extends BaseService<CustomerModel>{
         newUser.role = Role.CUSTOMER;
         return await this.add(newUser);
       } else  {
-        this.toastrService.success('Warning', 'An account with this email already exists.', {
-          timeOut: 10000,
-        })
+        notify({
+          message: 'An account with this email already exists.',
+          position: 'top',
+          width: 600,
+          type: 'warning'
+        });
 
         return null;
       }

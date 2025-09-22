@@ -1,7 +1,6 @@
 import { EventRegistrationModel } from './../../models/domain/event-registration.model';
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { SessionService } from '../../services/utils/session.service';
 import { Subject, take, takeUntil } from 'rxjs';
@@ -9,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { EventRegistrationService } from 'impactdisciplescommon/src/services/data/event-registration.service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
+import notify from 'devextreme/ui/notify';
 
 @Component({
   selector: 'app-capture-username-form',
@@ -25,7 +25,6 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
 
   constructor(private authService: AuthService,
     private router: Router,
-    public tostrService: ToastrService,
     public loggerService: LoggerService,
     private sessionService: SessionService,
     private eventRegistrationService: EventRegistrationService,
@@ -57,10 +56,12 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
       if(eventRegistrations.length == 0){
         this.loggerService.logMessage('LOGIN', email.toLowerCase(), 'The email address (' + email.toLowerCase() + ') is not recognized.', []);
 
-        this.tostrService.error(
-          'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.', 'Login Error',
-          { disableTimeOut: true }
-        );
+        notify({
+          message: 'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.',
+          position: 'top',
+          width: 600,
+          type: 'error'
+        });
       } else if(eventRegistrations.length == 1){
         this.setUser(eventRegistrations[0]);
 
