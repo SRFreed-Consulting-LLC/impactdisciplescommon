@@ -18,7 +18,6 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     let books = await this.getBooksTranslations(language);
     let lesson = await this.getLessonTranslations(language, lessonId)
 
-
     return this.createFormOptions(language, [app, ...books, lesson])
   }
 
@@ -49,7 +48,7 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
         let pairs = model.kvPairs.sort((a,b) => a.key - b.key);
 
         pairs.forEach(kvPair => {
-          formOptions.i18n[language][kvPair['content']] = kvPair['translation'] ? kvPair['translation'] : kvPair['content']
+          formOptions.i18n[language][kvPair['content'].replace(/<[^>]*>?/gm, '')] = kvPair['translation'] ? kvPair['translation'] : kvPair['content']
         })
       }
     })
