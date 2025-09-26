@@ -44,7 +44,7 @@ export class CreateAuthFormComponent implements OnDestroy {
       });
 
     } else {
-      if(environment.application == 'admin'){
+      if(environment.application == 'admin' || environment.application == 'book'){
         this.userService.getAllByValue('email', email).then(users => {
           if(users.length == 0){
             this.loggerService.logMessage('Create Admin Account', email, 'Tried to setup Admin account for (' + email + '). This email is not recognized. Setup Admin Account first.', []);
