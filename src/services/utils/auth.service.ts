@@ -14,6 +14,7 @@ import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/cus
 import { environment } from 'src/environments/environment';
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 import notify from 'devextreme/ui/notify';
+import { ImpactUserService } from '../../books/services/impact-user.service';
 
 const defaultPath = '/';
 
@@ -64,7 +65,8 @@ export class AuthService {
     public userService: AppUserService,
     private cookieService: CookieService,
     public loggerService: LoggerService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private impactUserService: ImpactUserService
   ) { }
 
   findUser(email: string): Observable<AppUser | CustomerModel> {
@@ -73,7 +75,7 @@ export class AuthService {
     if(environment.application == 'admin' || environment.application == 'book'){
       user$ = this.userService.getAllByValue('email', email.toLowerCase());
     } else if(environment.application == 'book-viewer'){
-      user$ = this.customerService.getAllByValue('email', email.toLowerCase());
+      user$ = this.impactUserService.getAllByValue('email', email.toLowerCase());
     } else if(environment.application == 'web'){
       user$ = this.customerService.getAllByValue('email', email.toLowerCase());
     }
