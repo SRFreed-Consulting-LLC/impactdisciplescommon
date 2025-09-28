@@ -7,5 +7,4 @@ export class BookLicenseModel extends BaseModel {
   bookId: string;
   type: string;
   length: number;
-
 }

@@ -34,52 +34,36 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     e.preventDefault();
     const { email } = this.loginEmail;
     this.isLoading = true;
-    if(environment.application == 'book' || environment.application == 'book-viewer'){
-      this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-        if (!result) {
-          this.isLoading = false;
+
+    if(environment.application == 'application'){
+      this.eventRegistrationService.getAllByValue('email', email.toLowerCase()).then(eventRegistrations => {
+        if(eventRegistrations.length == 0){
+          this.loggerService.logMessage('LOGIN', email.toLowerCase(), 'The email address (' + email.toLowerCase() + ') is not recognized.', []);
+
+          notify({
+            message: 'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.',
+            position: 'top',
+            width: 600,
+            type: 'error'
+          });
+        } else if(eventRegistrations.length == 1){
+          this.setUser(eventRegistrations[0]);
+
+          this.setLoggedIn(eventRegistrations[0]);
+
+          this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
+
+          this.sessionService.setCurrentEventId(eventRegistrations[0].eventId);
+
+          this.router.navigate(['home'])
         } else {
-          this.sessionService.currentUser = result;
+          this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
 
-          if (result.firebaseUID) {
-            this.isLoading = false;
-            this.router.navigate(['capture-password-form']);
-          } else {
-            this.isLoading = false;
-            this.router.navigate(['create-auth-form']);
-          }
+          this.router.navigate(['/event-selector']);
         }
+
+        this.isLoading = false;
       })
-    } else if(environment.application == 'application'){
-      let eventRegistrations: EventRegistrationModel[] = await this.eventRegistrationService.getAllByValue('email', email.toLowerCase());
-
-      if(eventRegistrations.length == 0){
-        this.loggerService.logMessage('LOGIN', email.toLowerCase(), 'The email address (' + email.toLowerCase() + ') is not recognized.', []);
-
-        notify({
-          message: 'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.',
-          position: 'top',
-          width: 600,
-          type: 'error'
-        });
-      } else if(eventRegistrations.length == 1){
-        this.setUser(eventRegistrations[0]);
-
-        this.setLoggedIn(eventRegistrations[0]);
-
-        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
-
-        this.sessionService.setCurrentEventId(eventRegistrations[0].eventId);
-
-        this.router.navigate(['home'])
-      } else {
-        this.cookieService.set("REGISTERED_EVENTS", JSON.stringify(eventRegistrations));
-
-        this.router.navigate(['/event-selector']);
-      }
-
-      this.isLoading = false;
-
     } else {
       this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
         if (!result) {

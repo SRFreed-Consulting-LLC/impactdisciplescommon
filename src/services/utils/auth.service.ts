@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 import notify from 'devextreme/ui/notify';
 import { ImpactUserService } from '../../books/services/impact-user.service';
+import { ImpactUser } from 'impactdisciplescommon/src/books/models/impact-user.model';
 
 const defaultPath = '/';
 
@@ -130,8 +131,10 @@ export class AuthService {
           if(result.user){
             let user$: Promise<any>;
 
-            if(environment.application == 'admin' || environment.application == 'book' || environment.application == 'book-viewer'){
+            if(environment.application == 'admin' || environment.application == 'book'){
               user$ = this.userService.getAllByValue('email', email);
+            } else if(environment.application == 'book-viewer') {
+              user$ = this.impactUserService.getAllByValue('email', email);
             } else {
               user$ = this.customerService.getAllByValue('email', email);
             }
@@ -303,10 +306,10 @@ export class AuthService {
     return of(user);
   }
 
-  getUserAsPromise(): Promise<AppUser | CustomerModel | EventRegistrationModel> {
+  getUserAsPromise(): Promise<AppUser | CustomerModel | ImpactUser | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
-    let user: AppUser | CustomerModel | EventRegistrationModel = null;
+    let user: AppUser | CustomerModel | ImpactUser| EventRegistrationModel = null;
 
     try {
       if (cookieValue) {

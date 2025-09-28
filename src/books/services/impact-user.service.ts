@@ -26,7 +26,7 @@ export class ImpactUserService extends BaseService<ImpactUser>{
       let match = checkoutForm.cartItems.find(item => book.title.startsWith(item.itemName.split(' - ') [0]))
 
       if(match){
-        let lm: BookLicenseModel = {...new BookLicenseModel()}
+        let lm: BookLicenseModel = new BookLicenseModel()
         lm.bookId = book.id;
         lm.bookTitle = book.title;
         lm.length = 1
