@@ -43,7 +43,6 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
           notify({
             message: 'The email address (' +email.toLowerCase() +') is not recognized. Please login with email address used during Registration.',
             position: 'top',
-            width: 600,
             type: 'error'
           });
         } else if(eventRegistrations.length == 1){
@@ -66,6 +65,9 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
       })
     } else {
       this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
+
+        console.log(result)
+
         if (!result) {
           this.isLoading = false;
         } else {

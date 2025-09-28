@@ -39,7 +39,6 @@ export class CreateAuthFormComponent implements OnDestroy {
       notify({
         message: 'Passwords do not match. Please try again.',
         position: 'top',
-        width: 600,
         type: 'success'
       });
 
@@ -52,7 +51,6 @@ export class CreateAuthFormComponent implements OnDestroy {
             notify({
               message: 'No account exists for this email.',
               position: 'top',
-              width: 600,
               type: 'error'
             });
 
@@ -64,7 +62,6 @@ export class CreateAuthFormComponent implements OnDestroy {
               notify({
                 message: 'An account for ' + email + ' had already been setup!. Try logging in with this email address!',
                 position: 'top',
-                width: 600,
                 type: 'error'
               });
 
@@ -76,7 +73,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                     notify({
                       message: 'Your account has been created. Please login using your new credentials.',
                       position: 'top',
-                      width: 600,
                       type: 'success'
                     });
 
@@ -88,7 +84,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                       notify({
                         message: 'A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.',
                         position: 'top',
-                        width: 600,
                         type: 'error'
                       });
 
@@ -97,7 +92,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                       notify({
                         message: 'There was an error creating your account: ' + result.message,
                         position: 'top',
-                        width: 600,
                         type: 'error'
                       });
 
@@ -124,7 +118,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                   notify({
                     message: 'Your account has been created! Please login.',
                     position: 'top',
-                    width: 600,
                     type: 'success'
                   });
 
@@ -135,7 +128,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                     notify({
                       message: 'A login account for this email already exists. Please have an Admin copy the firebaseUID over to your Customer Account.',
                       position: 'top',
-                      width: 600,
                       type: 'error'
                     });
 
@@ -144,7 +136,6 @@ export class CreateAuthFormComponent implements OnDestroy {
                     notify({
                       message: 'There was an error creating your account: ' + result.message,
                       position: 'top',
-                      width: 600,
                       type: 'error'
                     });
 
@@ -161,7 +152,6 @@ export class CreateAuthFormComponent implements OnDestroy {
             notify({
               message: 'An account for ' + email + ' had already been created!. Try logging in with this email address!',
               position: 'top',
-              width: 600,
               type: 'success'
             });
 

@@ -72,7 +72,6 @@ export class CustomerService extends BaseService<CustomerModel>{
         notify({
           message: 'An account with this email already exists.',
           position: 'top',
-          width: 600,
           type: 'warning'
         });
 

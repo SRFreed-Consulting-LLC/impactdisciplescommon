@@ -32,7 +32,6 @@ export class CapturePasswordFormComponent implements OnDestroy {
         notify({
           message: 'There was an error trying to log in: ' + result.message,
           position: 'top',
-          width: 600,
           type: 'error'
         });
       }

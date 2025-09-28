@@ -136,7 +136,6 @@ export class FireAuthDao {
         notify({
           message: 'Password Successfully changed.',
           position: 'top',
-          width: 600,
           type: 'success'
         });
 
@@ -145,7 +144,6 @@ export class FireAuthDao {
         notify({
           message: error,
           position: 'top',
-          width: 600,
           type: 'error'
         });
 

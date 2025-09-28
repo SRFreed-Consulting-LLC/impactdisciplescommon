@@ -25,7 +25,7 @@ const COOKIE_NAME = "impact-disciples-user"
   providedIn: 'root'
 })
 export class AuthService {
-  public user: AppUser | CustomerModel | EventRegistrationModel;
+  public user: AppUser | CustomerModel | ImpactUser | EventRegistrationModel;
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
@@ -81,8 +81,11 @@ export class AuthService {
       user$ = this.customerService.getAllByValue('email', email.toLowerCase());
     }
 
+
+
     return from(user$).pipe(
       switchMap(user => {
+        console.log(user)
         if (user.length == 0) {
           return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
             switchMap((ec: any) => {
@@ -93,7 +96,6 @@ export class AuthService {
                     ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' +
                     ec,
                 position: 'top',
-                width: 600,
                 type: 'error'
               });
 
@@ -109,7 +111,6 @@ export class AuthService {
                 message: 'More than 1 account was found with this email address (' + email +').' +
                 'Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
                 position: 'top',
-                width: 600,
                 type: 'error'
               });
               return of(null);
@@ -194,7 +195,6 @@ export class AuthService {
                   message: 'You have entered an incorrect password for this email address. If you have forgotten your password, enter your Email Address ' +
                   'and press the "Forgot Password" button. If the problem continues, please contact Alliance Group for assistance with this code: ' + ec,
                   position: 'top',
-                  width: 600,
                   type: 'error'
                 });
                 return of({
@@ -209,7 +209,6 @@ export class AuthService {
               switchMap((ec: any) => {
                 notify({
                   message: 'The email address (' +  email + ') is not recognized. Correct the Email Address and Try again. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
-                  width: 600,
                   type: 'error'
                 });
 
@@ -227,7 +226,6 @@ export class AuthService {
               switchMap((ec: any) => {
                 notify({
                   message: 'There have been too many failed logins to this account. Please reset your password by going to the login screen, entering your password, and pressing the "Forgot Password" button. If the problem continues, please contact your Admin for assistance with this code: ' + ec,
-                  width: 600,
                   type: 'error'
                 });
 
@@ -243,7 +241,6 @@ export class AuthService {
               switchMap((ec: any) => {
                 notify({
                   message: 'There was an Error accessing your account. Please contact your Admin for Assistance with this code: ' + ec,
-                  width: 600,
                   type: 'error'
                 });
 
@@ -266,7 +263,7 @@ export class AuthService {
     }
   }
 
-  setUser(user: AppUser | CustomerModel | EventRegistrationModel): Observable<AppUser | CustomerModel | EventRegistrationModel> {
+  setUser(user: AppUser | CustomerModel | ImpactUser | EventRegistrationModel): Observable<AppUser | CustomerModel | ImpactUser | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     try {
@@ -288,7 +285,7 @@ export class AuthService {
     return of(user);
   }
 
-  getUser(): Observable<AppUser | CustomerModel | EventRegistrationModel> {
+  getUser(): Observable<AppUser | CustomerModel | ImpactUser | EventRegistrationModel> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     let user: AppUser | CustomerModel | EventRegistrationModel = null;

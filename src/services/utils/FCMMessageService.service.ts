@@ -46,7 +46,6 @@ export class FcmMessageService {
     onMessage(this.messaging, (msg) => {
       notify({
         message: msg.notification.body,
-        width: 600,
         type: 'info'
       });
     });
