@@ -18,6 +18,24 @@ export class ImpactUserService extends BaseService<ImpactUser>{
   }
 
   async registerImpactUser(checkoutForm: CheckoutForm){
+    this.getAllByValue('email', checkoutForm.email).then(users => {
+      if(!users || users.length == 0){
+        let user: ImpactUser = {...new ImpactUser()}
+        user.email = checkoutForm.email;
+        user.firstName = checkoutForm.firstName;
+        user.lastName = checkoutForm.lastName;
+        user.phone = checkoutForm.phone;
+
+        this.add(user).then(u => {
+          this.getActiveLicenses(u, checkoutForm)
+        })
+      } else if(users.length == 1){
+        this.getActiveLicenses(users[0], checkoutForm)
+      }
+    })
+  }
+
+  async getActiveLicenses(user: ImpactUser, checkoutForm: CheckoutForm){
     let books: BookModel[] = await this.bookService.getAll();
 
     let licensedBooks: BookLicenseModel[] = []
@@ -26,48 +44,28 @@ export class ImpactUserService extends BaseService<ImpactUser>{
       let match = checkoutForm.cartItems.find(item => book.title.startsWith(item.itemName.split(' - ') [0]))
 
       if(match){
-        let lm: BookLicenseModel = new BookLicenseModel()
+        let lm: BookLicenseModel = {...new BookLicenseModel()}
         lm.bookId = book.id;
         lm.bookTitle = book.title;
         lm.length = 1
         lm.type = 'year';
         lm.purchaseDate = Timestamp.now()
         licensedBooks.push(lm)
-      } else {
-        console.log('no match found');
       }
     })
 
+    if(user.bookLicenses){
+      user.bookLicenses = []
+    }
 
-    this.getAllByValue('email', checkoutForm.email).then(users => {
-      if(!users || users.length == 0){
-        //create new user
-        console.log("none found")
-      } else if(users.length == 1){
-
-        if(!users[0].bookLicenses){
-          users[0].bookLicenses = []
-        }
-
-        licensedBooks.forEach(license => {
-          if(!users[0].bookLicenses.find(l => l.bookId == license.bookId)){
-            users[0].bookLicenses.push(license)
-          } else {
-            console.log('user already has license')
-          }
-        })
-
-        //update user
-        users[0].bookLicenses = licensedBooks;
-
-        this.update(users[0].id, users[0])
-      } else {
-        //error
+    licensedBooks.forEach(license => {
+      if(user.bookLicenses.find(l => l.bookId == license.bookId)){
+        user.bookLicenses.push(license)
       }
     })
 
+    user.bookLicenses = licensedBooks;
 
-    console.log("ebooks ordered", checkoutForm)
-
+    this.update(user.id, user)
   }
 }
