@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
-import { BookViewerAuthService } from '../book-admin-auth.service';
+import { BookViewerAuthService } from '../book-viewer-auth.service';
 
 @Component({
   selector: 'app-capture-username-form',

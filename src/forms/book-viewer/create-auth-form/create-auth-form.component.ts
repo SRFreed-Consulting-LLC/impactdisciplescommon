@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import notify from 'devextreme/ui/notify';
-import { BookViewerAuthService } from '../book-admin-auth.service';
+import { BookViewerAuthService } from '../book-viewer-auth.service';
 import { ImpactUserService } from 'impactdisciplescommon/src/books/services/impact-user.service';
 
 @Component({

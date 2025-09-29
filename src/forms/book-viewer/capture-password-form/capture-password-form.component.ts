@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import notify from 'devextreme/ui/notify';
-import { BookViewerAuthService } from '../book-admin-auth.service';
+import { BookViewerAuthService } from '../book-viewer-auth.service';
 
 @Component({
   selector: 'app-capture-password-form',

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
 import notify from 'devextreme/ui/notify';
 import { Subject, takeUntil } from 'rxjs';
-import { BookViewerAuthService } from '../book-admin-auth.service';
+import { BookViewerAuthService } from '../book-viewer-auth.service';
 
 
 @Component({

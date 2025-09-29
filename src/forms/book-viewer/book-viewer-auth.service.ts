@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { UserCredential } from 'firebase/auth';
 import { FireAuthDao } from '../../dao/fireauth.dao';
-import { AppUser } from '../../models/admin/appuser.model';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import notify from 'devextreme/ui/notify';
 import { ImpactUserService } from '../../books/services/impact-user.service';
 import { ImpactUser } from 'impactdisciplescommon/src/books/models/impact-user.model';
@@ -66,12 +64,8 @@ export class BookViewerAuthService {
         if(result.user){
           let user$ = this.impactUserService.getAllByValue('email', email);
 
-          user$.then(user => console.log(user))
-
           return from(user$).pipe(
             switchMap(user => {
-
-              console.log(user)
               if(user && user.length == 1) {
                 return from(result.user.getIdTokenResult()).pipe(
                   map(token => {
@@ -182,6 +176,7 @@ export class BookViewerAuthService {
 
   setUser(user: ImpactUser): Observable<ImpactUser> {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
+
     try {
       if (cookieValue) {
         let currentUser = JSON.parse(cookieValue);
@@ -201,10 +196,10 @@ export class BookViewerAuthService {
     return of(user);
   }
 
-  getLoggedInUser(): AppUser {
+  getLoggedInUser(): ImpactUser {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
-    let user: AppUser = null;
+    let user: ImpactUser = null;
 
     try {
       if (cookieValue) {
@@ -226,7 +221,7 @@ export class BookViewerAuthService {
 
         return await user$.then(async user => {
           if(user && user.length == 1){
-            let u: AppUser | CustomerModel | ImpactUser = user[0];
+            let u: ImpactUser = user[0];
 
             u.firebaseUID = result.user.uid;
 
@@ -278,7 +273,7 @@ export class BookViewerAuthService {
 
   get loggedIn(): boolean {
     if(this.cookieService.check(COOKIE_NAME)){
-      let user: AppUser =  this.getLoggedInUser()
+      let user: ImpactUser =  this.getLoggedInUser()
 
       if(user){
         let expiration: number = user['cookie_expiration_time'];

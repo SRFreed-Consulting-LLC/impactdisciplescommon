@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import notify from 'devextreme/ui/notify';
 import { Subject, takeUntil } from 'rxjs';
-import { BookViewerAuthService } from '../book-admin-auth.service';
+import { BookViewerAuthService } from '../book-viewer-auth.service';
 
 @Component({
   selector: 'app-reset-password-form',
