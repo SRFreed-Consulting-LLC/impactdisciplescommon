@@ -27,12 +27,13 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
     const { email } = this.loginEmail;
     this.isLoading = true;
 
-    this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-      if (!result) {
+    this.authService.findUser(email.toLowerCase()).pipe(takeUntil(this.ngUnsubscribe)).subscribe((user) => {
+      if (!user) {
         this.isLoading = false;
       } else {
+        this.authService.user = user;
 
-        if (result.firebaseUID) {
+        if (user.firebaseUID) {
           this.isLoading = false;
           this.router.navigate(['capture-password-form']);
         } else {

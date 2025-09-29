@@ -22,10 +22,9 @@ export class CapturePasswordFormComponent implements OnDestroy {
     const { password } = this.loginPassword;
     this.isLoading = true;
 
-    this.loginEmail = this.authService.getLoggedInUser().email;
+    this.loginEmail = this.authService.user?.email;
 
     this.authService.logIn(this.loginEmail, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
-      console.log(result)
       if (!result.isOk) {
         notify({
           message: 'There was an error trying to log in: ' + result.message,

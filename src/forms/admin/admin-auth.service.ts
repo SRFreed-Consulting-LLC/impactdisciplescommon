@@ -9,10 +9,8 @@ import { Store } from '@ngxs/store';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
 import notify from 'devextreme/ui/notify';
-import { ImpactUserService } from '../../books/services/impact-user.service';
 import { ImpactUser } from 'impactdisciplescommon/src/books/models/impact-user.model';
 import { UserAuthenticated } from 'impactdisciplescommon/src/services/actions/authentication.actions';
-import { CustomerService } from 'impactdisciplescommon/src/services/data/customer.service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
 
@@ -26,8 +24,6 @@ const COOKIE_NAME = "impact-disciples-user"
 export class AdminAuthService {
   public user: AppUser;
 
-
-
   constructor(
     private router: Router,
     private store: Store,
@@ -35,8 +31,6 @@ export class AdminAuthService {
     public userService: AppUserService,
     private cookieService: CookieService,
     public loggerService: LoggerService,
-    private customerService: CustomerService,
-    private impactUserService: ImpactUserService
   ) { }
 
   findUser(email: string): Observable<AppUser> {
