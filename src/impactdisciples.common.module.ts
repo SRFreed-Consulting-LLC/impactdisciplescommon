@@ -18,4 +18,4 @@ import { PhoneNumberMaskPipe } from './pipes/phone-number.pipe';
     PhoneNumberMaskPipe
   ]
 })
-export class ImpactDisciplesModule { }
+export class ImpactDisciplesCommonModule { }
