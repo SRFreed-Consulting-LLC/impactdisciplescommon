@@ -85,7 +85,6 @@ export class AuthService {
 
     return from(user$).pipe(
       switchMap(user => {
-        console.log(user)
         if (user.length == 0) {
           return this.loggerService.logMessage('LOGIN', email, 'The email address (' + email + ') is not recognized.', []).pipe(
             switchMap((ec: any) => {
@@ -344,16 +343,17 @@ export class AuthService {
       if(result.user){
         let user$: Promise<any>;
 
-        if(environment.application == 'admin'){
-          user$ = this.userService.getAllByValue('email', email);
-        } else {
-          user$ = this.customerService.getAllByValue('email', email);
+        if(environment.application == 'admin' || environment.application == 'book'){
+          user$ = this.userService.getAllByValue('email', email.toLowerCase());
+        } else if(environment.application == 'book-viewer'){
+          user$ = this.impactUserService.getAllByValue('email', email.toLowerCase());
+        } else if(environment.application == 'web'){
+          user$ = this.customerService.getAllByValue('email', email.toLowerCase());
         }
 
         return await user$.then(async appuser => {
-          console.log(appuser);
           if(appuser && appuser.length == 1){
-            let u: AppUser | CustomerModel = appuser[0];
+            let u: AppUser | CustomerModel | ImpactUser = appuser[0];
 
             u.firebaseUID = result.user.uid;
 
@@ -362,6 +362,15 @@ export class AuthService {
             } else {
               await this.customerService.update(u.id, u as CustomerModel)
             }
+
+
+        if(environment.application == 'admin' || environment.application == 'book'){
+          await this.userService.update(u.id, u as AppUser);
+        } else if(environment.application == 'book-viewer'){
+          await this.impactUserService.update(u.id, u as ImpactUser)
+        } else if(environment.application == 'web'){
+          await this.customerService.update(u.id, u as CustomerModel);
+        }
 
             return {
               isOk: true,
