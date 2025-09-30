@@ -1113,4 +1113,37 @@ export class LessonService extends BaseService<LessonModel>{
         }
     )
   }
+
+  loopThroughJSON(form) {
+      for (let key in form) {
+        if (typeof form[key] === 'object') {
+          if (Array.isArray(form[key])) {
+            for (let i = 0; i < form[key].length; i++) {
+              this.loopThroughJSON(form[key][i]);
+            }
+          } else {
+            this.loopThroughJSON(form[key]);
+          }
+        } else {
+          if(key == 'type' ){
+            if(form[key] == 'textarea'){
+              form['label'] = form['label']?.replace(/<[^>]*>?/gm, '')
+            } else if(form[key] == 'content'){
+              if(!form['html'].startsWith('<figure')){
+                form['html'] = form['html']?.replace(/<[^>]*>?/gm, '')
+              }
+
+            } else if(form[key] == 'radio'){
+              form['label'] = form['label']?.replace(/<[^>]*>?/gm, '')
+            }
+
+            if(form['values']){
+              form['values'].forEach(value => {
+                value['label'] = value['label']?.replace(/<[^>]*>?/gm, '')
+              });
+            }
+          }
+        }
+      }
+    }
 }
