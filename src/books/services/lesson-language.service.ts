@@ -37,6 +37,7 @@ export class TranslationsService extends BaseService<TranslationsModel> {
     let formOptions = {...new I18Model()}
 
     if(!formOptions.i18n[language]){
+      formOptions.language = language;
       formOptions.i18n[language] = {}
     }
 
@@ -86,11 +87,12 @@ export class TranslationsService extends BaseService<TranslationsModel> {
     })
   }
 
-  translate(word, renderOptions){
-    return renderOptions['i18n'][renderOptions['language']][word]
+  translate(word, renderOptions: I18Model){
+    return renderOptions.i18n[renderOptions.language][word]
   }
 }
+
 export class I18Model{
   language: string;
-  i18n: {}
+  i18n: {} = {}
 }
