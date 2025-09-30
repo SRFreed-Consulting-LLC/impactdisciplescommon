@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
-import notify from 'devextreme/ui/notify';
-import { Subject, takeUntil } from 'rxjs';
-import { BookViewerAuthService } from '../book-viewer-auth.service';
+import { Subject } from 'rxjs';
+import { ImpactDiscipleshipLibraryAuthService } from '../impact-discipleship-library-auth.service';
 
 
 @Component({
@@ -17,7 +16,9 @@ export class ChangePasswordFormComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: BookViewerAuthService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private authService: ImpactDiscipleshipLibraryAuthService,
+    private router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {

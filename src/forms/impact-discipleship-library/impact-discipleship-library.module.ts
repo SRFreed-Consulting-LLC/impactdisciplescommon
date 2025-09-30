@@ -39,4 +39,4 @@ import { LayoutsModule } from "impactdisciplescommon/src/layouts/layouts.module"
     ResetPasswordFormComponent
   ]
 })
-export class ImpactBookViewerFormsModule { }
+export class ImpactDiscipleshipLibraryModule { }

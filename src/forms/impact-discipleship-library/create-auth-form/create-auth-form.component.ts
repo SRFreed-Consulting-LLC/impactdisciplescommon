@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import notify from 'devextreme/ui/notify';
-import { BookViewerAuthService } from '../book-viewer-auth.service';
 import { ImpactUserService } from 'impactdisciplescommon/src/books/services/impact-user.service';
+import { ImpactDiscipleshipLibraryAuthService } from '../impact-discipleship-library-auth.service';
 
 @Component({
   selector: 'app-create-auth-form',
@@ -14,7 +14,7 @@ export class CreateAuthFormComponent {
   public isLoading: boolean = false;
   formData: any = {};
 
-  constructor(private authService: BookViewerAuthService,
+  constructor(private authService: ImpactDiscipleshipLibraryAuthService,
     private impactUserService: ImpactUserService,
     private router: Router,
     public loggerService: LoggerService) { }

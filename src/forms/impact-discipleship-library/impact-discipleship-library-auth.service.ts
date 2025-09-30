@@ -18,7 +18,7 @@ const COOKIE_NAME = "impact-disciples-user"
 @Injectable({
   providedIn: 'root'
 })
-export class BookViewerAuthService {
+export class ImpactDiscipleshipLibraryAuthService {
   public user: ImpactUser;
 
   constructor(
@@ -309,7 +309,7 @@ export class BookViewerAuthService {
 })
 //TODO: See why CanActivate is deprecated and update
 export class AuthGuardService implements CanActivate {
-  constructor(private router: Router, private authService: BookViewerAuthService) { }
+  constructor(private router: Router, private authService: ImpactDiscipleshipLibraryAuthService) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     let isLoggedIn = this.authService.loggedIn;

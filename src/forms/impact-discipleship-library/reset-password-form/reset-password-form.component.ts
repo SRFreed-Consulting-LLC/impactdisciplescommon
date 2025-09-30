@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import notify from 'devextreme/ui/notify';
 import { Subject, takeUntil } from 'rxjs';
-import { BookViewerAuthService } from '../book-viewer-auth.service';
+import { ImpactDiscipleshipLibraryAuthService } from '../impact-discipleship-library-auth.service';
 
 @Component({
   selector: 'app-reset-password-form',
@@ -15,7 +15,8 @@ export class ResetPasswordFormComponent implements OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: BookViewerAuthService, private router: Router) { }
+  constructor(private authService: ImpactDiscipleshipLibraryAuthService,
+    private router: Router) { }
 
   onSubmit(e: Event) {
     e.preventDefault();

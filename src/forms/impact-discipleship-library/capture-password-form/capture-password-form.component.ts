@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import notify from 'devextreme/ui/notify';
-import { BookViewerAuthService } from '../book-viewer-auth.service';
+import { ImpactDiscipleshipLibraryAuthService } from '../impact-discipleship-library-auth.service';
 
 @Component({
   selector: 'app-capture-password-form',
@@ -15,7 +15,7 @@ export class CapturePasswordFormComponent implements OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: BookViewerAuthService) { }
+  constructor(private authService: ImpactDiscipleshipLibraryAuthService) { }
 
   onSubmit(e: Event) {
     e.preventDefault();

@@ -1,11 +1,9 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { SessionService } from '../../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { CookieService } from 'ngx-cookie-service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
-import { BookViewerAuthService } from '../book-viewer-auth.service';
+import { ImpactDiscipleshipLibraryAuthService } from '../impact-discipleship-library-auth.service';
 
 @Component({
   selector: 'app-capture-username-form',
@@ -20,7 +18,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: BookViewerAuthService,
+  constructor(private authService: ImpactDiscipleshipLibraryAuthService,
     private router: Router,
     public loggerService: LoggerService) { }
 

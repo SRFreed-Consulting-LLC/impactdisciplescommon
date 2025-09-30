@@ -78,7 +78,7 @@ export class AdminAuthService {
 
                     if(environment.application == 'admin'){
                       this.router.navigate([this._lastAuthenticatedPath]);
-                    } else if(environment.application == 'book' || environment.application == 'book-viewer'){
+                    } else if(environment.application == 'book' || environment.application == 'impact-discipleship-library'){
                       this.router.navigate(['/home']);
                     } else {
                       this.router.navigate(['profile']);
