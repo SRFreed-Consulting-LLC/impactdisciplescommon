@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from './firebase.dao';
-import { LessonLanguageModel } from '../models/lesson-language.model';
+import { TranslationsModel } from '../models/translations.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LessonLanguageService extends BaseService<LessonLanguageModel> {
-  constructor(public override dao: FirebaseDAO<LessonLanguageModel>) {
+export class TranslationsService extends BaseService<TranslationsModel> {
+  constructor(public override dao: FirebaseDAO<TranslationsModel>) {
     super(dao)
 
     this.table="lessons-languages"
@@ -33,7 +33,7 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     return this.createFormOptions(language, books)
   }
 
-  private createFormOptions(language: string, models: LessonLanguageModel[]){
+  private createFormOptions(language: string, models: TranslationsModel[]){
     let formOptions = {
       language: language,
       i18n:{}
