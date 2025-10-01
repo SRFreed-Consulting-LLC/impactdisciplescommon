@@ -18,7 +18,7 @@ export class LessonService extends BaseService<LessonModel>{
     if(lesson.goal){
       form['components'].unshift(
         {
-          "html": "<p><strong>" + this.translationsService.translate('Goal', renderOptions) + ":</strong> "+this.translationsService.translate(lesson.goal, renderOptions)+"</p>",
+          "html": "<p><strong>" + this.translationsService.translate('Goal', renderOptions) + ":</strong> "+this.translationsService.translate(lesson.goal, renderOptions).replace(/<[^>]*>?/gm, '')+"</p>",
           "label": "Content",
           "refreshOnChange": false,
           "key": "content4",
@@ -1145,5 +1145,5 @@ export class LessonService extends BaseService<LessonModel>{
           }
         }
       }
-    }
+  }
 }
