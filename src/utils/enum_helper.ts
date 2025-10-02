@@ -1,5 +1,4 @@
 import { Countries } from "../lists/countries.enum";
-import { LANGUAGES } from "../lists/languages.enum";
 import { PHONE_TYPES } from "../lists/phone_types.enum";
 import { Role } from "../lists/roles.enum";
 import { States } from "../lists/states.enum";
@@ -38,9 +37,4 @@ export class EnumHelper {
   static getUOMTypesAsArray(): string[] {
     return Object.values(UNIT_OF_MEASURE) as [];
   }
-
-  static getLanguagesTypesAsArray(): { key: any; }[] {
-    return Object.keys(LANGUAGES).map(key => {return { key: LANGUAGES[key], value: key}});
-  }
-
 }
