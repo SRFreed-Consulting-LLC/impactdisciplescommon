@@ -5,6 +5,7 @@ export class ImpactUser extends Person {
     email: string;
     firebaseUID: string;
     bookLicenses: BookLicenseModel[] = [];
+    preferredLanguage?: string;
 
     constructor(){
       super();

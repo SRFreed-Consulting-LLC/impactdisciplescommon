@@ -73,7 +73,12 @@ export class ImpactDiscipleshipLibraryAuthService {
                     this.user['cookie_expiration_time'] = Date.parse(token.expirationTime);
                     console.log('Expiration:' + new Date(this.user['cookie_expiration_time']));
 
-                    this.router.navigate(['/home']);
+                    if(this.user.preferredLanguage){
+                      this.router.navigate(['/home']);
+                    } else {
+                      this.router.navigate(['/welcome']);
+                    }
+
 
                     this.cookieService.set(COOKIE_NAME, JSON.stringify(this.user), { expires: this.user['cookie_expiration_time'] });
 
@@ -174,7 +179,7 @@ export class ImpactDiscipleshipLibraryAuthService {
     );
   }
 
-  setUser(user: ImpactUser): Observable<ImpactUser> {
+  setUser(user: ImpactUser): ImpactUser {
     const cookieValue = this.cookieService.get(COOKIE_NAME);
 
     try {
@@ -193,7 +198,7 @@ export class ImpactDiscipleshipLibraryAuthService {
       console.error('Error parsing cookie JSON', error);
     }
 
-    return of(user);
+    return user;
   }
 
   getLoggedInUser(): ImpactUser {
@@ -271,28 +276,6 @@ export class ImpactDiscipleshipLibraryAuthService {
     this.router.navigate(['capture-username-form']);
   }
 
-  get loggedIn(): boolean {
-    if(this.cookieService.check(COOKIE_NAME)){
-      let user: ImpactUser =  this.getLoggedInUser()
-
-      if(user){
-        let expiration: number = user['cookie_expiration_time'];
-
-        if(expiration - Date.now() < (1000 * 60 * 60)){
-          user['cookie_expiration_time'] = expiration + (1000 * 60 * 60);
-
-          this.cookieService.set(COOKIE_NAME, JSON.stringify(user), { expires: user['cookie_expiration_time'] });
-
-          console.log('New Expiration:' + new Date(JSON.parse(this.cookieService.get(COOKIE_NAME))['cookie_expiration_time']));
-        }
-      }
-
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   private _lastAuthenticatedPath: string = defaultPath;
 
   set lastAuthenticatedPath(value: string) {
@@ -312,7 +295,7 @@ export class AuthGuardService implements CanActivate {
   constructor(private router: Router, private authService: ImpactDiscipleshipLibraryAuthService) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    let isLoggedIn = this.authService.loggedIn;
+    let isLoggedIn = this.authService.getLoggedInUser()? true : false;
 
     const isAuthForm = [
       'reset-password',
