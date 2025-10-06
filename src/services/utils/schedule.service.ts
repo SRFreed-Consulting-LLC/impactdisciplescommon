@@ -1,8 +1,8 @@
 import { EventRegistrationService } from 'impactdisciplescommon/src/services/data/event-registration.service';
 import { Injectable } from "@angular/core";
-import { ScheduleModel, TimeGroupsModel, UpdatedAgendaItemModel } from "../../../../impactdisciplescommon/src/models/schedule.model";
 import { AgendaItem } from "impactdisciplescommon/src/models/domain/utils/agenda-item.model";
 import { EventModel } from 'impactdisciplescommon/src/models/domain/event.model';
+import { ScheduleModel, TimeGroupsModel, UpdatedAgendaItemModel } from 'impactdisciplescommon/src/models/utils/schedule.model';
 
 @Injectable({
   providedIn: 'root',
