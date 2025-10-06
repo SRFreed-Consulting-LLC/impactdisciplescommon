@@ -66,8 +66,10 @@ export class EMailService extends BaseService<EMailModel>{
   }
 
   sendHTMLEMailFromTemplate(to:string, templateId: string, model: any){
-    this.templateService.getAllByValue('name', templateId).then(template => {
+    return this.templateService.getAllByValue('name', templateId).then(template => {
       let mail = {... new EMailModel()}
+      mail.to = to;
+      mail.date = Timestamp.now();
 
       let html = template[0].html;
 
@@ -75,11 +77,9 @@ export class EMailService extends BaseService<EMailModel>{
         html = html.replace("{{"+key+"}}", model[key])
       });
 
-      mail.to = to;
-      mail.date = Timestamp.now();
       let mailMessage: MessageModel = {... new MessageModel()};
 
-      mailMessage.subject = template[0].subject;
+      mailMessage.subject = template[0].subject.replace("{{eventName}}", model.eventName);
       mailMessage.html = html;
 
       mail.message = mailMessage;
