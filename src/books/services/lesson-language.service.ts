@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from './firebase.dao';
-import { LessonLanguageModel } from '../models/lesson-language.model';
+import { TranslationsModel } from '../models/translations.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LessonLanguageService extends BaseService<LessonLanguageModel> {
-  constructor(public override dao: FirebaseDAO<LessonLanguageModel>) {
+export class TranslationsService extends BaseService<TranslationsModel> {
+  constructor(public override dao: FirebaseDAO<TranslationsModel>) {
     super(dao)
 
     this.table="lessons-languages"
   }
 
-  async getLessonLanguageModel(language: string, lessonId: string){
+  async getLessonTranslationModel(language: string, lessonId: string){
     let app = await this.getApplicationTranslations(language);
     let books = await this.getBooksTranslations(language);
     let lesson = await this.getLessonTranslations(language, lessonId)
@@ -21,25 +21,23 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     return this.createFormOptions(language, [app, ...books, lesson])
   }
 
-  async getAppLanguageModel(language: string){
+  async getAppTranslationModel(language: string){
     let app = await this.getApplicationTranslations(language);
 
     return this.createFormOptions(language, [app])
   }
 
-  async getBookLanguageModel(language: string){
+  async getBookTranslationModel(language: string){
     let books = await this.getBooksTranslations(language);
 
     return this.createFormOptions(language, books)
   }
 
-  private createFormOptions(language: string, models: LessonLanguageModel[]){
-    let formOptions = {
-      language: language,
-      i18n:{}
-    }
+  private createFormOptions(language: string, models: TranslationsModel[]): I18Model{
+    let formOptions = {...new I18Model()}
 
     if(!formOptions.i18n[language]){
+      formOptions.language = language;
       formOptions.i18n[language] = {}
     }
 
@@ -89,7 +87,12 @@ export class LessonLanguageService extends BaseService<LessonLanguageModel> {
     })
   }
 
-  translate(word, renderOptions){
-    return renderOptions['i18n'][renderOptions['language']][word]
+  translate(word, renderOptions: I18Model){
+    return renderOptions.i18n[renderOptions.language][word]
   }
+}
+
+export class I18Model{
+  language: string;
+  i18n: {} = {}
 }

@@ -31,7 +31,7 @@ export class CaptureUsernameFormComponent implements OnDestroy  {
       if (!user) {
         this.isLoading = false;
       } else {
-        this.authService.user = user;
+        this.authService.setUser(user);
 
         if (user.firebaseUID) {
           this.isLoading = false;

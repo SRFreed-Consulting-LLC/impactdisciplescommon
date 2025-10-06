@@ -1,6 +1,7 @@
 import { BaseModel } from "impactdisciplescommon/src/models/base.model";
 import { UnitModel } from "./unit.model";
 import { LessonModel } from "./lesson.model";
+import { LanguageModel } from "./language.model";
 
 export class BookModel extends BaseModel {
   title: string;
@@ -10,4 +11,5 @@ export class BookModel extends BaseModel {
   units?: UnitModel[];
   lessons?: LessonModel[];
   order?: number;
+  languages?: LanguageModel[] = []
 }
