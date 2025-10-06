@@ -4,16 +4,17 @@ import { Timestamp } from "firebase/firestore";
 import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
 import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/admin/notification-registration.model";
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/data/notification-registration.service";
-import { ToastrService } from "ngx-toastr";
 import { environment } from "src/environments/environment";
-import { AuthService } from "./auth.service";
+import notify from "devextreme/ui/notify";
+import { AdminAuthService } from "impactdisciplescommon/src/forms/admin/admin-auth.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class FcmMessageService {
-  constructor(private messaging: Messaging, private toastrService: ToastrService,
-    private authService: AuthService, private notificationRegistrationService: NotificationRegistrationService){}
+  constructor(private messaging: Messaging,
+    private authService: AdminAuthService,
+    private notificationRegistrationService: NotificationRegistrationService){}
 
   checkNotificationsSetup(){
     if(Notification.permission != 'granted'){
@@ -43,8 +44,10 @@ export class FcmMessageService {
     //}).catch(err => console.error(err));
 
     onMessage(this.messaging, (msg) => {
-      this.toastrService.show(msg.notification.title, msg.notification.body);
-      console.log("My Firebase Cloud Message", msg);
+      notify({
+        message: msg.notification.body,
+        type: 'info'
+      });
     });
   }
 

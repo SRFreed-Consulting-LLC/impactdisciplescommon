@@ -1,4 +1,3 @@
-import { ToastrService } from 'ngx-toastr';
 import { LoggerService } from './logger.service';
 import { Injectable } from '@angular/core';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
@@ -7,7 +6,7 @@ import { BaseService } from './base.service';
 import { ShippingLabelRequest } from 'impactdisciplescommon/src/models/domain/shipment-label-batch-request.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { Timestamp } from 'firebase/firestore';
-import { Package, RateOptions, ShippingModel, ShippingRequest, ShippingToAddress, WeightDetail } from 'impactdisciplescommon/src/models/domain/shipment.model';
+import { Package, RateOptions, ShippingModel, ShippingRequest, WeightDetail } from 'impactdisciplescommon/src/models/domain/shipment.model';
 import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure.enum';
 
 
@@ -16,7 +15,7 @@ import { UNIT_OF_MEASURE } from 'impactdisciplescommon/src/lists/unit_of_measure
 })
 export class ShippingLabelService extends BaseService<ShippingLabelRequest>{
 
-  constructor(public override dao: FirebaseDAO<ShippingLabelRequest>, private logService: LoggerService, private toastrService: ToastrService) {
+  constructor(public override dao: FirebaseDAO<ShippingLabelRequest>, private logService: LoggerService) {
     super(dao)
     this.table="shipping-labels"
     this.fromFirestore = ShippingLabelService.fromFirestore

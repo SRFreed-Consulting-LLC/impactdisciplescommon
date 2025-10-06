@@ -1,6 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Auth, browserLocalPersistence, browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail,
   setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut, updatePassword, User, UserCredential } from 'firebase/auth';
 import { BehaviorSubject, Observable, fromEventPattern } from 'rxjs';
@@ -12,6 +11,7 @@ import { AppUser } from '../models/admin/appuser.model';
 import { AppUserService } from '../services/data/user.service';
 import { CookieService } from 'ngx-cookie-service';
 import { QueryParam, WhereFilterOperandKeys } from './firebase.dao';
+import notify from 'devextreme/ui/notify';
 
 const AUTH_COOKIE_NAME = 'crm_auth';
 const USER_COOKIE_NAME = 'crm_user';
@@ -33,7 +33,6 @@ export class FireAuthDao {
     public fs: Firestore,
     public router: Router,
     public ngZone: NgZone,
-    public toster: ToastrService,
     public userService: AppUserService,
     private cookieService: CookieService,
     private userPermissionService: UserPermissionService
@@ -134,10 +133,20 @@ export class FireAuthDao {
 
     if(this.auth.currentUser){
       updatePassword(this.auth.currentUser, newPassword).then(() => {
-        that.toster.info('Password Successfully changed.');
+        notify({
+          message: 'Password Successfully changed.',
+          position: 'top',
+          type: 'success'
+        });
+
         return true;
       }).catch(function (error) {
-        that.toster.error(error);
+        notify({
+          message: error,
+          position: 'top',
+          type: 'error'
+        });
+
         return false;
       });
 

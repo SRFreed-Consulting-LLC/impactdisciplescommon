@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
 import notify from 'devextreme/ui/notify';
-import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AdminAuthService } from '../admin-auth.service';
 
 
 @Component({
@@ -17,7 +17,7 @@ export class ChangePasswordFormComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private authService: AdminAuthService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -30,14 +30,14 @@ export class ChangePasswordFormComponent implements OnInit, OnDestroy {
     const { password } = this.formData;
     this.isLoading = true;
 
-    this.authService.changePassword(password, this.recoveryCode).pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
-      this.isLoading = false;
-      if (result.isOk) {
-        this.router.navigate(['/capture-username-form']);
-      } else {
-        notify(result.message, 'error', 2000);
-      }
-    })
+    // this.authService.changePassword(password, this.recoveryCode).pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
+    //   this.isLoading = false;
+    //   if (result.isOk) {
+    //     this.router.navigate(['/capture-username-form']);
+    //   } else {
+    //     notify(result.message, 'error', 2000);
+    //   }
+    // })
   }
 
   confirmPassword = (e: ValidationCallbackData) => {

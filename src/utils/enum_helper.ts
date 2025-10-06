@@ -37,5 +37,4 @@ export class EnumHelper {
   static getUOMTypesAsArray(): string[] {
     return Object.values(UNIT_OF_MEASURE) as [];
   }
-
 }

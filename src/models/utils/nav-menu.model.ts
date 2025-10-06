@@ -19,6 +19,7 @@ export interface MenuModel {
 export interface MobileMenuModel{
   title: string;
   link?: string;
+  external?: boolean,
   dropdownMenu?: DropdownMenuModel[];
   visible: boolean;
 }

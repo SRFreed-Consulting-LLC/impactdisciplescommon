@@ -1,8 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { AuthService } from 'impactdisciplescommon/src/services/utils/auth.service';
-import { SessionService } from '../../services/utils/session.service';
 import { Subject, takeUntil } from 'rxjs';
+import notify from 'devextreme/ui/notify';
+import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
   selector: 'app-capture-password-form',
@@ -16,21 +15,24 @@ export class CapturePasswordFormComponent implements OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
-  constructor(private authService: AuthService, public tostrService: ToastrService, private sessionService: SessionService) { }
+  constructor(private authService: AdminAuthService) { }
 
   onSubmit(e: Event) {
     e.preventDefault();
     const { password } = this.loginPassword;
     this.isLoading = true;
 
-    if(this.loginEmail === '') {
-      this.loginEmail = this.sessionService.currentUser.email;
-    }
+    this.loginEmail = this.authService.user?.email;
 
     this.authService.logIn(this.loginEmail, password).pipe(takeUntil(this.ngUnsubscribe)).subscribe((result) => {
       if (!result.isOk) {
-        this.tostrService.error('There was an error trying to log in: ' + result.message);
+        notify({
+          message: 'There was an error trying to log in: ' + result.message,
+          position: 'top',
+          type: 'error'
+        });
       }
+
       this.isLoading = false;
     })
   }
