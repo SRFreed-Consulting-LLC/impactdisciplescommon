@@ -23,6 +23,10 @@ export class EventRegistrationService extends BaseService<EventRegistrationModel
     return data;
   };
 
+  async getEventRegistrationById(id: string): Promise<EventRegistrationModel> {
+    return await this.getById(id);
+  }
+
   async getEventRegistration(email: string, eventId: string): Promise<EventRegistrationModel[]> {
     let params: QueryParam[] = [];
     params.push(new QueryParam('email', WhereFilterOperandKeys.equal, email.toLowerCase()));
