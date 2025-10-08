@@ -9,10 +9,10 @@ import { Store } from '@ngxs/store';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
 import notify from 'devextreme/ui/notify';
-import { ImpactUser } from 'impactdisciplescommon/src/books/models/impact-user.model';
 import { UserAuthenticated } from 'impactdisciplescommon/src/services/actions/authentication.actions';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
+import { ImpactUser } from 'impactdisciplespwacommon/src/models/impact-user.model';
 
 const defaultPath = '/';
 
