@@ -12,7 +12,6 @@ import notify from 'devextreme/ui/notify';
 import { UserAuthenticated } from 'impactdisciplescommon/src/services/actions/authentication.actions';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
-import { ImpactUser } from 'impactdisciplespwacommon/src/models/impact-user.model';
 
 const defaultPath = '/';
 
@@ -231,7 +230,7 @@ export class AdminAuthService {
 
         return await user$.then(async user => {
           if(user && user.length == 1){
-            let u: AppUser | CustomerModel | ImpactUser = user[0];
+            let u: AppUser | CustomerModel = user[0];
 
             u.firebaseUID = result.user.uid;
 
