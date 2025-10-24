@@ -96,7 +96,6 @@ export class FirebaseDAO<T extends BaseModel> {
         let retval: T = doc.data() as T;
         retval.id = doc.id;
         retval = fromFirestore? fromFirestore(retval) : retval;
-        console.log(retval);
         callBack(retval);
       }
     })
