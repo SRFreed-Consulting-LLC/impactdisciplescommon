@@ -26,6 +26,7 @@ export interface CartItem {
   eBookUrl?: any;
   size?: string;
   color?: string;
+  language?: string;
 }
 
 export interface Attendee {
