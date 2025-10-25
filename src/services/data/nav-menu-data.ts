@@ -34,20 +34,11 @@ const menuData: MenuModel[] = [
     external: false,
     highlight: false
   },
-  {
-    title: 'Events',
-    hasDropdown: true,
-    dropdownItems: [
-      { link: '/summit/2026', title: 'Summit 2026', visible: 'check', external: false, highlight: false },
-      { link: '/events', title: 'Upcoming Training', visible: true, external: false, highlight: false },
-    ],
-    visible: true,
-    external: false,
-    highlight: false
-  },
   { link: '/store', title: 'Store', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
-  { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false}
+  { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
+  { link: '/summit/2026', title: 'Summit 2026', visible: true, external: true, highlight: true },
+
 ]
 
 export default menuData;
