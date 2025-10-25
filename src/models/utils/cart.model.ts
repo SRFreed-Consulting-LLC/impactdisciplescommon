@@ -17,6 +17,7 @@ export interface CartItem {
   isEvent?: boolean;
   isEBook?: boolean;
   isDigitalBook?: boolean;
+  digitalBookId?: string;
   img?: any;
   attendees?: Attendee[];
   dateProcessed?: Timestamp;
