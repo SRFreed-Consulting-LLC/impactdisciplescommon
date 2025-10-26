@@ -70,14 +70,6 @@ export const mobileMenuData: MobileMenuModel[] = [
     visible: true
   },
   {
-    title: 'Events',
-    dropdownMenu: [
-      { link: '/summit/2026', title: 'Summit 2026', visible: true },
-      { link: '/events', title: 'Upcoming Training', visible: true },
-    ],
-    visible: true
-  },
-  {
     link: '/store',
     title: 'Store',
     visible: true,
@@ -92,8 +84,8 @@ export const mobileMenuData: MobileMenuModel[] = [
     visible: true
   },
   {
-    link: 'https://events.golfstatus.com/event/2025-impact-golf-tournament',
-    title: 'Golf Tournament 2025',
+    link: '/summit/2026',
+    title: 'Discipleship Summit',
     external: true,
     visible: true
   },
