@@ -37,16 +37,14 @@ const menuData: MenuModel[] = [
   { link: '/store', title: 'Store', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
-  { link: '/summit/2026', title: 'Summit 2026', visible: true, external: true, highlight: true },
+  { link: '/summit/2026', title: 'Summit 2026', visible: true, external: false, highlight: true },
 
 ]
 
 export default menuData;
 
 export const mobileMenuData: MobileMenuModel[] = [
-  {
-    link: '/', title: 'Home', visible: true
-  },
+  { link: '/', title: 'Home', visible: true },
   {
     title: 'Training',
     dropdownMenu: [
@@ -58,44 +56,20 @@ export const mobileMenuData: MobileMenuModel[] = [
     ],
     visible: true,
   },
-    {
-      title: 'Resources',
-      dropdownMenu: [
-        { link: '/e-books', title: 'E-Books', visible: true },
-        { link: '/podcasts', title: 'Podcasts', visible: true },
-        { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true },
-        { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true },
-        { link: '/spanish-resources', title: 'Spanish Resources', visible: true },
-      ],
-    visible: true
-  },
   {
-    title: 'Events',
+    title: 'Resources',
     dropdownMenu: [
-      { link: '/summit/2026', title: 'Summit 2026', visible: true },
-      { link: '/events', title: 'Upcoming Training', visible: true },
+      { link: '/e-books', title: 'E-Books', visible: true },
+      { link: '/podcasts', title: 'Podcasts', visible: true },
+      { link: '/disciple-making-minute', title: 'Disciple Making Minute', visible: true },
+      { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true },
+      { link: '/spanish-resources', title: 'Spanish Resources', visible: true },
     ],
     visible: true
   },
-  {
-    link: '/store',
-    title: 'Store',
-    visible: true,
-  },
-  {
-    link: '/give',
-    title: 'Donate', visible: true
-  },
-  {
-    link: '/team',
-    title: 'Team',
-    visible: true
-  },
-  {
-    link: 'https://events.golfstatus.com/event/2025-impact-golf-tournament',
-    title: 'Golf Tournament 2025',
-    external: true,
-    visible: true
-  },
+  { link: '/store', title: 'Store', visible: true },
+  { link: '/give', title: 'Donate', visible: true },
+  { link: '/team', title: 'Team', visible: true },
+  { link: '/summit/2026', title: 'Summit 2026', external: false, visible: true, highlight: true },
 
 ]

@@ -9,17 +9,18 @@ export interface MenuModel {
     dropdownMenu?: DropdownMenuModel[],
     visible: boolean | string,
     external: boolean | string,
-    highlight: boolean | string
+    highlight?: boolean | string
   }[],
   visible: boolean,
   external: boolean | string,
-  highlight: boolean | string
+  highlight?: boolean | string
 }
 
 export interface MobileMenuModel{
   title: string;
   link?: string;
   external?: boolean,
+  highlight?: boolean | string
   dropdownMenu?: DropdownMenuModel[];
   visible: boolean;
 }
