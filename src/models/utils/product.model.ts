@@ -24,4 +24,6 @@ export class ProductModel extends BaseModel {
   colors?: string[] = [];
   languages?: string[] = [];
   showInStore: boolean;
+  sendFollowUpEmail: boolean;
+  followUpEmailId: string;
 }
