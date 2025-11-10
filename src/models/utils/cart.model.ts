@@ -28,6 +28,7 @@ export interface CartItem {
   size?: string;
   color?: string;
   language?: string;
+  followUpEmailId?: string;
 }
 
 export interface Attendee {

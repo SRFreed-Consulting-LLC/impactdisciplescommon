@@ -87,4 +87,28 @@ export class EMailService extends BaseService<EMailModel>{
       return this.add(mail);
     })
   }
+
+  sendHTMLEMailByIdFromTemplate(to:string, templateId: string, model: any){
+    return this.templateService.getById(templateId).then(template => {
+      let mail = {... new EMailModel()}
+      mail.to = to;
+      mail.date = Timestamp.now();
+
+      let html = template.html;
+
+      Object.entries(model).forEach(([key, value]) => {
+        console.log('checking for ' + [key])
+        html = html.replace("{{"+key+"}}", model[key])
+      });
+
+      let mailMessage: MessageModel = {... new MessageModel()};
+
+      mailMessage.subject = template.subject;
+      mailMessage.html = html;
+
+      mail.message = mailMessage;
+
+      return this.add(mail);
+    })
+  }
 }
