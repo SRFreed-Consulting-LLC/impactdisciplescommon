@@ -28,7 +28,7 @@ const menuData: MenuModel[] = [
       { link: '/podcasts', title: 'Podcasts', visible: true, external: false, highlight: false },
       { link: '/disciple-making-minute', title: 'Disciple-Making Minute', visible: true, external: false, highlight: false },
       { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true, external: false, highlight: false },
-      { link: '/spanish-resources', title: 'Spanish Resources', visible: true, external: false, highlight: false },
+      { link: '/store?category=spanish-resources', title: 'Spanish Resources', visible: true, external: false, highlight: false },
     ],
     visible: true,
     external: false,
@@ -63,7 +63,7 @@ export const mobileMenuData: MobileMenuModel[] = [
       { link: '/podcasts', title: 'Podcasts', visible: true },
       { link: '/disciple-making-minute', title: 'Disciple-Making Minute', visible: true },
       { link: '/monthly-newsletter', title: 'Monthly Newsletter', visible: true },
-      { link: '/spanish-resources', title: 'Spanish Resources', visible: true },
+      { link: '/store?category=spanish-resources', title: 'Spanish Resources', visible: true },
     ],
     visible: true
   },
