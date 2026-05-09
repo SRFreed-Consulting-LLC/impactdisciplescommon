@@ -38,7 +38,7 @@ const menuData: MenuModel[] = [
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
   { link: '/summit/2027', title: 'Summit 2027', visible: true, external: false, highlight: true },
-
+  { link: 'https://events.golfstatus.com/event/2nd-Annual-Impact-Golf-Tournament', title: 'Impact Golf Tournament', visible: true, external: true, highlight: true }
 ]
 
 export default menuData;
