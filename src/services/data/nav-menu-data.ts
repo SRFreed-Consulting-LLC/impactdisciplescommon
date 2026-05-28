@@ -34,11 +34,19 @@ const menuData: MenuModel[] = [
     external: false,
     highlight: false
   },
-  { link: '/store', title: 'Store', hasDropdown: false , visible: true, external: false, highlight: false},
+  { title: 'Store', hasDropdown: true,
+    dropdownItems: [
+      { link: '/store', title: 'Impact Books', visible: true, external: false, highlight: false },
+      { link: 'http://www.asbshops.com/lagrangehub/matthewfrady/impact', title: 'Impact Merchandise', visible: true, external: true, highlight: true }
+    ],
+    visible: true,
+    external: false,
+    highlight: false
+  },
   { link: '/give', title: 'Donate', hasDropdown: false , visible: true, external: false, highlight: false},
   { link: '/team', title: 'Team', hasDropdown: false, visible: true, external: false, highlight: false},
-  { link: '/summit/2026', title: 'Summit 2026', visible: true, external: false, highlight: true },
-
+  { link: '/summit/2027', title: 'Summit 2027', visible: true, external: false, highlight: true },
+  { link: 'https://events.golfstatus.com/event/2nd-Annual-Impact-Golf-Tournament', title: 'Impact Golf Tournament', visible: true, external: true, highlight: true }
 ]
 
 export default menuData;
@@ -70,6 +78,6 @@ export const mobileMenuData: MobileMenuModel[] = [
   { link: '/store', title: 'Store', visible: true },
   { link: '/give', title: 'Donate', visible: true },
   { link: '/team', title: 'Team', visible: true },
-  { link: '/summit/2026', title: 'Summit 2026', external: false, visible: true, highlight: true },
+  { link: '/summit/2027', title: 'Summit 2027', external: false, visible: true, highlight: true },
 
 ]
