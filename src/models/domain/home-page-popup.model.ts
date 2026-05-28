@@ -1,12 +1,13 @@
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from '@google-cloud/firestore';
 import { BaseModel } from '../base.model';
-import { ImageModel } from '../utils/image.model';
 
 export class HomePagePopupModel extends BaseModel {
   isActive: boolean = false;
-  fromDate: Timestamp;
-  toDate: Timestamp;
-  image?: ImageModel;
+  fromDate?: Timestamp | Date | string;
+  toDate?: Timestamp | Date | string;
   title: string;
   text?: string;
+  width?: number;
+  height?: number;
+  bgColor?: string;
 }
