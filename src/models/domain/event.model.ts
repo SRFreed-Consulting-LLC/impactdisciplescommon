@@ -19,6 +19,7 @@ export class EventModel extends BaseModel {
   costInDollars?: number;
   isSummit?: boolean = false;
   isOnline?: boolean = false;
+  isKajabiCourse?: boolean = false;
   kajabiPurchaseURL?: string;
   kajabiSubscribeURL?: string;
   imageUrl?: any;
