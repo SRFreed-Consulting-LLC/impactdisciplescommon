@@ -7,9 +7,10 @@ import notify from 'devextreme/ui/notify';
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
-  selector: 'app-create-auth-form',
-  templateUrl: './create-auth-form.component.html',
-  styleUrls: ['./create-auth-form.component.scss']
+    selector: 'app-create-auth-form',
+    templateUrl: './create-auth-form.component.html',
+    styleUrls: ['./create-auth-form.component.scss'],
+    standalone: false
 })
 export class CreateAuthFormComponent implements OnDestroy {
   public isLoading: boolean = false;

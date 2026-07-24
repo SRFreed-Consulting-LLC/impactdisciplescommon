@@ -5,9 +5,10 @@ import {  Subject, takeUntil } from 'rxjs';
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
-  selector: 'app-reset-password-form',
-  templateUrl: './reset-password-form.component.html',
-  styleUrls: ['./reset-password-form.component.scss']
+    selector: 'app-reset-password-form',
+    templateUrl: './reset-password-form.component.html',
+    styleUrls: ['./reset-password-form.component.scss'],
+    standalone: false
 })
 export class ResetPasswordFormComponent implements OnDestroy {
   public isLoading: boolean = false;

@@ -6,9 +6,10 @@ import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.se
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
-  selector: 'app-capture-username-form',
-  templateUrl: './capture-username-form.component.html',
-  styleUrls: ['./capture-username-form.component.scss']
+    selector: 'app-capture-username-form',
+    templateUrl: './capture-username-form.component.html',
+    styleUrls: ['./capture-username-form.component.scss'],
+    standalone: false
 })
 export class CaptureUsernameFormComponent implements OnDestroy  {
   @Input() loginEmail: any = {};

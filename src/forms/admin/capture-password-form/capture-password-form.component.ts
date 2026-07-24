@@ -4,9 +4,10 @@ import notify from 'devextreme/ui/notify';
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
-  selector: 'app-capture-password-form',
-  templateUrl: './capture-password-form.component.html',
-  styleUrls: ['./capture-password-form.component.scss']
+    selector: 'app-capture-password-form',
+    templateUrl: './capture-password-form.component.html',
+    styleUrls: ['./capture-password-form.component.scss'],
+    standalone: false
 })
 export class CapturePasswordFormComponent implements OnDestroy {
   loginEmail: string = '';

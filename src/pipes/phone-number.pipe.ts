@@ -1,7 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Phone } from '../models/domain/utils/phone.model';
 
-@Pipe({ name: 'phoneNumberMask' })
+@Pipe({
+    name: 'phoneNumberMask',
+    standalone: false
+})
 export class PhoneNumberMaskPipe implements PipeTransform {
   transform(phoneNumber: Phone, showExtension: boolean = true): string {
     if (!phoneNumber || !phoneNumber?.number) {
