@@ -1,10 +1,9 @@
 import { Injectable, Input } from '@angular/core';
 import { DxFileManagerComponent } from 'devextreme-angular';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
-import { initializeApp } from 'firebase/app';
+import { getApp } from 'firebase/app';
 import { getStorage, ref, listAll, getMetadata, uploadBytes, deleteObject, uploadString, UploadResult, getBytes, getDownloadURL  } from "firebase/storage";
 import { FileItem } from 'impactdisciplescommon/src/models/utils/file-item.model';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ import { environment } from 'src/environments/environment';
 export class FileUploadService {
   public fileManager: DxFileManagerComponent;
 
-  storage = getStorage(initializeApp(environment.firebaseConfig));
+  storage = getStorage(getApp());
 
   @Input('height') height: string = '90%';
 
