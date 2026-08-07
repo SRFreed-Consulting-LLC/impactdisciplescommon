@@ -6,8 +6,9 @@ import { FileUploadService } from 'impactdisciplescommon/src/services/utils/file
 import { SingleOrMultiple } from 'devextreme/common';
 
 @Component({
-  selector: 'app-image-uploader',
-  templateUrl: './image-uploader.component.html'
+    selector: 'app-image-uploader',
+    templateUrl: './image-uploader.component.html',
+    standalone: false
 })
 export class ImageUploaderComponent {
   @Input() imageSelectVisible: boolean = true;
