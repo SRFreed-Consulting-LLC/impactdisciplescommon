@@ -1,6 +1,6 @@
 import { AgendaItem } from './../../models/domain/utils/agenda-item.model';
 import { Injectable } from '@angular/core';
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { EventRegistrationModel } from 'impactdisciplescommon/src/models/domain/event-registration.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';

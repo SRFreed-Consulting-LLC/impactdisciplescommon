@@ -1,6 +1,4 @@
 import { NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { DxButtonModule, DxFileManagerModule, DxFormModule, DxLoadIndicatorModule, DxPopupModule } from "devextreme-angular";
@@ -12,8 +10,7 @@ import { ImageUploaderComponent } from "./image-uploader.component";
     ImageUploaderComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
+    // Neither BrowserModule nor BrowserAnimationsModule imported here - see layouts.module.ts.
     CommonModule,
     RouterModule,
     LayoutsModule,

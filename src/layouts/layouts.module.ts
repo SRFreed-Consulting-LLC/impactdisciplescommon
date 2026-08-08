@@ -1,6 +1,4 @@
 import { NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { DxFormModule, DxLoadIndicatorModule, DxScrollViewModule, DxTabsModule, DxToolbarModule } from "devextreme-angular";
@@ -13,8 +11,15 @@ import { SingleCardComponent } from "./single-card/single-card.component";
     SingleCardComponent,
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
+    // Neither BrowserModule nor BrowserAnimationsModule is imported here:
+    // both are root-only (BrowserAnimationsModule itself re-exports
+    // BrowserModule internally), and this module is pulled in by every
+    // lazy-loaded feature module via ImpactDisciplesCommonModule - Angular
+    // hard-errors (NG05100) if BrowserModule's providers get registered a
+    // second time in a lazy injector. Neither was actually needed: nothing
+    // in this app uses @angular/animations triggers, and DevExtreme has its
+    // own animation engine independent of Angular's. CommonModule below
+    // provides the directives (*ngIf, *ngFor, etc.) this module needs.
     CommonModule,
     RouterModule,
     LayoutModule,

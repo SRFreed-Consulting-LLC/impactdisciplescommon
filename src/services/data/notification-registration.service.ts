@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseDAO } from '../../dao/firebase.dao';
 import { NotificationRegistrationModel } from 'impactdisciplescommon/src/models/admin/notification-registration.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseService } from './base.service';
 
 @Injectable({

@@ -1,4 +1,4 @@
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseModel } from '../base.model';
 
 export class HomePagePopupModel extends BaseModel {

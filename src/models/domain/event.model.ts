@@ -1,7 +1,7 @@
 import { LocationModel } from './location.model';
 import { BaseModel } from "../base.model";
 import { AppUser } from '../admin/appuser.model';
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { OrganizationModel } from './organization.model';
 import { AgendaItem } from './utils/agenda-item.model';
 import { FAQModel } from '../utils/faq.model';

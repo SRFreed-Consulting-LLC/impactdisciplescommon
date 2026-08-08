@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO, QueryParam, WhereFilterOperandKeys } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { EventModel } from 'impactdisciplescommon/src/models/domain/event.model';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';

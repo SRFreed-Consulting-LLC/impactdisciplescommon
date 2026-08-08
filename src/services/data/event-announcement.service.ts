@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Timestamp } from '@google-cloud/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { FirebaseDAO } from 'impactdisciplescommon/src/dao/firebase.dao';
 import { dateFromTimestamp } from 'impactdisciplescommon/src/utils/date-from-timestamp';
 import { BaseService } from './base.service';
