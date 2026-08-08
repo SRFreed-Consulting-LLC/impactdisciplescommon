@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { addDoc, collectionData, deleteDoc, doc, getDoc, getDocs, limit, query, setDoc, where } from '@angular/fire/firestore';
 import { Firestore, collection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { DocumentData, onSnapshot, QueryConstraint, QuerySnapshot } from 'firebase/firestore';
 import { BaseModel } from '../models/base.model';
 import { Unsubscribe } from 'firebase/auth';
@@ -14,28 +14,40 @@ export class FirebaseDAO<T extends BaseModel> {
 
   constructor(public fs: Firestore ) {}
 
-  public getAll(table: string, fromFirestore?): Promise<T[]>{
-    return getDocs(collection(this.fs, '/' + table)).then(docs => {
+  // limitCount is optional and defaults to unbounded (existing behavior) --
+  // pass it to cap how many documents a page pulls back instead of the
+  // entire collection.
+  public getAll(table: string, fromFirestore?, limitCount?: number): Promise<T[]>{
+    const constraints: QueryConstraint[] = limitCount ? [limit(limitCount)] : [];
+
+    return getDocs(query(collection(this.fs, '/' + table), ...constraints)).then(docs => {
       return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  public getAllByValue(table: string, field: string, value: any, fromFirestore?): Promise<T[]>{
-    return getDocs(query(collection(this.fs, '/' + table), where(field, "==", value))).then(docs => {
+  public getAllByValue(table: string, field: string, value: any, fromFirestore?, limitCount?: number): Promise<T[]>{
+    const constraints: QueryConstraint[] = [where(field, "==", value)];
+    if (limitCount) constraints.push(limit(limitCount));
+
+    return getDocs(query(collection(this.fs, '/' + table), ...constraints)).then(docs => {
       return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  public queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Promise<T[]>{
-    return getDocs(query(collection(this.fs, '/' + table), where(field, opStr, value))).then(docs => {
+  public queryByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?, limitCount?: number): Promise<T[]>{
+    const constraints: QueryConstraint[] = [where(field, opStr, value)];
+    if (limitCount) constraints.push(limit(limitCount));
+
+    return getDocs(query(collection(this.fs, '/' + table), ...constraints)).then(docs => {
       return this.getDocListFromPromise(docs, fromFirestore);
     });
   }
 
-  public queryAllByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Promise<T[]>{
+  public queryAllByMultiValue(table: string, queries: QueryParam[], fromFirestore?, limitCount?: number): Promise<T[]>{
     const queryConstraints: QueryConstraint[] = queries.map((query) =>
       where(query.field, query.operation, query.value),
     );
+    if (limitCount) queryConstraints.push(limit(limitCount));
 
     return getDocs(query(collection(this.fs, '/' + table), ...queryConstraints)).then(docs => {
       return this.getDocListFromPromise(docs, fromFirestore);
@@ -74,18 +86,36 @@ export class FirebaseDAO<T extends BaseModel> {
     return deleteDoc(doc(this.fs, '/' + table + '/' + id));
   }
 
-  public streamAll(table: string, fromFirestore?): Observable<T[]>{
-    return collectionData(collection(this.fs, '/' + table), {idField: 'id'}).pipe(
+  public streamAll(table: string, fromFirestore?, limitCount?: number): Observable<T[]>{
+    const constraints: QueryConstraint[] = limitCount ? [limit(limitCount)] : [];
+
+    return collectionData(query(collection(this.fs, '/' + table), ...constraints), {idField: 'id'}).pipe(
       map(docs => {
         return this.getDocListFromStream(docs, fromFirestore);
+      }),
+      // Without this, a failed/offline/permission-denied listener just
+      // errors the observable silently -- no error callback is registered
+      // at most call sites, so the UI is left showing stale/empty data
+      // forever with no visible sign anything went wrong. Log it and fall
+      // back to an empty list instead.
+      catchError(err => {
+        console.error(`FirebaseDAO.streamAll('${table}') failed:`, err);
+        return of([]);
       })
     );
   }
 
-  public streamByValue(table: string, field: string, value: any, fromFirestore?): Observable<T[]>{
-    return collectionData(query(collection(this.fs, '/' + table), where(field, "==", value)), {idField: 'id'}).pipe(
+  public streamByValue(table: string, field: string, value: any, fromFirestore?, limitCount?: number): Observable<T[]>{
+    const constraints: QueryConstraint[] = [where(field, "==", value)];
+    if (limitCount) constraints.push(limit(limitCount));
+
+    return collectionData(query(collection(this.fs, '/' + table), ...constraints), {idField: 'id'}).pipe(
       map(docs => {
         return this.getDocListFromStream(docs, fromFirestore);
+      }),
+      catchError(err => {
+        console.error(`FirebaseDAO.streamByValue('${table}', '${field}') failed:`, err);
+        return of([]);
       })
     );
   }
@@ -101,22 +131,34 @@ export class FirebaseDAO<T extends BaseModel> {
     })
   }
 
-  public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?): Observable<T[]>{
-    return collectionData(query(collection(this.fs, '/' + table), where(field, opStr, value)), {idField: 'id'}).pipe(
+  public queryStreamByValue(table: string, field: string, opStr: WhereFilterOperandKeys, value: any, fromFirestore?, limitCount?: number): Observable<T[]>{
+    const constraints: QueryConstraint[] = [where(field, opStr, value)];
+    if (limitCount) constraints.push(limit(limitCount));
+
+    return collectionData(query(collection(this.fs, '/' + table), ...constraints), {idField: 'id'}).pipe(
       map(docs => {
         return this.getDocListFromStream(docs, fromFirestore);
+      }),
+      catchError(err => {
+        console.error(`FirebaseDAO.queryStreamByValue('${table}', '${field}') failed:`, err);
+        return of([]);
       })
     );
   }
 
-  public queryAllStreamByMultiValue(table: string, queries: QueryParam[], fromFirestore?): Observable<T[]>{
+  public queryAllStreamByMultiValue(table: string, queries: QueryParam[], fromFirestore?, limitCount?: number): Observable<T[]>{
     const queryConstraints: QueryConstraint[] = queries.map((query) =>
       where(query.field, query.operation, query.value),
     );
+    if (limitCount) queryConstraints.push(limit(limitCount));
 
     return collectionData(query(collection(this.fs, '/' + table), ...queryConstraints), {idField: 'id'}).pipe(
       map(docs => {
         return this.getDocListFromStream(docs, fromFirestore);
+      }),
+      catchError(err => {
+        console.error(`FirebaseDAO.queryAllStreamByMultiValue('${table}') failed:`, err);
+        return of([]);
       })
     );
   }
