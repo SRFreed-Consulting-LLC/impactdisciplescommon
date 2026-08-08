@@ -13,32 +13,35 @@ export class BaseService<T extends BaseModel> {
 
   constructor(public dao: FirebaseDAO<T>) {}
 
-  getAll(): Promise<T[]>{
-    return this.dao.getAll(this.table, this.fromFirestore);
+  // limitCount is optional everywhere below and defaults to unbounded
+  // (existing behavior) -- pass it from a page/component to cap how many
+  // documents a list/stream query pulls back instead of the whole collection.
+  getAll(limitCount?: number): Promise<T[]>{
+    return this.dao.getAll(this.table, this.fromFirestore, limitCount);
   }
 
-  getAllByValue(field: string, value: any): Promise<T[]>{
-    return this.dao.getAllByValue(this.table, field, value, this.fromFirestore);
+  getAllByValue(field: string, value: any, limitCount?: number): Promise<T[]>{
+    return this.dao.getAllByValue(this.table, field, value, this.fromFirestore, limitCount);
   }
 
-  queryAllByValue(field: string, opStr: WhereFilterOperandKeys, value: any): Promise<T[]>{
-    return this.dao.queryByValue(this.table, field, opStr, value, this.fromFirestore);
+  queryAllByValue(field: string, opStr: WhereFilterOperandKeys, value: any, limitCount?: number): Promise<T[]>{
+    return this.dao.queryByValue(this.table, field, opStr, value, this.fromFirestore, limitCount);
   }
 
-  queryAllByMultiValue(queries: QueryParam[]): Promise<T[]>{
-    return this.dao.queryAllByMultiValue(this.table, queries, this.fromFirestore)
+  queryAllByMultiValue(queries: QueryParam[], limitCount?: number): Promise<T[]>{
+    return this.dao.queryAllByMultiValue(this.table, queries, this.fromFirestore, limitCount)
   }
 
   getById(id: string): Promise<T>{
     return this.dao.getById(id, this.table, this.fromFirestore);
   }
 
-  streamAll(): Observable<T[]>{
-    return this.dao.streamAll(this.table, this.fromFirestore)
+  streamAll(limitCount?: number): Observable<T[]>{
+    return this.dao.streamAll(this.table, this.fromFirestore, limitCount)
   }
 
-  streamAllByValue(field: string, value: any): Observable<T[]>{
-    return this.dao.streamByValue(this.table, field, value, this.fromFirestore)
+  streamAllByValue(field: string, value: any, limitCount?: number): Observable<T[]>{
+    return this.dao.streamByValue(this.table, field, value, this.fromFirestore, limitCount)
   }
 
   streamById(id: string): Observable<T[]>{
@@ -49,12 +52,12 @@ export class BaseService<T extends BaseModel> {
     return this.dao.streamById(id, this.table, callBack, this.fromFirestore);
   }
 
-  queryStreamByValue(field: any, opStr: WhereFilterOperandKeys, value: string): Observable<T[]>{
-    return this.dao.queryStreamByValue(this.table, field, opStr, value, this.fromFirestore);
+  queryStreamByValue(field: any, opStr: WhereFilterOperandKeys, value: string, limitCount?: number): Observable<T[]>{
+    return this.dao.queryStreamByValue(this.table, field, opStr, value, this.fromFirestore, limitCount);
   }
 
-  queryAllStreamByMultiValue(queries: QueryParam[]): Observable<T[]>{
-    return this.dao.queryAllStreamByMultiValue(this.table, queries, this.fromFirestore);
+  queryAllStreamByMultiValue(queries: QueryParam[], limitCount?: number): Observable<T[]>{
+    return this.dao.queryAllStreamByMultiValue(this.table, queries, this.fromFirestore, limitCount);
   }
 
   add(value: T): Promise<T>{

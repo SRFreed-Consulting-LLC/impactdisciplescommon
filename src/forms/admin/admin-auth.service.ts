@@ -4,7 +4,7 @@ import { UserCredential } from 'firebase/auth';
 import { FireAuthDao } from '../../dao/fireauth.dao';
 import { AppUser } from '../../models/admin/appuser.model';
 import { CookieService } from 'ngx-cookie-service';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
@@ -319,9 +319,14 @@ export class AdminAuthService {
 export class AuthGuardService implements CanActivate {
   constructor(private router: Router, private authService: AdminAuthService) { }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    let isLoggedIn = this.authService.loggedIn;
-
+  // SECURITY: this guard is the access-control boundary for every admin route.
+  // It MUST be based on the Firebase Auth SDK's own session state (verified
+  // against Firebase's servers), never on the "impact-disciples-user" cookie
+  // alone -- that cookie is plain, unsigned JSON written client-side and can
+  // be forged from devtools (e.g. `document.cookie = "impact-disciples-user=..."`).
+  // The cookie is still used elsewhere to cache profile data (role, email) for
+  // display purposes, but it is not trusted here as proof of authentication.
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const isAuthForm = [
       'reset-password',
       'create-account',
@@ -331,22 +336,38 @@ export class AuthGuardService implements CanActivate {
       'create-auth-form'
     ].includes(route.routeConfig?.path || defaultPath);
 
-    if (isLoggedIn && isAuthForm) {
-      this.authService.lastAuthenticatedPath = defaultPath;
-      this.router.navigate([defaultPath]);
-      return false;
-    }
+    return this.authService.dao.currentUser$.pipe(
+      take(1),
+      switchMap(user => {
+        if (!user) {
+          return of(false);
+        }
 
-    if (!isLoggedIn && !isAuthForm) {
+        // Force a refresh check against Firebase so an expired/revoked
+        // session can't be reused just because a stale cookie still exists.
+        return from(user.getIdTokenResult()).pipe(
+          map(token => new Date(token.expirationTime).getTime() > Date.now()),
+          catchError(() => of(false))
+        );
+      }),
+      map(isLoggedIn => {
+        if (isLoggedIn && isAuthForm) {
+          this.authService.lastAuthenticatedPath = defaultPath;
+          this.router.navigate([defaultPath]);
+          return false;
+        }
 
-      console.log('not logged in via Authguard')
-      this.router.navigate(['/capture-username-form']);
-    }
+        if (!isLoggedIn && !isAuthForm) {
+          console.log('not logged in via Authguard');
+          this.router.navigate(['/capture-username-form']);
+        }
 
-    if (isLoggedIn) {
-      this.authService.lastAuthenticatedPath = route.routeConfig?.path || defaultPath;
-    }
+        if (isLoggedIn) {
+          this.authService.lastAuthenticatedPath = route.routeConfig?.path || defaultPath;
+        }
 
-    return isLoggedIn || isAuthForm;
+        return isLoggedIn || isAuthForm;
+      })
+    );
   }
 }
