@@ -7,7 +7,7 @@ import { PHONE_TYPES } from 'impactdisciplescommon/src/lists/phone_types.enum';
 import { Role } from 'impactdisciplescommon/src/lists/roles.enum';
 import { Address } from 'impactdisciplescommon/src/models/domain/utils/address.model';
 import { Phone } from 'impactdisciplescommon/src/models/domain/utils/phone.model';
-import notify from 'devextreme/ui/notify';
+import { notify } from 'impactdisciplescommon/src/utils/notify.util';
 
 @Injectable({
   providedIn: 'root'

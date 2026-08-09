@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationCallbackData } from 'devextreme-angular/common';
-import notify from 'devextreme/ui/notify';
+import { notify } from '../../../utils/notify.util';
 import { Subject, takeUntil } from 'rxjs';
 import { AdminAuthService } from '../admin-auth.service';
 

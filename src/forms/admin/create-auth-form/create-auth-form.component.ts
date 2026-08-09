@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
-import notify from 'devextreme/ui/notify';
+import { notify } from '../../../utils/notify.util';
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({

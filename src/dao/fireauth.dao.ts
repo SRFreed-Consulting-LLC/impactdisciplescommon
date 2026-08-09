@@ -11,7 +11,7 @@ import { AppUser } from '../models/admin/appuser.model';
 import { AppUserService } from '../services/data/user.service';
 import { CookieService } from 'ngx-cookie-service';
 import { QueryParam, WhereFilterOperandKeys } from './firebase.dao';
-import notify from 'devextreme/ui/notify';
+import { notify } from '../utils/notify.util';
 
 const AUTH_COOKIE_NAME = 'crm_auth';
 const USER_COOKIE_NAME = 'crm_user';

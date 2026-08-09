@@ -5,7 +5,7 @@ import { AppUser } from "impactdisciplescommon/src/models/admin/appuser.model";
 import { NotificationRegistrationModel } from "impactdisciplescommon/src/models/admin/notification-registration.model";
 import { NotificationRegistrationService } from "impactdisciplescommon/src/services/data/notification-registration.service";
 import { environment } from "src/environments/environment";
-import notify from "devextreme/ui/notify";
+import { notify } from "impactdisciplescommon/src/utils/notify.util";
 import { AdminAuthService } from "impactdisciplescommon/src/forms/admin/admin-auth.service";
 
 @Injectable({

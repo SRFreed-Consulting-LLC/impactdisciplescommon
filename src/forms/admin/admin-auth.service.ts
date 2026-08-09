@@ -8,7 +8,7 @@ import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { CustomerModel } from 'impactdisciplescommon/src/models/domain/utils/customer.model';
 import { environment } from 'src/environments/environment';
-import notify from 'devextreme/ui/notify';
+import { notify } from 'impactdisciplescommon/src/utils/notify.util';
 import { UserAuthenticated } from 'impactdisciplescommon/src/services/actions/authentication.actions';
 import { LoggerService } from 'impactdisciplescommon/src/services/data/logger.service';
 import { AppUserService } from 'impactdisciplescommon/src/services/data/user.service';

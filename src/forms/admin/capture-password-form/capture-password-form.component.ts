@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import notify from 'devextreme/ui/notify';
+import { notify } from '../../../utils/notify.util';
 import { AdminAuthService } from '../admin-auth.service';
 
 @Component({
